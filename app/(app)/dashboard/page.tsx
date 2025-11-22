@@ -32,13 +32,13 @@ export default async function DashboardPage() {
   // Fetch recent meals count
   const { count: mealsCount } = await supabase
     .from('meals')
-    .select('*', { count: 'only', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id);
 
   // Fetch active meal plans count
   const { count: mealPlansCount } = await supabase
     .from('meal_plans')
-    .select('*', { count: 'only', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id);
 
   // Fetch today's progress (if exists)
