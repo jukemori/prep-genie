@@ -1,52 +1,46 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Separator } from '@/components/atoms/ui/separator'
-import { MacroDisplay } from '@/components/molecules/macro-display'
-import { IngredientItem } from '@/components/molecules/ingredient-item'
-import { ArrowLeft, Clock, Users, Edit, Trash2 } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import type { Meal } from '@/types'
+import { ArrowLeft, Clock, Edit, Trash2, Users } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
+import { Separator } from '@/components/atoms/ui/separator';
+import { IngredientItem } from '@/components/molecules/ingredient-item';
+import { MacroDisplay } from '@/components/molecules/macro-display';
+import { createClient } from '@/lib/supabase/server';
 
 interface PageProps {
   params: Promise<{
-    id: string
-  }>
+    id: string;
+  }>;
 }
 
 export default async function MealDetailPage({ params }: PageProps) {
-  const { id } = await params
-  const supabase = await createClient()
+  const { id } = await params;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return null
+    return null;
   }
 
-  const { data: meal } = await supabase
-    .from('meals')
-    .select('*')
-    .eq('id', id)
-    .single()
+  const { data: meal } = await supabase.from('meals').select('*').eq('id', id).single();
 
   if (!meal) {
-    notFound()
+    notFound();
   }
 
   // Check access
   if (meal.user_id !== user.id && !meal.is_public) {
-    notFound()
+    notFound();
   }
 
-  const typedMeal = meal as Meal
-  const isOwner = meal.user_id === user.id
-  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0)
+  const isOwner = meal.user_id === user.id;
+  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0);
 
   return (
     <div className="space-y-6">
@@ -78,12 +72,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Header */}
           {meal.image_url && (
             <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-              <Image
-                src={meal.image_url}
-                alt={meal.name}
-                fill
-                className="object-cover"
-              />
+              <Image src={meal.image_url} alt={meal.name} fill className="object-cover" />
             </div>
           )}
 
@@ -94,9 +83,7 @@ export default async function MealDetailPage({ params }: PageProps) {
                 <Badge className="capitalize">{meal.difficulty_level}</Badge>
               )}
             </div>
-            {meal.description && (
-              <p className="text-muted-foreground">{meal.description}</p>
-            )}
+            {meal.description && <p className="text-muted-foreground">{meal.description}</p>}
             <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
               {totalTime > 0 && (
                 <div className="flex items-center gap-1">
@@ -122,13 +109,18 @@ export default async function MealDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent className="space-y-2">
               {Array.isArray(meal.ingredients) && meal.ingredients.length > 0 ? (
-                meal.ingredients.map((ingredient: any, index: number) => (
-                  <IngredientItem
-                    key={index}
-                    ingredient={ingredient}
-                    showCategory
-                  />
-                ))
+                meal.ingredients.map(
+                  (
+                    ingredient: { name: string; quantity: number; unit: string; category?: string },
+                    index: number
+                  ) => (
+                    <IngredientItem
+                      key={`${ingredient.name}-${index}`}
+                      ingredient={ingredient}
+                      showCategory
+                    />
+                  )
+                )
               ) : (
                 <p className="text-sm text-muted-foreground">No ingredients listed</p>
               )}
@@ -144,7 +136,7 @@ export default async function MealDetailPage({ params }: PageProps) {
               {meal.instructions && meal.instructions.length > 0 ? (
                 <ol className="space-y-3">
                   {meal.instructions.map((step: string, index: number) => (
-                    <li key={index} className="flex gap-3">
+                    <li key={`${step.slice(0, 20)}-${index}`} className="flex gap-3">
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                         {index + 1}
                       </span>
@@ -228,5 +220,5 @@ export default async function MealDetailPage({ params }: PageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

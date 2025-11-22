@@ -1,79 +1,99 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { createMeal } from '@/features/meals/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Input } from '@/components/atoms/ui/input'
-import { Label } from '@/components/atoms/ui/label'
-import { Textarea } from '@/components/atoms/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select'
-import { Checkbox } from '@/components/atoms/ui/checkbox'
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
+import { Checkbox } from '@/components/atoms/ui/checkbox';
+import { Input } from '@/components/atoms/ui/input';
+import { Label } from '@/components/atoms/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/atoms/ui/select';
+import { Textarea } from '@/components/atoms/ui/textarea';
+import { createMeal } from '@/features/meals/api/actions';
 
 interface Ingredient {
-  name: string
-  quantity: number
-  unit: string
-  category: string
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+}
+
+interface Instruction {
+  id: string;
+  text: string;
 }
 
 export default function NewMealPage() {
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([
-    { name: '', quantity: 0, unit: '', category: 'other' },
-  ])
-  const [instructions, setInstructions] = useState<string[]>([''])
+    { id: crypto.randomUUID(), name: '', quantity: 0, unit: '', category: 'other' },
+  ]);
+  const [instructions, setInstructions] = useState<Instruction[]>([
+    { id: crypto.randomUUID(), text: '' },
+  ]);
 
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: '', quantity: 0, unit: '', category: 'other' }])
-  }
+    setIngredients([
+      ...ingredients,
+      { id: crypto.randomUUID(), name: '', quantity: 0, unit: '', category: 'other' },
+    ]);
+  };
 
-  const removeIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index))
-  }
+  const removeIngredient = (id: string) => {
+    setIngredients(ingredients.filter((ing) => ing.id !== id));
+  };
 
-  const updateIngredient = (index: number, field: keyof Ingredient, value: string | number) => {
-    const updated = [...ingredients]
-    updated[index] = { ...updated[index], [field]: value }
-    setIngredients(updated)
-  }
+  const updateIngredient = (
+    id: string,
+    field: keyof Omit<Ingredient, 'id'>,
+    value: string | number
+  ) => {
+    setIngredients(ingredients.map((ing) => (ing.id === id ? { ...ing, [field]: value } : ing)));
+  };
 
   const addInstruction = () => {
-    setInstructions([...instructions, ''])
-  }
+    setInstructions([...instructions, { id: crypto.randomUUID(), text: '' }]);
+  };
 
-  const removeInstruction = (index: number) => {
-    setInstructions(instructions.filter((_, i) => i !== index))
-  }
+  const removeInstruction = (id: string) => {
+    setInstructions(instructions.filter((inst) => inst.id !== id));
+  };
 
-  const updateInstruction = (index: number, value: string) => {
-    const updated = [...instructions]
-    updated[index] = value
-    setInstructions(updated)
-  }
+  const updateInstruction = (id: string, value: string) => {
+    setInstructions(instructions.map((inst) => (inst.id === id ? { ...inst, text: value } : inst)));
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
-    formData.set('ingredients', JSON.stringify(ingredients.filter(i => i.name)))
-    formData.set('instructions', JSON.stringify(instructions.filter(i => i)))
+    const formData = new FormData(e.currentTarget);
+    // Remove IDs before submitting
+    const ingredientsData = ingredients.filter((i) => i.name).map(({ id, ...rest }) => rest);
+    const instructionsData = instructions.filter((i) => i.text).map((i) => i.text);
+    formData.set('ingredients', JSON.stringify(ingredientsData));
+    formData.set('instructions', JSON.stringify(instructionsData));
 
-    const result = await createMeal(formData)
+    const result = await createMeal(formData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     } else if (result?.data) {
-      router.push(`/meals/${result.data.id}`)
+      router.push(`/meals/${result.data.id}`);
     }
   }
 
@@ -90,9 +110,7 @@ export default function NewMealPage() {
 
       <div>
         <h1 className="text-3xl font-bold">Create New Meal</h1>
-        <p className="text-muted-foreground">
-          Add a new recipe to your meal library
-        </p>
+        <p className="text-muted-foreground">Add a new recipe to your meal library</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -179,24 +197,12 @@ export default function NewMealPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="prepTime">Prep Time (min)</Label>
-                <Input
-                  id="prepTime"
-                  name="prepTime"
-                  type="number"
-                  min="0"
-                  disabled={loading}
-                />
+                <Input id="prepTime" name="prepTime" type="number" min="0" disabled={loading} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="cookTime">Cook Time (min)</Label>
-                <Input
-                  id="cookTime"
-                  name="cookTime"
-                  type="number"
-                  min="0"
-                  disabled={loading}
-                />
+                <Input id="cookTime" name="cookTime" type="number" min="0" disabled={loading} />
               </div>
             </div>
 
@@ -268,30 +274,32 @@ export default function NewMealPage() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
-            {ingredients.map((ingredient, index) => (
-              <div key={index} className="flex gap-2">
+            {ingredients.map((ingredient) => (
+              <div key={ingredient.id} className="flex gap-2">
                 <Input
                   placeholder="Name"
                   value={ingredient.name}
-                  onChange={(e) => updateIngredient(index, 'name', e.target.value)}
+                  onChange={(e) => updateIngredient(ingredient.id, 'name', e.target.value)}
                   className="flex-1"
                 />
                 <Input
                   type="number"
                   placeholder="Qty"
                   value={ingredient.quantity || ''}
-                  onChange={(e) => updateIngredient(index, 'quantity', Number(e.target.value))}
+                  onChange={(e) =>
+                    updateIngredient(ingredient.id, 'quantity', Number(e.target.value))
+                  }
                   className="w-24"
                 />
                 <Input
                   placeholder="Unit"
                   value={ingredient.unit}
-                  onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
+                  onChange={(e) => updateIngredient(ingredient.id, 'unit', e.target.value)}
                   className="w-24"
                 />
                 <Select
                   value={ingredient.category}
-                  onValueChange={(value) => updateIngredient(index, 'category', value)}
+                  onValueChange={(value) => updateIngredient(ingredient.id, 'category', value)}
                 >
                   <SelectTrigger className="w-32">
                     <SelectValue />
@@ -311,7 +319,7 @@ export default function NewMealPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeIngredient(index)}
+                    onClick={() => removeIngredient(ingredient.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -332,14 +340,14 @@ export default function NewMealPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {instructions.map((instruction, index) => (
-              <div key={index} className="flex gap-2">
+              <div key={instruction.id} className="flex gap-2">
                 <span className="flex h-10 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-sm font-medium">
                   {index + 1}
                 </span>
                 <Textarea
                   placeholder="Describe this step..."
-                  value={instruction}
-                  onChange={(e) => updateInstruction(index, e.target.value)}
+                  value={instruction.text}
+                  onChange={(e) => updateInstruction(instruction.id, e.target.value)}
                   rows={2}
                   className="flex-1"
                 />
@@ -348,7 +356,7 @@ export default function NewMealPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeInstruction(index)}
+                    onClick={() => removeInstruction(instruction.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -359,9 +367,7 @@ export default function NewMealPage() {
         </Card>
 
         {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {error}
-          </div>
+          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
         )}
 
         <div className="flex justify-end gap-4">
@@ -374,5 +380,5 @@ export default function NewMealPage() {
         </div>
       </form>
     </div>
-  )
+  );
 }
