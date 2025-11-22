@@ -103,7 +103,7 @@ export async function createMeal(formData: FormData) {
   // Validate
   const validation = mealSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0].message };
   }
 
   const validated = validation.data;
@@ -197,7 +197,7 @@ export async function updateMeal(id: string, formData: FormData) {
   // Validate
   const validation = mealSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0].message };
   }
 
   const validated = validation.data;

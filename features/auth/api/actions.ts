@@ -26,7 +26,7 @@ export async function login(formData: FormData) {
 
   const validation = loginSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0].message };
   }
 
   const { email, password } = validation.data;
@@ -54,7 +54,7 @@ export async function register(formData: FormData) {
 
   const validation = registerSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0].message };
   }
 
   const { email, password, confirmPassword } = validation.data;
