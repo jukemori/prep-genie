@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const mealPlanSchema = z.object({
   name: z.string().min(1, 'Plan name is required').max(100, 'Name too long'),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   type: z.enum(['daily', 'weekly', 'custom']).default('weekly'),
-});
+})
 
-export type MealPlanForm = z.infer<typeof mealPlanSchema>;
+export type MealPlanForm = z.infer<typeof mealPlanSchema>
 
 export const mealPlanItemSchema = z.object({
   mealPlanId: z.string().uuid(),
@@ -16,9 +16,9 @@ export const mealPlanItemSchema = z.object({
   mealTime: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
   scheduledDate: z.string().optional(),
   servings: z.number().int().positive().default(1),
-});
+})
 
-export type MealPlanItemForm = z.infer<typeof mealPlanItemSchema>;
+export type MealPlanItemForm = z.infer<typeof mealPlanItemSchema>
 
 // AI Meal Plan Generation Request
 export const aiMealPlanRequestSchema = z.object({
@@ -32,6 +32,6 @@ export const aiMealPlanRequestSchema = z.object({
       difficultyLevel: z.enum(['easy', 'medium', 'hard']).optional(),
     })
     .optional(),
-});
+})
 
-export type AIMealPlanRequest = z.infer<typeof aiMealPlanRequestSchema>;
+export type AIMealPlanRequest = z.infer<typeof aiMealPlanRequestSchema>

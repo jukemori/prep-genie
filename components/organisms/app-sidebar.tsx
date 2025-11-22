@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   CalendarDays,
@@ -9,10 +9,10 @@ import {
   ShoppingCart,
   TrendingUp,
   UtensilsCrossed,
-} from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -22,10 +22,10 @@ const navigation = [
   { name: 'Progress', href: '/progress', icon: TrendingUp },
   { name: 'AI Assistant', href: '/chat', icon: MessageSquare },
   { name: 'Settings', href: '/settings', icon: Settings },
-];
+]
 
 export function AppSidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <aside className="hidden w-64 border-r bg-card lg:block">
@@ -36,7 +36,7 @@ export function AppSidebar() {
         </div>
         <nav className="flex-1 space-y-1 p-4">
           {navigation.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
             return (
               <Link
                 key={item.name}
@@ -51,10 +51,10 @@ export function AppSidebar() {
                 <item.icon className="h-5 w-5" />
                 {item.name}
               </Link>
-            );
+            )
           })}
         </nav>
       </div>
     </aside>
-  );
+  )
 }

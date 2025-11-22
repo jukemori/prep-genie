@@ -1,83 +1,83 @@
-'use client';
+'use client'
 
-import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
-import { Progress } from '@/components/atoms/ui/progress';
-import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions';
+import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { Progress } from '@/components/atoms/ui/progress'
+import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions'
 
 interface GeneratedMeal {
-  name: string;
-  description: string;
-  meal_type: string;
+  name: string
+  description: string
+  meal_type: string
   nutrition_per_serving: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fats: number;
-  };
+    calories: number
+    protein: number
+    carbs: number
+    fats: number
+  }
 }
 
-import { readStreamableValue } from '@ai-sdk/rsc';
+import { readStreamableValue } from '@ai-sdk/rsc'
 
 export default function GenerateMealPlanPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [generatedPlan, setGeneratedPlan] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [generatedPlan, setGeneratedPlan] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
 
   async function handleGenerate() {
-    setLoading(true);
-    setGenerating(true);
-    setError(null);
-    setGeneratedPlan('');
+    setLoading(true)
+    setGenerating(true)
+    setError(null)
+    setGeneratedPlan('')
 
     try {
-      const { stream } = await generateAIMealPlan();
-      let fullContent = '';
+      const { stream } = await generateAIMealPlan()
+      let fullContent = ''
 
       for await (const chunk of readStreamableValue(stream)) {
         if (chunk) {
-          fullContent += chunk;
-          setGeneratedPlan(fullContent);
+          fullContent += chunk
+          setGeneratedPlan(fullContent)
         }
       }
 
-      setGenerating(false);
+      setGenerating(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate meal plan');
-      setGenerating(false);
+      setError(err instanceof Error ? err.message : 'Failed to generate meal plan')
+      setGenerating(false)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   async function handleSave() {
-    if (!generatedPlan) return;
+    if (!generatedPlan) return
 
-    setSaving(true);
-    setError(null);
+    setSaving(true)
+    setError(null)
 
-    const result = await saveMealPlan(generatedPlan);
+    const result = await saveMealPlan(generatedPlan)
 
     if (result.error) {
-      setError(result.error);
-      setSaving(false);
+      setError(result.error)
+      setSaving(false)
     } else if (result.data) {
-      router.push(`/meal-plans/${result.data.id}`);
+      router.push(`/meal-plans/${result.data.id}`)
     }
   }
 
-  let parsedPlan = null;
+  let parsedPlan = null
   try {
     if (generatedPlan && !generating) {
-      parsedPlan = JSON.parse(generatedPlan);
+      parsedPlan = JSON.parse(generatedPlan)
     }
   } catch {
     // Still generating or invalid JSON
@@ -227,5 +227,5 @@ export default function GenerateMealPlanPage() {
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
     </div>
-  );
+  )
 }

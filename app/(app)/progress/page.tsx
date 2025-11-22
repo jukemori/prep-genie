@@ -1,92 +1,92 @@
-'use client';
+'use client'
 
-import { Calendar, Minus, TrendingDown, TrendingUp } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
-import { Input } from '@/components/atoms/ui/input';
-import { Label } from '@/components/atoms/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs';
-import { Textarea } from '@/components/atoms/ui/textarea';
-import { getProgressLogs, logProgress } from '@/features/progress/api/actions';
-import { createClient } from '@/lib/supabase/client';
-import type { ProgressLog, UserProfile } from '@/types';
+import { Calendar, Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { Input } from '@/components/atoms/ui/input'
+import { Label } from '@/components/atoms/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
+import { Textarea } from '@/components/atoms/ui/textarea'
+import { getProgressLogs, logProgress } from '@/features/progress/api/actions'
+import { createClient } from '@/lib/supabase/client'
+import type { ProgressLog, UserProfile } from '@/types'
 
 export default function ProgressPage() {
-  const [logs, setLogs] = useState<ProgressLog[]>([]);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [logs, setLogs] = useState<ProgressLog[]>([])
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0]
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const {
         data: { user },
-      } = await supabase.auth.getUser();
+      } = await supabase.auth.getUser()
 
-      if (!user) return;
+      if (!user) return
 
       // Get user profile
       const { data: profileData } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .single()
 
-      setProfile(profileData);
+      setProfile(profileData)
 
       // Get last 30 days of logs
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
         .toISOString()
-        .split('T')[0];
+        .split('T')[0]
 
-      const result = await getProgressLogs(thirtyDaysAgo);
+      const result = await getProgressLogs(thirtyDaysAgo)
       if (result.data) {
-        setLogs(result.data);
+        setLogs(result.data)
       }
 
-      setLoading(false);
+      setLoading(false)
     }
 
-    loadData();
-  }, []);
+    loadData()
+  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
 
-    const formData = new FormData(e.currentTarget);
-    const result = await logProgress(formData);
+    const formData = new FormData(e.currentTarget)
+    const result = await logProgress(formData)
 
     if (result.error) {
-      setError(result.error);
+      setError(result.error)
     } else {
       // Reload logs
-      const logsResult = await getProgressLogs();
+      const logsResult = await getProgressLogs()
       if (logsResult.data) {
-        setLogs(logsResult.data);
+        setLogs(logsResult.data)
       }
       // Reset form
-      e.currentTarget.reset();
+      e.currentTarget.reset()
     }
 
-    setSubmitting(false);
+    setSubmitting(false)
   }
 
-  const todayLog = logs.find((log) => log.log_date === today);
-  const latestWeight = logs.find((log) => log.weight)?.weight;
-  const startWeight = logs.length > 0 ? logs[logs.length - 1]?.weight : null;
-  const weightChange = latestWeight && startWeight ? latestWeight - startWeight : null;
+  const todayLog = logs.find((log) => log.log_date === today)
+  const latestWeight = logs.find((log) => log.weight)?.weight
+  const startWeight = logs.length > 0 ? logs[logs.length - 1]?.weight : null
+  const weightChange = latestWeight && startWeight ? latestWeight - startWeight : null
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -308,5 +308,5 @@ export default function ProgressPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

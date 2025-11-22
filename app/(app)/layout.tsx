@@ -1,17 +1,17 @@
-import { redirect } from 'next/navigation';
-import { AppHeader } from '@/components/organisms/app-header';
-import { AppSidebar } from '@/components/organisms/app-sidebar';
-import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation'
+import { AppHeader } from '@/components/organisms/app-header'
+import { AppSidebar } from '@/components/organisms/app-sidebar'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login');
+    redirect('/login')
   }
 
   // Check if user has completed onboarding
@@ -19,10 +19,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .from('user_profiles')
     .select('id')
     .eq('id', user.id)
-    .single();
+    .single()
 
   if (!profile) {
-    redirect('/onboarding');
+    redirect('/onboarding')
   }
 
   return (
@@ -33,5 +33,5 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <main className="p-6">{children}</main>
       </div>
     </div>
-  );
+  )
 }

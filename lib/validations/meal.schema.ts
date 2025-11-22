@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const ingredientSchema = z.object({
   name: z.string().min(1, 'Ingredient name is required'),
@@ -7,7 +7,7 @@ export const ingredientSchema = z.object({
   category: z
     .enum(['produce', 'protein', 'dairy', 'grains', 'pantry', 'spices', 'other'])
     .optional(),
-});
+})
 
 export const mealSchema = z.object({
   name: z.string().min(1, 'Meal name is required').max(100, 'Name too long'),
@@ -27,10 +27,10 @@ export const mealSchema = z.object({
   difficultyLevel: z.enum(['easy', 'medium', 'hard']).optional(),
   isPublic: z.boolean().default(false),
   imageUrl: z.string().url().optional(),
-});
+})
 
-export type MealForm = z.infer<typeof mealSchema>;
-export type Ingredient = z.infer<typeof ingredientSchema>;
+export type MealForm = z.infer<typeof mealSchema>
+export type Ingredient = z.infer<typeof ingredientSchema>
 
 // Schema for editing macros only
 export const macroEditSchema = z.object({
@@ -39,6 +39,6 @@ export const macroEditSchema = z.object({
   carbsPerServing: z.number().int().nonnegative('Carbs cannot be negative'),
   fatsPerServing: z.number().int().nonnegative('Fats cannot be negative'),
   servings: z.number().int().positive('Servings must be at least 1'),
-});
+})
 
-export type MacroEdit = z.infer<typeof macroEditSchema>;
+export type MacroEdit = z.infer<typeof macroEditSchema>

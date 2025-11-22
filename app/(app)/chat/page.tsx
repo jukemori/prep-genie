@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import { readStreamableValue } from '@ai-sdk/rsc';
-import { Bot, Send, Sparkles, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent } from '@/components/atoms/ui/card';
-import { Input } from '@/components/atoms/ui/input';
-import { chatWithNutritionAssistant } from '@/features/ai-chat/api/actions';
+import { readStreamableValue } from '@ai-sdk/rsc'
+import { Bot, Send, Sparkles, User } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent } from '@/components/atoms/ui/card'
+import { Input } from '@/components/atoms/ui/input'
+import { chatWithNutritionAssistant } from '@/features/ai-chat/api/actions'
 
 interface Message {
-  role: 'user' | 'assistant';
-  content: string;
+  role: 'user' | 'assistant'
+  content: string
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -19,65 +19,65 @@ const SUGGESTED_QUESTIONS = [
   'What are healthy snack alternatives?',
   'How do I calculate my macros?',
   'Best foods for post-workout recovery?',
-];
+]
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
+    e.preventDefault()
+    if (!input.trim() || loading) return
 
-    const userMessage: Message = { role: 'user', content: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setLoading(true);
+    const userMessage: Message = { role: 'user', content: input }
+    setMessages((prev) => [...prev, userMessage])
+    setInput('')
+    setLoading(true)
 
     try {
       const { stream } = await chatWithNutritionAssistant(
         input,
         messages.map((m) => ({ role: m.role, content: m.content }))
-      );
+      )
 
-      let fullContent = '';
-      const assistantMessage: Message = { role: 'assistant', content: '' };
-      setMessages((prev) => [...prev, assistantMessage]);
+      let fullContent = ''
+      const assistantMessage: Message = { role: 'assistant', content: '' }
+      setMessages((prev) => [...prev, assistantMessage])
 
       for await (const chunk of readStreamableValue(stream)) {
         if (chunk) {
-          fullContent += chunk;
+          fullContent += chunk
           setMessages((prev) => {
-            const updated = [...prev];
+            const updated = [...prev]
             updated[updated.length - 1] = {
               role: 'assistant',
               content: fullContent,
-            };
-            return updated;
-          });
+            }
+            return updated
+          })
         }
       }
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error('Chat error:', error)
       setMessages((prev) =>
         prev.slice(0, -1).concat({
           role: 'assistant',
           content: 'Sorry, I encountered an error. Please try again.',
         })
-      );
+      )
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   function handleSuggestedQuestion(question: string) {
-    setInput(question);
+    setInput(question)
   }
 
   return (
@@ -190,5 +190,5 @@ export default function ChatPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

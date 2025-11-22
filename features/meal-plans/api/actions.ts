@@ -1,45 +1,45 @@
-'use server';
+'use server'
 
-import { createStreamableValue } from '@ai-sdk/rsc';
-import { revalidatePath } from 'next/cache';
-import { openai } from '@/lib/ai/openai';
-import { generateMealPlanPrompt } from '@/lib/ai/prompts/meal-plan-generator';
-import { createClient } from '@/lib/supabase/server';
-import type { MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types';
+import { createStreamableValue } from '@ai-sdk/rsc'
+import { revalidatePath } from 'next/cache'
+import { openai } from '@/lib/ai/openai'
+import { generateMealPlanPrompt } from '@/lib/ai/prompts/meal-plan-generator'
+import { createClient } from '@/lib/supabase/server'
+import type { MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
 
 export async function getMealPlans() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: 'Not authenticated' }
   }
 
   const { data, error } = await supabase
     .from('meal_plans')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message }
   }
 
-  return { data };
+  return { data }
 }
 
 export async function getMealPlan(id: string) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: 'Not authenticated' }
   }
 
   const { data: mealPlan, error: planError } = await supabase
@@ -47,10 +47,10 @@ export async function getMealPlan(id: string) {
     .select('*')
     .eq('id', id)
     .eq('user_id', user.id)
-    .single();
+    .single()
 
   if (planError) {
-    return { error: planError.message };
+    return { error: planError.message }
   }
 
   // Get meal plan items with meals
@@ -59,24 +59,24 @@ export async function getMealPlan(id: string) {
     .select('*, meals(*)')
     .eq('meal_plan_id', id)
     .order('day_of_week', { ascending: true })
-    .order('meal_time', { ascending: true });
+    .order('meal_time', { ascending: true })
 
   if (itemsError) {
-    return { error: itemsError.message };
+    return { error: itemsError.message }
   }
 
-  return { data: { ...mealPlan, items } };
+  return { data: { ...mealPlan, items } }
 }
 
 export async function generateAIMealPlan() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    throw new Error('Not authenticated');
+    throw new Error('Not authenticated')
   }
 
   // Get user profile
@@ -84,49 +84,49 @@ export async function generateAIMealPlan() {
     .from('user_profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .single()
 
   if (profileError || !profile) {
-    throw new Error('User profile not found');
+    throw new Error('User profile not found')
   }
 
-  const stream = createStreamableValue('');
+  const stream = createStreamableValue('')
 
-  (async () => {
-    const prompt = generateMealPlanPrompt(profile);
+  ;(async () => {
+    const prompt = generateMealPlanPrompt(profile)
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
       stream: true,
       response_format: { type: 'json_object' },
-    });
+    })
 
     for await (const chunk of completion) {
-      const content = chunk.choices[0]?.delta?.content || '';
-      stream.update(content);
+      const content = chunk.choices[0]?.delta?.content || ''
+      stream.update(content)
     }
 
-    stream.done();
-  })();
+    stream.done()
+  })()
 
-  return { stream: stream.value };
+  return { stream: stream.value }
 }
 
 export async function saveMealPlan(mealPlanData: string) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: 'Not authenticated' }
   }
 
   try {
-    const parsedData = JSON.parse(mealPlanData);
-    const { week_summary, meal_plan } = parsedData;
+    const parsedData = JSON.parse(mealPlanData)
+    const { week_summary, meal_plan } = parsedData
 
     // Create meal plan
     const mealPlanInsert: MealPlanInsert = {
@@ -139,16 +139,16 @@ export async function saveMealPlan(mealPlanData: string) {
       total_protein: week_summary.total_protein,
       total_carbs: week_summary.total_carbs,
       total_fats: week_summary.total_fats,
-    };
+    }
 
     const { data: createdPlan, error: planError } = await supabase
       .from('meal_plans')
       .insert(mealPlanInsert)
       .select()
-      .single();
+      .single()
 
     if (planError || !createdPlan) {
-      return { error: planError?.message || 'Failed to create meal plan' };
+      return { error: planError?.message || 'Failed to create meal plan' }
     }
 
     // Create meals and meal plan items
@@ -175,16 +175,16 @@ export async function saveMealPlan(mealPlanData: string) {
           is_public: false,
           is_ai_generated: true,
           image_url: null,
-        };
+        }
 
         const { data: createdMeal, error: mealError } = await supabase
           .from('meals')
           .insert(mealInsert)
           .select()
-          .single();
+          .single()
 
         if (mealError || !createdMeal) {
-          continue; // Skip this meal if error
+          continue // Skip this meal if error
         }
 
         // Create meal plan item
@@ -195,28 +195,28 @@ export async function saveMealPlan(mealPlanData: string) {
           meal_time: meal.meal_type,
           servings: meal.servings,
           is_completed: false,
-        };
+        }
 
-        await supabase.from('meal_plan_items').insert(itemInsert);
+        await supabase.from('meal_plan_items').insert(itemInsert)
       }
     }
 
-    revalidatePath('/meal-plans');
-    return { data: createdPlan };
+    revalidatePath('/meal-plans')
+    return { data: createdPlan }
   } catch (_error) {
-    return { error: 'Failed to parse or save meal plan' };
+    return { error: 'Failed to parse or save meal plan' }
   }
 }
 
 export async function deleteMealPlan(id: string) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: 'Not authenticated' }
   }
 
   // Verify ownership
@@ -224,18 +224,18 @@ export async function deleteMealPlan(id: string) {
     .from('meal_plans')
     .select('user_id')
     .eq('id', id)
-    .single();
+    .single()
 
   if (!existing || existing.user_id !== user.id) {
-    return { error: 'Not authorized' };
+    return { error: 'Not authorized' }
   }
 
-  const { error } = await supabase.from('meal_plans').delete().eq('id', id);
+  const { error } = await supabase.from('meal_plans').delete().eq('id', id)
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message }
   }
 
-  revalidatePath('/meal-plans');
-  return { success: true };
+  revalidatePath('/meal-plans')
+  return { success: true }
 }

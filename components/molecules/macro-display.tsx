@@ -1,14 +1,14 @@
-import { Card, CardContent } from '@/components/atoms/ui/card';
-import { Progress } from '@/components/atoms/ui/progress';
+import { Card, CardContent } from '@/components/atoms/ui/card'
+import { Progress } from '@/components/atoms/ui/progress'
 
 interface MacroDisplayProps {
-  protein: number;
-  carbs: number;
-  fats: number;
-  targetProtein?: number;
-  targetCarbs?: number;
-  targetFats?: number;
-  showProgress?: boolean;
+  protein: number
+  carbs: number
+  fats: number
+  targetProtein?: number
+  targetCarbs?: number
+  targetFats?: number
+  showProgress?: boolean
 }
 
 export function MacroDisplay({
@@ -20,9 +20,9 @@ export function MacroDisplay({
   targetFats,
   showProgress = false,
 }: MacroDisplayProps) {
-  const proteinPercent = targetProtein ? (protein / targetProtein) * 100 : 0;
-  const carbsPercent = targetCarbs ? (carbs / targetCarbs) * 100 : 0;
-  const fatsPercent = targetFats ? (fats / targetFats) * 100 : 0;
+  const proteinPercent = targetProtein ? (protein / targetProtein) * 100 : 0
+  const carbsPercent = targetCarbs ? (carbs / targetCarbs) * 100 : 0
+  const fatsPercent = targetFats ? (fats / targetFats) * 100 : 0
 
   return (
     <Card>
@@ -61,5 +61,5 @@ export function MacroDisplay({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,29 +1,29 @@
-import { Plus, Search } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/atoms/ui/button';
-import { Input } from '@/components/atoms/ui/input';
-import { MealCard } from '@/components/molecules/meal-card';
-import { createClient } from '@/lib/supabase/server';
-import type { Meal } from '@/types';
+import { Plus, Search } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/atoms/ui/button'
+import { Input } from '@/components/atoms/ui/input'
+import { MealCard } from '@/components/molecules/meal-card'
+import { createClient } from '@/lib/supabase/server'
+import type { Meal } from '@/types'
 
 interface PageProps {
   searchParams: Promise<{
-    search?: string;
-    cuisine?: string;
-    mealType?: string;
-  }>;
+    search?: string
+    cuisine?: string
+    mealType?: string
+  }>
 }
 
 export default async function MealsPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const supabase = await createClient();
+  const params = await searchParams
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return null;
+    return null
   }
 
   // Build query
@@ -31,22 +31,22 @@ export default async function MealsPage({ searchParams }: PageProps) {
     .from('meals')
     .select('*')
     .or(`user_id.eq.${user.id},is_public.eq.true`)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
   // Apply filters
   if (params.search) {
-    query = query.ilike('name', `%${params.search}%`);
+    query = query.ilike('name', `%${params.search}%`)
   }
 
   if (params.cuisine) {
-    query = query.eq('cuisine_type', params.cuisine);
+    query = query.eq('cuisine_type', params.cuisine)
   }
 
   if (params.mealType) {
-    query = query.eq('meal_type', params.mealType);
+    query = query.eq('meal_type', params.mealType)
   }
 
-  const { data: meals } = await query;
+  const { data: meals } = await query
 
   return (
     <div className="space-y-6">
@@ -103,5 +103,5 @@ export default async function MealsPage({ searchParams }: PageProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

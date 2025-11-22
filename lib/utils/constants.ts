@@ -9,7 +9,7 @@ export const ACTIVITY_MULTIPLIERS = {
   moderate: 1.55, // Moderate exercise 3-5 days/week
   active: 1.725, // Heavy exercise 6-7 days/week
   very_active: 1.9, // Very heavy exercise, physical job
-} as const;
+} as const
 
 // Goal-based calorie adjustments (percentage of TDEE)
 export const GOAL_ADJUSTMENTS = {
@@ -17,7 +17,7 @@ export const GOAL_ADJUSTMENTS = {
   maintain: 0, // No adjustment
   muscle_gain: 0.1, // 10% surplus
   balanced: 0, // No adjustment
-} as const;
+} as const
 
 // Default macro ratios (as percentage of total calories)
 export const DEFAULT_MACRO_RATIOS = {
@@ -41,7 +41,7 @@ export const DEFAULT_MACRO_RATIOS = {
     carbs: 0.4,
     fats: 0.3,
   },
-} as const;
+} as const
 
 // Calories per gram of macronutrient
 export const CALORIES_PER_GRAM = {
@@ -49,10 +49,10 @@ export const CALORIES_PER_GRAM = {
   carbs: 4,
   fats: 9,
   alcohol: 7,
-} as const;
+} as const
 
 // Meal type options
-export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const
 
 // Dietary preferences
 export const DIETARY_PREFERENCES = [
@@ -61,25 +61,25 @@ export const DIETARY_PREFERENCES = [
   'vegan',
   'pescatarian',
   'halal',
-] as const;
+] as const
 
 // Difficulty levels
-export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'] as const;
+export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'] as const
 
 // Activity levels
-export const ACTIVITY_LEVELS = ['sedentary', 'light', 'moderate', 'active', 'very_active'] as const;
+export const ACTIVITY_LEVELS = ['sedentary', 'light', 'moderate', 'active', 'very_active'] as const
 
 // Goals
-export const GOALS = ['weight_loss', 'maintain', 'muscle_gain', 'balanced'] as const;
+export const GOALS = ['weight_loss', 'maintain', 'muscle_gain', 'balanced'] as const
 
 // Budget levels
-export const BUDGET_LEVELS = ['low', 'medium', 'high'] as const;
+export const BUDGET_LEVELS = ['low', 'medium', 'high'] as const
 
 // Cooking skill levels
-export const COOKING_SKILL_LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
+export const COOKING_SKILL_LEVELS = ['beginner', 'intermediate', 'advanced'] as const
 
 // Gender options
-export const GENDERS = ['male', 'female', 'other'] as const;
+export const GENDERS = ['male', 'female', 'other'] as const
 
 // Common grocery categories
 export const GROCERY_CATEGORIES = [
@@ -92,14 +92,14 @@ export const GROCERY_CATEGORIES = [
   'beverages',
   'snacks',
   'other',
-] as const;
+] as const
 
 // API limits
 export const API_LIMITS = {
   FREE_MEAL_PLANS_PER_MONTH: 3,
   FREE_SAVED_MEALS: 10,
   PRO_UNLIMITED: -1,
-} as const;
+} as const
 
 // Validation constraints
 export const VALIDATION_LIMITS = {
@@ -113,7 +113,7 @@ export const VALIDATION_LIMITS = {
   MAX_PREP_TIME: 480, // 8 hours
   MIN_SERVINGS: 1,
   MAX_SERVINGS: 20,
-} as const;
+} as const
 
 // Date formats
 export const DATE_FORMATS = {
@@ -122,4 +122,4 @@ export const DATE_FORMATS = {
   ISO: 'yyyy-MM-dd',
   TIME: 'h:mm a',
   DATETIME: 'MMM d, yyyy h:mm a',
-} as const;
+} as const

@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
 interface NutritionRingProps {
-  protein: number;
-  carbs: number;
-  fats: number;
-  size?: number;
-  strokeWidth?: number;
+  protein: number
+  carbs: number
+  fats: number
+  size?: number
+  strokeWidth?: number
 }
 
 export function NutritionRing({
@@ -17,25 +17,25 @@ export function NutritionRing({
   size = 120,
   strokeWidth = 12,
 }: NutritionRingProps) {
-  const total = protein + carbs + fats;
+  const total = protein + carbs + fats
 
   const percentages = useMemo(() => {
-    if (total === 0) return { protein: 0, carbs: 0, fats: 0 };
+    if (total === 0) return { protein: 0, carbs: 0, fats: 0 }
     return {
       protein: (protein / total) * 100,
       carbs: (carbs / total) * 100,
       fats: (fats / total) * 100,
-    };
-  }, [protein, carbs, fats, total]);
+    }
+  }, [protein, carbs, fats, total])
 
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const center = size / 2;
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const center = size / 2
 
   // Calculate stroke dash offsets for each segment
-  const _proteinOffset = 0;
-  const carbsOffset = (percentages.protein / 100) * circumference;
-  const fatsOffset = carbsOffset + (percentages.carbs / 100) * circumference;
+  const _proteinOffset = 0
+  const carbsOffset = (percentages.protein / 100) * circumference
+  const fatsOffset = carbsOffset + (percentages.carbs / 100) * circumference
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -128,5 +128,5 @@ export function NutritionRing({
         </div>
       </div>
     </div>
-  );
+  )
 }

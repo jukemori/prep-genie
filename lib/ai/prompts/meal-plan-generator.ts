@@ -1,4 +1,4 @@
-import type { UserProfile } from '@/types';
+import type { UserProfile } from '@/types'
 
 export function generateMealPlanPrompt(profile: UserProfile) {
   return `You are an expert nutritionist and meal planner. Generate a personalized meal plan based on the following user profile:
@@ -80,7 +80,7 @@ export function generateMealPlanPrompt(profile: UserProfile) {
       ]
     }
   ]
-}`;
+}`
 }
 
 export function modifyMealPrompt(
@@ -100,7 +100,7 @@ Please provide:
 3. Updated nutrition information (calories, protein, carbs, fats per serving)
 4. Brief explanation of changes made
 
-Output as JSON with the same structure as the original meal.`;
+Output as JSON with the same structure as the original meal.`
 }
 
 export function substituteIngredientPrompt(
@@ -116,5 +116,5 @@ Provide 3 substitution options with:
 3. Impact on nutrition
 4. Impact on flavor/texture
 
-Output as JSON array.`;
+Output as JSON array.`
 }

@@ -1,46 +1,46 @@
-import { ArrowLeft, Clock, Edit, Trash2, Users } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
-import { Separator } from '@/components/atoms/ui/separator';
-import { IngredientItem } from '@/components/molecules/ingredient-item';
-import { MacroDisplay } from '@/components/molecules/macro-display';
-import { createClient } from '@/lib/supabase/server';
+import { ArrowLeft, Clock, Edit, Trash2, Users } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { Separator } from '@/components/atoms/ui/separator'
+import { IngredientItem } from '@/components/molecules/ingredient-item'
+import { MacroDisplay } from '@/components/molecules/macro-display'
+import { createClient } from '@/lib/supabase/server'
 
 interface PageProps {
   params: Promise<{
-    id: string;
-  }>;
+    id: string
+  }>
 }
 
 export default async function MealDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  const supabase = await createClient();
+  const { id } = await params
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return null;
+    return null
   }
 
-  const { data: meal } = await supabase.from('meals').select('*').eq('id', id).single();
+  const { data: meal } = await supabase.from('meals').select('*').eq('id', id).single()
 
   if (!meal) {
-    notFound();
+    notFound()
   }
 
   // Check access
   if (meal.user_id !== user.id && !meal.is_public) {
-    notFound();
+    notFound()
   }
 
-  const isOwner = meal.user_id === user.id;
-  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0);
+  const isOwner = meal.user_id === user.id
+  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0)
 
   return (
     <div className="space-y-6">
@@ -220,5 +220,5 @@ export default async function MealDetailPage({ params }: PageProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

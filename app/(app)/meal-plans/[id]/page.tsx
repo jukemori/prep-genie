@@ -1,34 +1,34 @@
-import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import type { Meal, MealPlanItem } from '@/types';
+import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import type { Meal, MealPlanItem } from '@/types'
 
 interface MealPlanItemWithMeal extends MealPlanItem {
-  meals: Meal;
+  meals: Meal
 }
 
-import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
-import { Checkbox } from '@/components/atoms/ui/checkbox';
+import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { Checkbox } from '@/components/atoms/ui/checkbox'
 
 interface PageProps {
   params: Promise<{
-    id: string;
-  }>;
+    id: string
+  }>
 }
 
 export default async function MealPlanDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  const supabase = await createClient();
+  const { id } = await params
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return null;
+    return null
   }
 
   const { data: mealPlan } = await supabase
@@ -36,33 +36,33 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
     .select('*')
     .eq('id', id)
     .eq('user_id', user.id)
-    .single();
+    .single()
 
   if (!mealPlan) {
-    notFound();
+    notFound()
   }
 
   const { data: items } = await supabase
     .from('meal_plan_items')
     .select('*, meals(*)')
     .eq('meal_plan_id', id)
-    .order('day_of_week', { ascending: true });
+    .order('day_of_week', { ascending: true })
 
   // Group by day
-  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
   const groupedByDay = items?.reduce(
     (acc: Record<number, MealPlanItemWithMeal[]>, item: MealPlanItemWithMeal) => {
-      const day = item.day_of_week;
+      const day = item.day_of_week
       if (day !== null) {
         if (!acc[day]) {
-          acc[day] = [];
+          acc[day] = []
         }
-        acc[day].push(item);
+        acc[day].push(item)
       }
-      return acc;
+      return acc
     },
     {}
-  );
+  )
 
   return (
     <div className="space-y-6">
@@ -167,5 +167,5 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
             </Card>
           ))}
     </div>
-  );
+  )
 }

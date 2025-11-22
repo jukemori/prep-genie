@@ -1,10 +1,10 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { create } from 'zustand'
+import { devtools, persist } from 'zustand/middleware'
 
 interface UIStore {
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
-  setSidebarOpen: (open: boolean) => void;
+  sidebarOpen: boolean
+  toggleSidebar: () => void
+  setSidebarOpen: (open: boolean) => void
 }
 
 export const useUIStore = create<UIStore>()(
@@ -18,4 +18,4 @@ export const useUIStore = create<UIStore>()(
       { name: 'ui-store' }
     )
   )
-);
+)

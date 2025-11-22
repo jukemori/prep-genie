@@ -1,99 +1,99 @@
-'use client';
+'use client'
 
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
-import { Checkbox } from '@/components/atoms/ui/checkbox';
-import { Input } from '@/components/atoms/ui/input';
-import { Label } from '@/components/atoms/ui/label';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { Checkbox } from '@/components/atoms/ui/checkbox'
+import { Input } from '@/components/atoms/ui/input'
+import { Label } from '@/components/atoms/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/ui/select';
-import { Textarea } from '@/components/atoms/ui/textarea';
-import { createMeal } from '@/features/meals/api/actions';
+} from '@/components/atoms/ui/select'
+import { Textarea } from '@/components/atoms/ui/textarea'
+import { createMeal } from '@/features/meals/api/actions'
 
 interface Ingredient {
-  id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  category: string;
+  id: string
+  name: string
+  quantity: number
+  unit: string
+  category: string
 }
 
 interface Instruction {
-  id: string;
-  text: string;
+  id: string
+  text: string
 }
 
 export default function NewMealPage() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { id: crypto.randomUUID(), name: '', quantity: 0, unit: '', category: 'other' },
-  ]);
+  ])
   const [instructions, setInstructions] = useState<Instruction[]>([
     { id: crypto.randomUUID(), text: '' },
-  ]);
+  ])
 
   const addIngredient = () => {
     setIngredients([
       ...ingredients,
       { id: crypto.randomUUID(), name: '', quantity: 0, unit: '', category: 'other' },
-    ]);
-  };
+    ])
+  }
 
   const removeIngredient = (id: string) => {
-    setIngredients(ingredients.filter((ing) => ing.id !== id));
-  };
+    setIngredients(ingredients.filter((ing) => ing.id !== id))
+  }
 
   const updateIngredient = (
     id: string,
     field: keyof Omit<Ingredient, 'id'>,
     value: string | number
   ) => {
-    setIngredients(ingredients.map((ing) => (ing.id === id ? { ...ing, [field]: value } : ing)));
-  };
+    setIngredients(ingredients.map((ing) => (ing.id === id ? { ...ing, [field]: value } : ing)))
+  }
 
   const addInstruction = () => {
-    setInstructions([...instructions, { id: crypto.randomUUID(), text: '' }]);
-  };
+    setInstructions([...instructions, { id: crypto.randomUUID(), text: '' }])
+  }
 
   const removeInstruction = (id: string) => {
-    setInstructions(instructions.filter((inst) => inst.id !== id));
-  };
+    setInstructions(instructions.filter((inst) => inst.id !== id))
+  }
 
   const updateInstruction = (id: string, value: string) => {
-    setInstructions(instructions.map((inst) => (inst.id === id ? { ...inst, text: value } : inst)));
-  };
+    setInstructions(instructions.map((inst) => (inst.id === id ? { ...inst, text: value } : inst)))
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget)
     // Remove IDs before submitting
-    const ingredientsData = ingredients.filter((i) => i.name).map(({ id, ...rest }) => rest);
-    const instructionsData = instructions.filter((i) => i.text).map((i) => i.text);
-    formData.set('ingredients', JSON.stringify(ingredientsData));
-    formData.set('instructions', JSON.stringify(instructionsData));
+    const ingredientsData = ingredients.filter((i) => i.name).map(({ id, ...rest }) => rest)
+    const instructionsData = instructions.filter((i) => i.text).map((i) => i.text)
+    formData.set('ingredients', JSON.stringify(ingredientsData))
+    formData.set('instructions', JSON.stringify(instructionsData))
 
-    const result = await createMeal(formData);
+    const result = await createMeal(formData)
 
     if (result?.error) {
-      setError(result.error);
-      setLoading(false);
+      setError(result.error)
+      setLoading(false)
     } else if (result?.data) {
-      router.push(`/meals/${result.data.id}`);
+      router.push(`/meals/${result.data.id}`)
     }
   }
 
@@ -380,5 +380,5 @@ export default function NewMealPage() {
         </div>
       </form>
     </div>
-  );
+  )
 }

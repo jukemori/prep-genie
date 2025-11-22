@@ -1,18 +1,18 @@
-import { Clock, Flame, Users } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/atoms/ui/card';
-import type { Meal } from '@/types';
+import { Clock, Flame, Users } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/atoms/ui/card'
+import type { Meal } from '@/types'
 
 interface MealCardProps {
-  meal: Meal;
-  showActions?: boolean;
+  meal: Meal
+  showActions?: boolean
 }
 
 export function MealCard({ meal, showActions = true }: MealCardProps) {
-  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0);
+  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0)
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg">
@@ -100,5 +100,5 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
         </CardFooter>
       )}
     </Card>
-  );
+  )
 }

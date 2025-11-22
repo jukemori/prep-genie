@@ -6,21 +6,21 @@
  * Format a number as calories (e.g., 1234 -> "1,234 kcal")
  */
 export function formatCalories(calories: number): string {
-  return `${calories.toLocaleString()} kcal`;
+  return `${calories.toLocaleString()} kcal`
 }
 
 /**
  * Format a number as grams (e.g., 150 -> "150g")
  */
 export function formatGrams(grams: number): string {
-  return `${Math.round(grams)}g`;
+  return `${Math.round(grams)}g`
 }
 
 /**
  * Format a number as macros (e.g., 150 -> "150g")
  * Alias for formatGrams for clarity in nutrition context
  */
-export const formatMacros = formatGrams;
+export const formatMacros = formatGrams
 
 /**
  * Format time in minutes to human-readable string
@@ -29,18 +29,18 @@ export const formatMacros = formatGrams;
  */
 export function formatMinutes(minutes: number): string {
   if (minutes < 60) {
-    return `${minutes} mins`;
+    return `${minutes} mins`
   }
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+  const hours = Math.floor(minutes / 60)
+  const remainingMinutes = minutes % 60
+  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`
 }
 
 /**
  * Format a decimal number to a fixed number of decimal places
  */
 export function formatDecimal(value: number, decimals = 1): string {
-  return value.toFixed(decimals);
+  return value.toFixed(decimals)
 }
 
 /**
@@ -49,7 +49,7 @@ export function formatDecimal(value: number, decimals = 1): string {
  * @example formatPercentage(0.333) -> "33.3%"
  */
 export function formatPercentage(value: number, decimals = 1): string {
-  return `${(value * 100).toFixed(decimals)}%`;
+  return `${(value * 100).toFixed(decimals)}%`
 }
 
 /**
@@ -59,9 +59,9 @@ export function formatPercentage(value: number, decimals = 1): string {
  */
 export function formatWeight(weightKg: number, unit: 'kg' | 'lbs' = 'kg'): string {
   if (unit === 'lbs') {
-    return `${(weightKg * 2.20462).toFixed(1)} lbs`;
+    return `${(weightKg * 2.20462).toFixed(1)} lbs`
   }
-  return `${weightKg.toFixed(1)} kg`;
+  return `${weightKg.toFixed(1)} kg`
 }
 
 /**
@@ -71,12 +71,12 @@ export function formatWeight(weightKg: number, unit: 'kg' | 'lbs' = 'kg'): strin
  */
 export function formatHeight(heightCm: number, unit: 'cm' | 'ft' = 'cm'): string {
   if (unit === 'ft') {
-    const totalInches = heightCm / 2.54;
-    const feet = Math.floor(totalInches / 12);
-    const inches = Math.round(totalInches % 12);
-    return `${feet}'${inches}"`;
+    const totalInches = heightCm / 2.54
+    const feet = Math.floor(totalInches / 12)
+    const inches = Math.round(totalInches % 12)
+    return `${feet}'${inches}"`
   }
-  return `${heightCm} cm`;
+  return `${heightCm} cm`
 }
 
 /**
@@ -84,7 +84,7 @@ export function formatHeight(heightCm: number, unit: 'cm' | 'ft' = 'cm'): string
  * @example capitalize('hello world') -> "Hello world"
  */
 export function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**
@@ -95,7 +95,7 @@ export function toTitleCase(str: string): string {
   return str
     .split('_')
     .map((word) => capitalize(word))
-    .join(' ');
+    .join(' ')
 }
 
 /**
@@ -103,6 +103,6 @@ export function toTitleCase(str: string): string {
  * @example truncate('Long text here', 10) -> "Long text..."
  */
 export function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength)}...`
 }

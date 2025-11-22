@@ -1,32 +1,32 @@
-import { CalendarDays, Plus, Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import { Badge } from '@/components/atoms/ui/badge';
-import { Button } from '@/components/atoms/ui/button';
+import { CalendarDays, Plus, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/atoms/ui/card';
-import { createClient } from '@/lib/supabase/server';
+} from '@/components/atoms/ui/card'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function MealPlansPage() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return null;
+    return null
   }
 
   const { data: mealPlans } = await supabase
     .from('meal_plans')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
   return (
     <div className="space-y-6">
@@ -125,5 +125,5 @@ export default async function MealPlansPage() {
         </Card>
       )}
     </div>
-  );
+  )
 }

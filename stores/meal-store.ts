@@ -1,18 +1,18 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
-import type { Meal } from '@/types';
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+import type { Meal } from '@/types'
 
 interface MealStore {
-  selectedMeal: Meal | null;
-  setSelectedMeal: (meal: Meal | null) => void;
+  selectedMeal: Meal | null
+  setSelectedMeal: (meal: Meal | null) => void
   mealFilters: {
-    mealType: string[];
-    cuisineType: string[];
-    dietaryPreference: string[];
-    maxPrepTime: number | null;
-  };
-  setMealFilters: (filters: Partial<MealStore['mealFilters']>) => void;
-  resetFilters: () => void;
+    mealType: string[]
+    cuisineType: string[]
+    dietaryPreference: string[]
+    maxPrepTime: number | null
+  }
+  setMealFilters: (filters: Partial<MealStore['mealFilters']>) => void
+  resetFilters: () => void
 }
 
 const initialFilters: MealStore['mealFilters'] = {
@@ -20,7 +20,7 @@ const initialFilters: MealStore['mealFilters'] = {
   cuisineType: [],
   dietaryPreference: [],
   maxPrepTime: null,
-};
+}
 
 export const useMealStore = create<MealStore>()(
   devtools((set) => ({
@@ -33,4 +33,4 @@ export const useMealStore = create<MealStore>()(
       })),
     resetFilters: () => set({ mealFilters: initialFilters }),
   }))
-);
+)

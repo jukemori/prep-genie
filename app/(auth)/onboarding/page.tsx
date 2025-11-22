@@ -1,35 +1,35 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Button } from '@/components/atoms/ui/button';
+import { useState } from 'react'
+import { Button } from '@/components/atoms/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/atoms/ui/card';
-import { Checkbox } from '@/components/atoms/ui/checkbox';
-import { Input } from '@/components/atoms/ui/input';
-import { Label } from '@/components/atoms/ui/label';
-import { Progress } from '@/components/atoms/ui/progress';
+} from '@/components/atoms/ui/card'
+import { Checkbox } from '@/components/atoms/ui/checkbox'
+import { Input } from '@/components/atoms/ui/input'
+import { Label } from '@/components/atoms/ui/label'
+import { Progress } from '@/components/atoms/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/ui/select';
-import { createUserProfile } from '@/features/user-profile/api/actions';
+} from '@/components/atoms/ui/select'
+import { createUserProfile } from '@/features/user-profile/api/actions'
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 4
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState<Step>(1);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<Step>(1)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -44,67 +44,67 @@ export default function OnboardingPage() {
     budgetLevel: '',
     cookingSkillLevel: '',
     timeAvailable: '',
-  });
+  })
 
   const updateField = (field: string, value: string | string[]) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
 
-  const progress = (step / TOTAL_STEPS) * 100;
+  const progress = (step / TOTAL_STEPS) * 100
 
   async function handleSubmit() {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
-    const submitFormData = new FormData();
-    submitFormData.append('age', formData.age);
-    submitFormData.append('weight', formData.weight);
-    submitFormData.append('height', formData.height);
-    submitFormData.append('gender', formData.gender);
-    submitFormData.append('activityLevel', formData.activityLevel);
-    submitFormData.append('goal', formData.goal);
-    submitFormData.append('dietaryPreference', formData.dietaryPreference);
-    submitFormData.append('allergies', formData.allergies.join(','));
-    submitFormData.append('budgetLevel', formData.budgetLevel);
-    submitFormData.append('cookingSkillLevel', formData.cookingSkillLevel);
-    submitFormData.append('timeAvailable', formData.timeAvailable);
+    const submitFormData = new FormData()
+    submitFormData.append('age', formData.age)
+    submitFormData.append('weight', formData.weight)
+    submitFormData.append('height', formData.height)
+    submitFormData.append('gender', formData.gender)
+    submitFormData.append('activityLevel', formData.activityLevel)
+    submitFormData.append('goal', formData.goal)
+    submitFormData.append('dietaryPreference', formData.dietaryPreference)
+    submitFormData.append('allergies', formData.allergies.join(','))
+    submitFormData.append('budgetLevel', formData.budgetLevel)
+    submitFormData.append('cookingSkillLevel', formData.cookingSkillLevel)
+    submitFormData.append('timeAvailable', formData.timeAvailable)
 
-    const result = await createUserProfile(submitFormData);
+    const result = await createUserProfile(submitFormData)
 
     if (result?.error) {
-      setError(result.error);
-      setLoading(false);
+      setError(result.error)
+      setLoading(false)
     }
   }
 
   const handleNext = () => {
     if (step < TOTAL_STEPS) {
-      setStep((step + 1) as Step);
+      setStep((step + 1) as Step)
     } else {
-      handleSubmit();
+      handleSubmit()
     }
-  };
+  }
 
   const handleBack = () => {
     if (step > 1) {
-      setStep((step - 1) as Step);
+      setStep((step - 1) as Step)
     }
-  };
+  }
 
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.age && formData.weight && formData.height && formData.gender;
+        return formData.age && formData.weight && formData.height && formData.gender
       case 2:
-        return formData.activityLevel && formData.goal;
+        return formData.activityLevel && formData.goal
       case 3:
-        return formData.dietaryPreference;
+        return formData.dietaryPreference
       case 4:
-        return true;
+        return true
       default:
-        return false;
+        return false
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -251,12 +251,12 @@ export default function OnboardingPage() {
                                 updateField('allergies', [
                                   ...formData.allergies,
                                   allergen.toLowerCase(),
-                                ]);
+                                ])
                               } else {
                                 updateField(
                                   'allergies',
                                   formData.allergies.filter((a) => a !== allergen.toLowerCase())
-                                );
+                                )
                               }
                             }}
                           />
@@ -346,5 +346,5 @@ export default function OnboardingPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
