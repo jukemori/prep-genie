@@ -1,28 +1,34 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Checkbox } from '@/components/atoms/ui/checkbox'
-import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
-import Link from 'next/link'
+import { notFound } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import type { Meal, MealPlanItem } from '@/types';
+
+interface MealPlanItemWithMeal extends MealPlanItem {
+  meals: Meal;
+}
+
+import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
+import { Checkbox } from '@/components/atoms/ui/checkbox';
 
 interface PageProps {
   params: Promise<{
-    id: string
-  }>
+    id: string;
+  }>;
 }
 
 export default async function MealPlanDetailPage({ params }: PageProps) {
-  const { id } = await params
-  const supabase = await createClient()
+  const { id } = await params;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return null
+    return null;
   }
 
   const { data: mealPlan } = await supabase
@@ -30,28 +36,31 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
     .select('*')
     .eq('id', id)
     .eq('user_id', user.id)
-    .single()
+    .single();
 
   if (!mealPlan) {
-    notFound()
+    notFound();
   }
 
   const { data: items } = await supabase
     .from('meal_plan_items')
     .select('*, meals(*)')
     .eq('meal_plan_id', id)
-    .order('day_of_week', { ascending: true })
+    .order('day_of_week', { ascending: true });
 
   // Group by day
-  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-  const groupedByDay = items?.reduce((acc: any, item: any) => {
-    const day = item.day_of_week
-    if (!acc[day]) {
-      acc[day] = []
-    }
-    acc[day].push(item)
-    return acc
-  }, {})
+  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const groupedByDay = items?.reduce(
+    (acc: Record<number, MealPlanItemWithMeal[]>, item: MealPlanItemWithMeal) => {
+      const day = item.day_of_week;
+      if (!acc[day]) {
+        acc[day] = [];
+      }
+      acc[day].push(item);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="space-y-6">
@@ -114,47 +123,47 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
       </div>
 
       {/* Days */}
-      {groupedByDay && Object.keys(groupedByDay).sort().map((day: any) => (
-        <Card key={day}>
-          <CardHeader>
-            <CardTitle>{dayNames[day]}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {groupedByDay[day].map((item: any) => (
-              <div
-                key={item.id}
-                className="flex items-start gap-3 rounded-lg border p-4"
-              >
-                <Checkbox />
-                <div className="flex-1">
-                  <div className="mb-2 flex items-start justify-between gap-2">
-                    <div>
-                      <Link
-                        href={`/meals/${item.meal_id}`}
-                        className="font-semibold hover:underline"
-                      >
-                        {item.meals.name}
-                      </Link>
-                      {item.meals.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {item.meals.description}
-                        </p>
-                      )}
+      {groupedByDay &&
+        Object.keys(groupedByDay)
+          .sort()
+          .map((day: string) => (
+            <Card key={day}>
+              <CardHeader>
+                <CardTitle>{dayNames[day]}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {groupedByDay[day].map((item: MealPlanItemWithMeal) => (
+                  <div key={item.id} className="flex items-start gap-3 rounded-lg border p-4">
+                    <Checkbox />
+                    <div className="flex-1">
+                      <div className="mb-2 flex items-start justify-between gap-2">
+                        <div>
+                          <Link
+                            href={`/meals/${item.meal_id}`}
+                            className="font-semibold hover:underline"
+                          >
+                            {item.meals.name}
+                          </Link>
+                          {item.meals.description && (
+                            <p className="text-sm text-muted-foreground">
+                              {item.meals.description}
+                            </p>
+                          )}
+                        </div>
+                        <Badge className="capitalize">{item.meal_time}</Badge>
+                      </div>
+                      <div className="flex gap-4 text-sm text-muted-foreground">
+                        <span>{item.meals.calories_per_serving || 0} cal</span>
+                        <span>{item.meals.protein_per_serving || 0}g protein</span>
+                        <span>{item.meals.carbs_per_serving || 0}g carbs</span>
+                        <span>{item.meals.fats_per_serving || 0}g fats</span>
+                      </div>
                     </div>
-                    <Badge className="capitalize">{item.meal_time}</Badge>
                   </div>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    <span>{item.meals.calories_per_serving || 0} cal</span>
-                    <span>{item.meals.protein_per_serving || 0}g protein</span>
-                    <span>{item.meals.carbs_per_serving || 0}g carbs</span>
-                    <span>{item.meals.fats_per_serving || 0}g fats</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      ))}
+                ))}
+              </CardContent>
+            </Card>
+          ))}
     </div>
-  )
+  );
 }

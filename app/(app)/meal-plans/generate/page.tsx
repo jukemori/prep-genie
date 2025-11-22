@@ -1,70 +1,83 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Progress } from '@/components/atoms/ui/progress'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Sparkles, ArrowLeft, Save, Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { readStreamableValue } from 'ai/rsc'
+import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
+import { Progress } from '@/components/atoms/ui/progress';
+import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions';
+
+interface GeneratedMeal {
+  name: string;
+  description: string;
+  meal_type: string;
+  nutrition_per_serving: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+  };
+}
+
+import { readStreamableValue } from 'ai/rsc';
 
 export default function GenerateMealPlanPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [generating, setGenerating] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [generatedPlan, setGeneratedPlan] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [generatedPlan, setGeneratedPlan] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGenerate() {
-    setLoading(true)
-    setGenerating(true)
-    setError(null)
-    setGeneratedPlan('')
+    setLoading(true);
+    setGenerating(true);
+    setError(null);
+    setGeneratedPlan('');
 
     try {
-      const { stream } = await generateAIMealPlan()
-      let fullContent = ''
+      const { stream } = await generateAIMealPlan();
+      let fullContent = '';
 
       for await (const chunk of readStreamableValue(stream)) {
         if (chunk) {
-          fullContent += chunk
-          setGeneratedPlan(fullContent)
+          fullContent += chunk;
+          setGeneratedPlan(fullContent);
         }
       }
 
-      setGenerating(false)
+      setGenerating(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate meal plan')
-      setGenerating(false)
+      setError(err instanceof Error ? err.message : 'Failed to generate meal plan');
+      setGenerating(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleSave() {
-    if (!generatedPlan) return
+    if (!generatedPlan) return;
 
-    setSaving(true)
-    setError(null)
+    setSaving(true);
+    setError(null);
 
-    const result = await saveMealPlan(generatedPlan)
+    const result = await saveMealPlan(generatedPlan);
 
     if (result.error) {
-      setError(result.error)
-      setSaving(false)
+      setError(result.error);
+      setSaving(false);
     } else if (result.data) {
-      router.push(`/meal-plans/${result.data.id}`)
+      router.push(`/meal-plans/${result.data.id}`);
     }
   }
 
-  let parsedPlan = null
+  let parsedPlan = null;
   try {
     if (generatedPlan && !generating) {
-      parsedPlan = JSON.parse(generatedPlan)
+      parsedPlan = JSON.parse(generatedPlan);
     }
   } catch {
     // Still generating or invalid JSON
@@ -128,9 +141,7 @@ export default function GenerateMealPlanPage() {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
             <h3 className="mb-2 text-lg font-semibold">Generating Your Meal Plan</h3>
-            <p className="text-sm text-muted-foreground">
-              This may take a minute...
-            </p>
+            <p className="text-sm text-muted-foreground">This may take a minute...</p>
             {generating && (
               <div className="mt-4 w-full max-w-md">
                 <Progress value={undefined} className="h-2" />
@@ -157,52 +168,44 @@ export default function GenerateMealPlanPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-4">
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-bold">
-                    {parsedPlan.week_summary.total_calories}
-                  </p>
+                  <p className="text-2xl font-bold">{parsedPlan.week_summary.total_calories}</p>
                   <p className="text-xs text-muted-foreground">Total Calories</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-bold">
-                    {parsedPlan.week_summary.total_protein}g
-                  </p>
+                  <p className="text-2xl font-bold">{parsedPlan.week_summary.total_protein}g</p>
                   <p className="text-xs text-muted-foreground">Protein</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-bold">
-                    {parsedPlan.week_summary.total_carbs}g
-                  </p>
+                  <p className="text-2xl font-bold">{parsedPlan.week_summary.total_carbs}g</p>
                   <p className="text-xs text-muted-foreground">Carbs</p>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-center">
-                  <p className="text-2xl font-bold">
-                    {parsedPlan.week_summary.total_fats}g
-                  </p>
+                  <p className="text-2xl font-bold">{parsedPlan.week_summary.total_fats}g</p>
                   <p className="text-xs text-muted-foreground">Fats</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {parsedPlan.meal_plan.map((day: any) => (
+          {parsedPlan.meal_plan.map((day: { day: number; meals: GeneratedMeal[] }) => (
             <Card key={day.day}>
               <CardHeader>
                 <CardTitle>
-                  Day {day.day} - {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day.day - 1]}
+                  Day {day.day} -{' '}
+                  {
+                    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][
+                      day.day - 1
+                    ]
+                  }
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {day.meals.map((meal: any, index: number) => (
-                  <div
-                    key={index}
-                    className="rounded-lg border p-4"
-                  >
+                {day.meals.map((meal: GeneratedMeal) => (
+                  <div key={meal.name} className="rounded-lg border p-4">
                     <div className="mb-2 flex items-start justify-between">
                       <div>
                         <h4 className="font-semibold">{meal.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {meal.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{meal.description}</p>
                       </div>
                       <Badge className="capitalize">{meal.meal_type}</Badge>
                     </div>
@@ -221,10 +224,8 @@ export default function GenerateMealPlanPage() {
       )}
 
       {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
-        </div>
+        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
     </div>
-  )
+  );
 }
