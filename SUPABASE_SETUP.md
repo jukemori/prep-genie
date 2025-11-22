@@ -1,155 +1,99 @@
-# Supabase Manual Setup Guide
+# Supabase Setup Guide - PrepGenie
 
-This document outlines the manual setup steps required in the Supabase Admin Dashboard that cannot be automated via MCP (Model Context Protocol) tools.
+This document outlines what has been set up via MCP and what requires manual configuration in the Supabase Admin Dashboard.
 
 ---
 
-## 🚨 Required Manual Steps
+## ✅ Already Configured via MCP
 
-### 1. Create Supabase Project
+The following has been automatically set up using Supabase MCP tools:
 
-**Action Required:** Create a new Supabase project via the [Supabase Dashboard](https://app.supabase.com)
+### Project Details
+- **Project Name:** PrepGenie
+- **Project ID:** `nwuzxcpljlvwhpitwutf`
+- **Region:** `ap-northeast-1` (Tokyo)
+- **Status:** ACTIVE_HEALTHY
+- **Database Version:** PostgreSQL 17.6.1
+- **Project URL:** `https://nwuzxcpljlvwhpitwutf.supabase.co`
+
+### Database Schema
+✅ **All tables created with RLS enabled:**
+- `user_profiles` - User profile and nutrition data
+- `meals` - Meal/recipe database
+- `meal_plans` - Weekly/daily meal plans
+- `meal_plan_items` - Individual meal plan entries
+- `grocery_lists` - Shopping lists
+- `saved_meals` - User's favorite meals
+- `progress_logs` - Weight/nutrition tracking
+- `ai_chat_history` - AI conversation logs
+
+✅ **Migration Applied:**
+- `20251122041652_initial_schema` - Complete database schema with RLS policies
+
+### API Credentials (Already in .env.local)
+✅ **Project URL:** `https://nwuzxcpljlvwhpitwutf.supabase.co`
+✅ **Anon Key:** Already configured in `.env.local`
+
+---
+
+## ⚠️ Required Manual Setup
+
+### 1. Get Service Role Key
+
+**Action Required:** Copy the service role key from Supabase Dashboard
+
+**Why Manual:** The service role key is highly sensitive and bypasses RLS policies. It cannot be retrieved via MCP for security reasons.
 
 **Steps:**
-1. Log in to [https://app.supabase.com](https://app.supabase.com)
-2. Click "New Project"
-3. Select your organization
-4. Enter project details:
-   - **Name:** `prep-genie` (or your preferred name)
-   - **Database Password:** Generate a strong password (save this securely!)
-   - **Region:** Choose closest to your users (e.g., `us-west-1`, `eu-west-1`)
-   - **Pricing Plan:** Free tier is sufficient for development
-5. Click "Create new project"
-6. Wait 2-3 minutes for project initialization
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf)
+2. Navigate to **Settings** → **API**
+3. Copy the **service_role** secret key
+4. Update `.env.local`:
+   ```bash
+   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
 
-**Why Manual:** Project creation requires authentication and organization selection that cannot be automated via MCP.
+**Current Status:** ❌ Not configured (shows `your_service_role_key_here` in `.env.local`)
 
 ---
 
-### 2. Get API Keys and Project URL
+### 2. Configure Authentication Settings
 
-**Action Required:** Copy your project's API credentials
+**Action Required:** Enable and configure auth providers in Supabase Dashboard
 
-**Steps:**
-1. Navigate to **Settings** → **API** in your Supabase dashboard
-2. Copy the following values to your `.env.local` file:
-
-```bash
-# Project URL
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-
-# Anon/Public Key (safe for client-side use)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# Service Role Key (NEVER expose to client - server-side only)
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-**⚠️ Security Warning:**
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Safe for client-side, respects RLS policies
-- `SUPABASE_SERVICE_ROLE_KEY` - **NEVER** expose to client, bypasses RLS, server-only
-
-**Why Manual:** API keys are sensitive credentials that must be manually copied to environment variables.
-
----
-
-### 3. Run Database Migrations
-
-**Action Required:** Apply the database schema to your Supabase project
-
-**Option A: Using Supabase CLI (Recommended)**
-
-```bash
-# Link your local project to Supabase project
-supabase link --project-ref your-project-id
-
-# Apply all migrations
-pnpm supabase:reset
-
-# Generate TypeScript types
-pnpm supabase:types
-```
-
-**Option B: Using Supabase Dashboard**
-
-1. Navigate to **SQL Editor** in your Supabase dashboard
-2. Open `supabase/migrations/20250101000000_initial_schema.sql`
-3. Copy the entire SQL content
-4. Paste into the SQL Editor
-5. Click "Run"
-
-**Why Manual:** While migrations can be applied via CLI, the initial project linking and credential configuration requires manual setup.
-
----
-
-### 4. Configure Authentication Providers
-
-**Action Required:** Enable authentication methods in Supabase
-
-**Email Authentication (Default - Required):**
-1. Navigate to **Authentication** → **Providers**
+**Email Authentication (Required):**
+1. Navigate to **Authentication** → **Providers** in [Supabase Dashboard](https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/auth/providers)
 2. **Email** should be enabled by default
-3. Configure email settings:
-   - **Enable Email Confirmations:** Recommended for production
-   - **Secure Email Change:** Recommended
-   - **Double Confirm Email Changes:** Recommended for production
+3. Configure email settings under **Authentication** → **Email Templates**:
+   - ✅ **Enable Email Confirmations:** Recommended for production
+   - ✅ **Secure Email Change:** Recommended
+   - ✅ **Double Confirm Email Changes:** Recommended for production
 
-**Optional - OAuth Providers:**
+**Email Templates to Customize:**
+- **Confirm signup** - Welcome email with confirmation link
+- **Magic Link** - Passwordless login email
+- **Change Email Address** - Email change confirmation
+- **Reset Password** - Password reset email
 
-If you want to add Google/GitHub login:
-
-**Google OAuth:**
-1. Navigate to **Authentication** → **Providers**
-2. Enable **Google**
-3. Enter your Google OAuth credentials:
-   - **Client ID:** From [Google Cloud Console](https://console.cloud.google.com)
-   - **Client Secret:** From Google Cloud Console
-4. Add authorized redirect URL: `https://your-project-id.supabase.co/auth/v1/callback`
-
-**GitHub OAuth:**
-1. Navigate to **Authentication** → **Providers**
-2. Enable **GitHub**
-3. Enter your GitHub OAuth credentials:
-   - **Client ID:** From [GitHub Developer Settings](https://github.com/settings/developers)
-   - **Client Secret:** From GitHub Developer Settings
-4. Add callback URL: `https://your-project-id.supabase.co/auth/v1/callback`
-
-**Why Manual:** OAuth provider configuration requires external credentials and dashboard setup.
-
----
-
-### 5. Configure Email Templates (Optional but Recommended)
-
-**Action Required:** Customize authentication emails
-
-**Steps:**
-1. Navigate to **Authentication** → **Email Templates**
-2. Customize the following templates:
-   - **Confirm signup** - Welcome email with confirmation link
-   - **Invite user** - Team invitation email
-   - **Magic Link** - Passwordless login email
-   - **Change Email Address** - Email change confirmation
-   - **Reset Password** - Password reset email
-
-**Default Template Variables:**
+**Template Variables Available:**
 - `{{ .ConfirmationURL }}` - Confirmation/action link
 - `{{ .Token }}` - OTP code
-- `{{ .SiteURL }}` - Your application URL
+- `{{ .SiteURL }}` - Your application URL (http://localhost:3000)
 - `{{ .Email }}` - User's email address
 
-**Why Manual:** Email template customization is project-specific and requires dashboard access.
+**Why Manual:** Email template customization and provider configuration requires dashboard access.
 
 ---
 
-### 6. Configure Site URL and Redirect URLs
+### 3. Set Site URL and Redirect URLs
 
-**Action Required:** Set your application's URLs for auth redirects
+**Action Required:** Configure allowed redirect URLs for authentication
 
 **Steps:**
-1. Navigate to **Authentication** → **URL Configuration**
+1. Navigate to **Authentication** → **URL Configuration** in [Supabase Dashboard](https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/auth/url-configuration)
 2. Set **Site URL:**
    - **Development:** `http://localhost:3000`
-   - **Production:** `https://your-domain.com`
+   - **Production:** `https://your-domain.com` (when deploying)
 3. Add **Redirect URLs** (comma-separated):
    ```
    http://localhost:3000/**,https://your-domain.com/**
@@ -159,44 +103,44 @@ If you want to add Google/GitHub login:
 
 ---
 
-### 7. Enable Row Level Security (RLS) - Verification
+### 4. Optional - OAuth Providers
 
-**Action Required:** Verify RLS is enabled (should be automatic from migration)
+If you want to add social login (Google/GitHub):
 
-**Steps:**
-1. Navigate to **Database** → **Tables**
-2. Verify each table has RLS enabled (green checkmark):
-   - `user_profiles`
-   - `meals`
-   - `meal_plans`
-   - `meal_plan_items`
-   - `grocery_lists`
-   - `saved_meals`
-   - `progress_logs`
-   - `ai_chat_history`
+**Google OAuth:**
+1. Create OAuth credentials at [Google Cloud Console](https://console.cloud.google.com)
+2. Navigate to **Authentication** → **Providers** in Supabase
+3. Enable **Google** and enter:
+   - **Client ID:** From Google Cloud Console
+   - **Client Secret:** From Google Cloud Console
+4. Add authorized redirect URL: `https://nwuzxcpljlvwhpitwutf.supabase.co/auth/v1/callback`
 
-**If RLS is not enabled:**
-1. Click on the table
-2. Click "Enable RLS"
+**GitHub OAuth:**
+1. Create OAuth app at [GitHub Developer Settings](https://github.com/settings/developers)
+2. Navigate to **Authentication** → **Providers** in Supabase
+3. Enable **GitHub** and enter:
+   - **Client ID:** From GitHub
+   - **Client Secret:** From GitHub
+4. Add callback URL: `https://nwuzxcpljlvwhpitwutf.supabase.co/auth/v1/callback`
 
-**Why Manual:** While migrations enable RLS automatically, verification via dashboard is recommended for security.
+**Why Manual:** OAuth requires external provider credentials and dashboard configuration.
 
 ---
 
-### 8. Set Up Storage Buckets (Optional - For Meal Images)
+### 5. Optional - Storage Buckets (For Meal Images)
 
-**Action Required:** Create storage buckets for user-uploaded images
+**Action Required:** Create storage bucket for user-uploaded meal images
 
 **Steps:**
-1. Navigate to **Storage**
+1. Navigate to **Storage** in [Supabase Dashboard](https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/storage/buckets)
 2. Click "Create a new bucket"
-3. Create bucket with:
+3. Configure:
    - **Name:** `meal-images`
    - **Public:** Yes (for publicly accessible meal images)
    - **File size limit:** 5 MB (recommended)
    - **Allowed MIME types:** `image/png, image/jpeg, image/jpg, image/webp`
 
-**Set Storage Policies:**
+**Storage Policies (apply via SQL Editor):**
 ```sql
 -- Allow authenticated users to upload
 CREATE POLICY "Users can upload meal images"
@@ -217,46 +161,59 @@ TO authenticated
 USING (bucket_id = 'meal-images' AND auth.uid()::text = (storage.foldername(name))[1]);
 ```
 
-**Why Manual:** Storage bucket creation and policy configuration requires dashboard access.
+**Why Manual:** Storage bucket creation requires dashboard access, but policies can be applied via MCP using `execute_sql`.
 
 ---
 
-## ✅ What Can Be Automated (No Manual Steps)
+## 🔧 Verification Checklist
 
-The following operations can be handled automatically via the Supabase MCP tools:
+After completing manual setup, verify:
 
-- ✅ **List projects** - `mcp__supabase__list_projects`
-- ✅ **Get project details** - `mcp__supabase__get_project`
-- ✅ **Execute SQL queries** - `mcp__supabase__execute_sql`
-- ✅ **Apply migrations** - `mcp__supabase__apply_migration`
-- ✅ **List tables** - `mcp__supabase__list_tables`
-- ✅ **Generate TypeScript types** - `mcp__supabase__generate_typescript_types`
-- ✅ **Get project URL** - `mcp__supabase__get_project_url`
-- ✅ **Get API keys** - `mcp__supabase__get_publishable_keys`
+- [ ] Service role key is set in `.env.local`
+- [ ] Email authentication is enabled
+- [ ] Site URL is set to `http://localhost:3000`
+- [ ] Redirect URLs include `http://localhost:3000/**`
+- [ ] Email templates are configured (optional but recommended)
+- [ ] OAuth providers are set up (if using social login)
+- [ ] Storage bucket created (if using meal image uploads)
 
 ---
 
-## 🔄 Post-Setup Workflow
+## 🧪 Testing Authentication
 
-After completing manual setup:
+After setup, test the authentication flow:
 
-1. **Verify environment variables** are set in `.env.local`
-2. **Link local project** to Supabase:
-   ```bash
-   supabase link --project-ref your-project-id
-   ```
-3. **Generate TypeScript types**:
-   ```bash
-   pnpm supabase:types
-   ```
-4. **Test authentication**:
-   ```bash
-   pnpm dev
-   # Visit http://localhost:3000/register
-   # Create a test account
-   # Verify email confirmation (if enabled)
-   ```
-5. **Verify RLS policies** by testing CRUD operations as authenticated user
+```bash
+# Start the development server
+pnpm dev
+
+# Visit http://localhost:3000/register
+# 1. Create a test account
+# 2. Check email for confirmation (if enabled)
+# 3. Verify login works
+# 4. Check that protected routes redirect to /login when not authenticated
+```
+
+**Test protected routes:**
+- Navigate to `http://localhost:3000/dashboard` (should redirect to `/login` if not authenticated)
+- After login, should access dashboard without redirect
+
+---
+
+## 🛠️ What Can Be Done via MCP
+
+The following operations are automated via Supabase MCP tools (already done or available):
+
+- ✅ **Project Creation** - `mcp__supabase__create_project` (already done)
+- ✅ **List Projects** - `mcp__supabase__list_projects`
+- ✅ **Get Project Details** - `mcp__supabase__get_project`
+- ✅ **Get Project URL** - `mcp__supabase__get_project_url`
+- ✅ **Get API Keys** - `mcp__supabase__get_publishable_keys` (anon key only)
+- ✅ **List Tables** - `mcp__supabase__list_tables`
+- ✅ **List Migrations** - `mcp__supabase__list_migrations`
+- ✅ **Apply Migrations** - `mcp__supabase__apply_migration` (already done)
+- ✅ **Execute SQL** - `mcp__supabase__execute_sql`
+- ✅ **Generate TypeScript Types** - `mcp__supabase__generate_typescript_types`
 
 ---
 
@@ -268,25 +225,62 @@ After completing manual setup:
 - Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
 - Restart dev server: `pnpm dev`
 
+### Issue: Service Role Key not working
+
+**Solution:**
+- Ensure you copied the **service_role** key, not the **anon** key
+- Check that key is set in `.env.local` as `SUPABASE_SERVICE_ROLE_KEY`
+- Service role key bypasses RLS - use only in Server Actions/API routes, never client-side
+
 ### Issue: "Row Level Security policy violation"
 
 **Solution:**
-- Verify RLS policies are applied (check migrations)
-- Ensure user is authenticated before accessing protected tables
+- Verify user is authenticated before accessing protected tables
 - Check that `auth.uid()` matches the `user_id` in the table
+- RLS policies are already applied via migration
 
 ### Issue: "Email not sent" during registration
 
 **Solution:**
 - Check **Authentication** → **Email Templates** in dashboard
-- Verify SMTP settings (Supabase provides default SMTP for development)
+- Supabase provides default SMTP for development (rate-limited)
 - For production, configure custom SMTP provider
 
-### Issue: "Redirect URL mismatch" after OAuth login
+### Issue: "Redirect URL mismatch" after login
 
 **Solution:**
 - Add your application URL to **Authentication** → **URL Configuration** → **Redirect URLs**
-- Ensure URL matches exactly (including protocol and trailing slashes)
+- Ensure URL matches exactly (including protocol)
+- Default should include `http://localhost:3000/**`
+
+---
+
+## 📊 Current Status Summary
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Supabase Project | ✅ Created | Project ID: nwuzxcpljlvwhpitwutf |
+| Database Schema | ✅ Deployed | All 8 tables with RLS enabled |
+| Project URL | ✅ Configured | In .env.local |
+| Anon Key | ✅ Configured | In .env.local |
+| Service Role Key | ⚠️ Manual Required | Copy from dashboard |
+| Email Auth | ⚠️ Manual Required | Enable in dashboard |
+| Site URL | ⚠️ Manual Required | Set in dashboard |
+| Redirect URLs | ⚠️ Manual Required | Set in dashboard |
+| OAuth Providers | ⏸️ Optional | Configure if needed |
+| Storage Buckets | ⏸️ Optional | Create if using images |
+
+---
+
+## 📚 Quick Links
+
+- **Supabase Project Dashboard:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf
+- **API Settings:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/settings/api
+- **Auth Providers:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/auth/providers
+- **URL Configuration:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/auth/url-configuration
+- **Email Templates:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/auth/templates
+- **Storage:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/storage/buckets
+- **SQL Editor:** https://supabase.com/dashboard/project/nwuzxcpljlvwhpitwutf/sql/new
 
 ---
 
@@ -296,10 +290,10 @@ After completing manual setup:
 - [Row Level Security Guide](https://supabase.com/docs/guides/auth/row-level-security)
 - [Auth Helpers for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
 - [Storage Guide](https://supabase.com/docs/guides/storage)
-- [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 
 ---
 
 **Last Updated:** 2025-01-22
-**PrepGenie Version:** 1.0.0
-**Supabase Version:** 2.58.0+
+**PrepGenie Project ID:** nwuzxcpljlvwhpitwutf
+**Region:** ap-northeast-1 (Tokyo)
+**Database Version:** PostgreSQL 17.6.1
