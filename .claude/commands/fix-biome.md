@@ -1,36 +1,68 @@
 ---
-description: Fix all Biome linting and formatting errors
+description: Fix all Biome linting, formatting, and TypeScript errors
 ---
 
-Run Biome with auto-fix to resolve all linting and formatting issues in the codebase.
-
-Please execute:
+**Step 1: Run Biome auto-fix**
 ```bash
 pnpm run lint:fix
 ```
 
-This will:
-- Automatically fix all auto-fixable linting errors
-- Format all code according to Biome configuration
-- Apply import sorting
-- Report any errors that require manual fixes
-
-**Then check for TypeScript errors:**
+**Step 2: Check TypeScript errors**
 ```bash
 pnpm tsc --noEmit
 ```
 
-This will:
-- Verify all TypeScript types are correct
-- Catch type errors that Biome might miss
-- Ensure proper usage of Supabase generated types
-- Check for module resolution issues
+**Step 3: Fix all errors systematically**
 
-After running both commands, please summarize:
-1. Number of files fixed by Biome
-2. Any TypeScript compilation errors found
-3. Any remaining Biome errors that need manual intervention
-4. Suggestions for resolving manual fixes if needed
+DO NOT just summarize the errors. You MUST fix all errors found using these tools:
+
+## Fixing Biome Errors
+
+1. **Use Serena MCP to locate errors:**
+   - `mcp__serena__search_for_pattern` - Find problematic code patterns
+   - `mcp__serena__get_symbols_overview` - Understand file structure
+   - `mcp__serena__find_symbol` - Read specific functions/classes with errors
+
+2. **Use Context7 MCP for solutions:**
+   - `mcp__context7__resolve-library-id` for "biomejs"
+   - `mcp__context7__get-library-docs` with error code for rule documentation
+
+3. **Apply fixes:**
+   - `mcp__serena__replace_symbol_body` for symbol-level fixes
+   - Use Edit tool for line-by-line corrections
+   - Follow type safety rules from CLAUDE.md
+
+## Fixing TypeScript Errors
+
+1. **For module resolution errors:**
+   - Check tsconfig.json path aliases
+   - Verify file locations match imports
+   - Use `mcp__serena__find_file` to locate correct paths
+
+2. **For implicit `any` errors:**
+   - Add explicit types to all parameters
+   - Use React event types: `React.FormEvent`, `React.ChangeEvent`, etc.
+   - Never use `any` type (use proper Supabase generated types)
+
+3. **For null safety errors:**
+   - Add null checks before using nullable values
+   - Use optional chaining `?.` and nullish coalescing `??`
+
+4. **For Zod errors:**
+   - Replace `error.errors` with `error.issues`
+
+5. **For type mismatches:**
+   - Use proper OpenAI/library types from their type definitions
+   - Import and use Supabase generated types from `@/types`
+
+## After Fixing
+
+Run both commands again to verify all errors are resolved:
+```bash
+pnpm run lint:fix && pnpm tsc --noEmit
+```
+
+Only stop when BOTH commands show zero errors.
 
 ## CRITICAL Type Safety Rules
 
@@ -61,28 +93,17 @@ interface GroceryItem {
 }
 ```
 
-## If Auto-Fix Doesn't Work
+## Common Error Patterns and Fixes
 
-If there are errors that cannot be auto-fixed:
+### Biome Error Fixes:
+- **`noExplicitAny`**: Replace with proper Supabase generated types from `@/types`
+- **`noArrayIndexKey`**: Use stable IDs (crypto.randomUUID()) or content-based keys
+- **`useExhaustiveDependencies`**: Fix React hook dependency arrays
+- **`noSvgWithoutTitle`**: Add `<title>` and `aria-label` to SVG elements
 
-1. **Use Serena MCP** to locate and analyze the specific error locations:
-   - Use `mcp__serena__search_for_pattern` to find problematic code patterns
-   - Use `mcp__serena__get_symbols_overview` to understand file structure
-   - Use `mcp__serena__find_symbol` to read specific functions/classes with errors
-
-2. **Use Context7 MCP** to find solutions:
-   - Search Biome documentation: `mcp__context7__resolve-library-id` for "biomejs"
-   - Get specific rule documentation: `mcp__context7__get-library-docs` with the error code
-   - Find best practices and examples for fixing the specific error type
-
-3. **Apply Fixes Systematically**:
-   - **For `noExplicitAny` errors**: Replace with proper Supabase generated types
-   - **For `noArrayIndexKey` errors**: Use stable IDs or content-based keys
-   - **For `useExhaustiveDependencies` warnings**: Fix dependency arrays properly
-   - Use `mcp__serena__replace_symbol_body` for targeted symbol fixes
-   - Use the Edit tool for precise line-by-line corrections
-   - Ensure fixes follow Biome configuration in biome.json
-
-4. **Verify Fixes**:
-   - Run `pnpm run lint:fix` again to confirm all errors are resolved
-   - Run `pnpm run type-check` to ensure TypeScript compilation still works
+### TypeScript Error Fixes:
+- **Module not found**: Check path aliases in tsconfig.json, verify file locations
+- **Implicit `any`**: Add explicit types to all function parameters
+- **Null safety**: Add null checks or optional chaining before using values
+- **Zod `.errors`**: Change to `.issues` (correct Zod API)
+- **Type mismatches**: Import proper library types, use Supabase generated types
