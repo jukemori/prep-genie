@@ -15,10 +15,21 @@ This will:
 - Apply import sorting
 - Report any errors that require manual fixes
 
-After running, please summarize:
-1. Number of files fixed
-2. Any remaining errors that need manual intervention
-3. Suggestions for resolving manual fixes if needed
+**Then check for TypeScript errors:**
+```bash
+pnpm run type-check
+```
+
+This will:
+- Verify all TypeScript types are correct
+- Catch type errors that Biome might miss
+- Ensure proper usage of Supabase generated types
+
+After running both commands, please summarize:
+1. Number of files fixed by Biome
+2. Any TypeScript compilation errors found
+3. Any remaining Biome errors that need manual intervention
+4. Suggestions for resolving manual fixes if needed
 
 ## CRITICAL Type Safety Rules
 
