@@ -17,13 +17,14 @@ This will:
 
 **Then check for TypeScript errors:**
 ```bash
-pnpm run type-check
+pnpm tsc --noEmit
 ```
 
 This will:
 - Verify all TypeScript types are correct
 - Catch type errors that Biome might miss
 - Ensure proper usage of Supabase generated types
+- Check for module resolution issues
 
 After running both commands, please summarize:
 1. Number of files fixed by Biome
