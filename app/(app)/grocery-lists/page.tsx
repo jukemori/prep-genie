@@ -1,35 +1,39 @@
-import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Plus, ShoppingCart } from 'lucide-react'
-import Link from 'next/link'
+import { Plus, ShoppingCart } from 'lucide-react';
+import Link from 'next/link';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function GroceryListsPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return null
+    return null;
   }
 
   const { data: groceryLists } = await supabase
     .from('grocery_lists')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Grocery Lists</h1>
-          <p className="text-muted-foreground">
-            Manage your shopping lists
-          </p>
+          <p className="text-muted-foreground">Manage your shopping lists</p>
         </div>
         <Button asChild>
           <Link href="/grocery-lists/new">
@@ -42,9 +46,11 @@ export default async function GroceryListsPage() {
       {groceryLists && groceryLists.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {groceryLists.map((list) => {
-            const items = Array.isArray(list.items) ? list.items : []
-            const purchasedCount = items.filter((item: any) => item.is_purchased).length
-            const totalItems = items.length
+            const items = Array.isArray(list.items) ? list.items : [];
+            const purchasedCount = items.filter(
+              (item: { is_purchased?: boolean }) => item.is_purchased
+            ).length;
+            const totalItems = items.length;
 
             return (
               <Card key={list.id} className="transition-shadow hover:shadow-lg">
@@ -72,7 +78,7 @@ export default async function GroceryListsPage() {
                   </Button>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       ) : (
@@ -95,5 +101,5 @@ export default async function GroceryListsPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

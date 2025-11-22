@@ -1,72 +1,83 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { getGroceryList, updateGroceryListItems } from '@/features/grocery-lists/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Checkbox } from '@/components/atoms/ui/checkbox'
-import { Badge } from '@/components/atoms/ui/badge'
-import { ArrowLeft, Trash2, Save } from 'lucide-react'
-import Link from 'next/link'
-import { use } from 'react'
+import { ArrowLeft, Save, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { use, useEffect, useState } from 'react';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card';
+import { Checkbox } from '@/components/atoms/ui/checkbox';
+import { getGroceryList, updateGroceryListItems } from '@/features/grocery-lists/api/actions';
+import type { GroceryList } from '@/types';
 
 interface PageProps {
   params: Promise<{
-    id: string
-  }>
+    id: string;
+  }>;
+}
+
+interface GroceryItem {
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  is_purchased: boolean;
 }
 
 export default function GroceryListDetailPage({ params }: PageProps) {
-  const { id } = use(params)
-  const [list, setList] = useState<any>(null)
-  const [items, setItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+  const { id } = use(params);
+  const [list, setList] = useState<GroceryList | null>(null);
+  const [items, setItems] = useState<GroceryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     async function loadList() {
-      const result = await getGroceryList(id)
+      const result = await getGroceryList(id);
       if (result.data) {
-        setList(result.data)
-        setItems(Array.isArray(result.data.items) ? result.data.items : [])
+        setList(result.data);
+        setItems(Array.isArray(result.data.items) ? result.data.items : []);
       }
-      setLoading(false)
+      setLoading(false);
     }
-    loadList()
-  }, [id])
+    loadList();
+  }, [id]);
 
   const handleToggleItem = (index: number) => {
-    const updated = [...items]
+    const updated = [...items];
     updated[index] = {
       ...updated[index],
       is_purchased: !updated[index].is_purchased,
-    }
-    setItems(updated)
-  }
+    };
+    setItems(updated);
+  };
 
   const handleSave = async () => {
-    setSaving(true)
-    await updateGroceryListItems(id, items)
-    setSaving(false)
-  }
+    setSaving(true);
+    await updateGroceryListItems(id, items);
+    setSaving(false);
+  };
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (!list) {
-    return <div>Grocery list not found</div>
+    return <div>Grocery list not found</div>;
   }
 
-  const purchasedCount = items.filter(item => item.is_purchased).length
-  const totalItems = items.length
+  const purchasedCount = items.filter((item) => item.is_purchased).length;
+  const totalItems = items.length;
 
   // Group by category
-  const categories = ['produce', 'protein', 'dairy', 'grains', 'pantry', 'spices', 'other']
-  const groupedItems = categories.reduce((acc: any, category) => {
-    acc[category] = items.filter(item => item.category === category)
-    return acc
-  }, {})
+  const categories = ['produce', 'protein', 'dairy', 'grains', 'pantry', 'spices', 'other'];
+  const groupedItems = categories.reduce(
+    (acc: Record<string, GroceryItem[]>, category) => {
+      acc[category] = items.filter((item) => item.category === category);
+      return acc;
+    },
+    {} as Record<string, GroceryItem[]>
+  );
 
   return (
     <div className="space-y-6">
@@ -106,9 +117,9 @@ export default function GroceryListDetailPage({ params }: PageProps) {
         </CardContent>
       </Card>
 
-      {categories.map(category => {
-        const categoryItems = groupedItems[category]
-        if (!categoryItems || categoryItems.length === 0) return null
+      {categories.map((category) => {
+        const categoryItems = groupedItems[category];
+        if (!categoryItems || categoryItems.length === 0) return null;
 
         return (
           <Card key={category}>
@@ -116,19 +127,18 @@ export default function GroceryListDetailPage({ params }: PageProps) {
               <CardTitle className="capitalize">{category}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {categoryItems.map((item: any, index: number) => {
-                const globalIndex = items.indexOf(item)
+              {categoryItems.map((item) => {
+                const globalIndex = items.indexOf(item);
                 return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 rounded-lg border p-3"
-                  >
+                  <div key={item.name} className="flex items-center gap-3 rounded-lg border p-3">
                     <Checkbox
                       checked={item.is_purchased}
                       onCheckedChange={() => handleToggleItem(globalIndex)}
                     />
                     <div className="flex-1">
-                      <p className={`font-medium ${item.is_purchased ? 'line-through text-muted-foreground' : ''}`}>
+                      <p
+                        className={`font-medium ${item.is_purchased ? 'line-through text-muted-foreground' : ''}`}
+                      >
                         {item.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
@@ -136,12 +146,12 @@ export default function GroceryListDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                   </div>
-                )
+                );
               })}
             </CardContent>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
