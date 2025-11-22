@@ -21,6 +21,86 @@ This document provides step-by-step instructions for building PrepGenie using Cl
 
 ---
 
+## 🔒 CRITICAL: Type Safety Rules
+
+**ALWAYS use Supabase generated types. NEVER use `any` type. NEVER create custom interfaces for database tables.**
+
+### Generated Types Location
+- `types/database.ts` - Auto-generated from Supabase schema (DO NOT format with Biome)
+- `types/index.ts` - Type exports and utilities
+
+### ✅ DO (Correct Usage)
+```typescript
+// Use generated types from @/types
+import type { UserProfile, Meal, MealPlan, ProgressLog, GroceryList } from '@/types';
+
+// For direct table access
+import type { Tables, TablesInsert, TablesUpdate } from '@/types/database';
+type Meal = Tables<'meals'>;
+type MealInsert = TablesInsert<'meals'>;
+
+// Component state with proper types
+const [profile, setProfile] = useState<UserProfile | null>(null);
+const [meals, setMeals] = useState<Meal[]>([]);
+
+// Server Actions with generated types
+export async function createMeal(data: TablesInsert<'meals'>) {
+  const { data: meal } = await supabase.from('meals').insert(data);
+  return meal;
+}
+
+// Only create interfaces for JSONB fields NOT in database schema
+interface GroceryItem {
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  is_purchased: boolean;
+}
+```
+
+### ❌ DON'T (Wrong Usage)
+```typescript
+// ❌ NEVER use any type
+const [data, setData] = useState<any>(null);
+const items: any[] = [];
+
+// ❌ NEVER create custom interfaces for database tables
+interface CustomMeal {
+  id: string;
+  name: string;
+  // ... This should use Meal from generated types!
+}
+
+// ❌ NEVER create duplicate types for tables
+interface UserProfile {
+  // ... Use generated UserProfile instead!
+}
+```
+
+### Available Generated Types
+- `UserProfile` - User profile data
+- `Meal` - Meal/recipe data
+- `MealPlan` - Weekly/daily meal plans
+- `MealPlanItem` - Individual meal plan entries
+- `GroceryList` - Shopping lists
+- `ProgressLog` - Weight/nutrition tracking
+- `SavedMeal` - User's favorite meals
+- `AiChatHistory` - AI conversation logs
+
+### Biome Configuration
+- `types/database.ts` is **excluded from Biome formatting** (auto-generated file)
+- `noExplicitAny: "error"` enforces no `any` types anywhere
+- Always run `pnpm run lint:fix` after making changes
+
+### Regenerating Types
+```bash
+# When database schema changes
+pnpm supabase:types
+```
+
+---
+
 ## 📋 Implementation Phases
 
 ### Phase 1: Project Setup & Infrastructure (Current Phase)
