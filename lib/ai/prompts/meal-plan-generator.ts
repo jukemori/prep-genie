@@ -1,0 +1,120 @@
+import type { UserProfile } from '@/types'
+
+export function generateMealPlanPrompt(profile: UserProfile) {
+  return `You are an expert nutritionist and meal planner. Generate a personalized meal plan based on the following user profile:
+
+**User Profile:**
+- Age: ${profile.age}
+- Weight: ${profile.weight}kg
+- Height: ${profile.height}cm
+- Gender: ${profile.gender}
+- Activity Level: ${profile.activity_level}
+- Goal: ${profile.goal}
+- Dietary Preference: ${profile.dietary_preference}
+- Allergies: ${profile.allergies?.join(', ') || 'None'}
+- Cooking Skill: ${profile.cooking_skill_level || 'intermediate'}
+- Time Available: ${profile.time_available || 60} minutes per day
+- Budget: ${profile.budget_level || 'medium'}
+
+**Nutrition Targets:**
+- Daily Calories: ${profile.daily_calorie_target} kcal
+- Protein: ${profile.target_protein}g
+- Carbs: ${profile.target_carbs}g
+- Fats: ${profile.target_fats}g
+
+**Requirements:**
+1. Generate a complete weekly meal plan (7 days)
+2. Include 3 main meals per day (breakfast, lunch, dinner)
+3. Each meal should include:
+   - Name
+   - Description
+   - Detailed ingredients with quantities
+   - Step-by-step instructions
+   - Prep time and cook time
+   - Nutrition per serving (calories, protein, carbs, fats)
+   - Servings
+4. Ensure meals align with dietary preferences and avoid allergens
+5. Consider cooking skill level and time constraints
+6. Vary cuisine types for diversity
+7. Optimize for batch cooking where possible
+
+**Output Format (JSON):**
+{
+  "week_summary": {
+    "total_calories": number,
+    "avg_calories_per_day": number,
+    "total_protein": number,
+    "total_carbs": number,
+    "total_fats": number
+  },
+  "meal_plan": [
+    {
+      "day": 1-7,
+      "meals": [
+        {
+          "meal_type": "breakfast" | "lunch" | "dinner",
+          "name": "string",
+          "description": "string",
+          "ingredients": [
+            {
+              "name": "string",
+              "quantity": number,
+              "unit": "string",
+              "category": "produce" | "protein" | "dairy" | "grains" | "pantry" | "spices" | "other"
+            }
+          ],
+          "instructions": ["step1", "step2", ...],
+          "prep_time": number (minutes),
+          "cook_time": number (minutes),
+          "servings": number,
+          "nutrition_per_serving": {
+            "calories": number,
+            "protein": number,
+            "carbs": number,
+            "fats": number
+          },
+          "tags": ["tag1", "tag2", ...],
+          "cuisine_type": "string",
+          "difficulty_level": "easy" | "medium" | "hard"
+        }
+      ]
+    }
+  ]
+}`
+}
+
+export function modifyMealPrompt(
+  mealName: string,
+  currentIngredients: string[],
+  modification: string
+) {
+  return `You are a nutrition expert. Modify the following meal based on the user's request:
+
+**Current Meal:** ${mealName}
+**Current Ingredients:** ${currentIngredients.join(', ')}
+**Modification Request:** ${modification}
+
+Please provide:
+1. Updated ingredient list with quantities
+2. Updated instructions
+3. Updated nutrition information (calories, protein, carbs, fats per serving)
+4. Brief explanation of changes made
+
+Output as JSON with the same structure as the original meal.`
+}
+
+export function substituteIngredientPrompt(
+  ingredient: string,
+  reason: string,
+  mealContext: string
+) {
+  return `Suggest ${reason === 'allergy' ? 'allergy-safe' : 'suitable'} substitutes for "${ingredient}" in the context of: ${mealContext}
+
+Provide 3 substitution options with:
+1. Substitute ingredient name
+2. Quantity adjustment (if needed)
+3. Impact on nutrition
+4. Impact on flavor/texture
+
+Output as JSON array.`
+}
