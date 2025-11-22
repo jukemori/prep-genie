@@ -1,23 +1,35 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { createUserProfile } from '@/features/user-profile/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Input } from '@/components/atoms/ui/input'
-import { Label } from '@/components/atoms/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select'
-import { Progress } from '@/components/atoms/ui/progress'
-import { Checkbox } from '@/components/atoms/ui/checkbox'
+import { useState } from 'react';
+import { Button } from '@/components/atoms/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card';
+import { Checkbox } from '@/components/atoms/ui/checkbox';
+import { Input } from '@/components/atoms/ui/input';
+import { Label } from '@/components/atoms/ui/label';
+import { Progress } from '@/components/atoms/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/atoms/ui/select';
+import { createUserProfile } from '@/features/user-profile/api/actions';
 
-type Step = 1 | 2 | 3 | 4
+type Step = 1 | 2 | 3 | 4;
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 4;
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState<Step>(1)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<Step>(1);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -32,67 +44,67 @@ export default function OnboardingPage() {
     budgetLevel: '',
     cookingSkillLevel: '',
     timeAvailable: '',
-  })
+  });
 
   const updateField = (field: string, value: string | string[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const progress = (step / TOTAL_STEPS) * 100
+  const progress = (step / TOTAL_STEPS) * 100;
 
   async function handleSubmit() {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
-    const submitFormData = new FormData()
-    submitFormData.append('age', formData.age)
-    submitFormData.append('weight', formData.weight)
-    submitFormData.append('height', formData.height)
-    submitFormData.append('gender', formData.gender)
-    submitFormData.append('activityLevel', formData.activityLevel)
-    submitFormData.append('goal', formData.goal)
-    submitFormData.append('dietaryPreference', formData.dietaryPreference)
-    submitFormData.append('allergies', formData.allergies.join(','))
-    submitFormData.append('budgetLevel', formData.budgetLevel)
-    submitFormData.append('cookingSkillLevel', formData.cookingSkillLevel)
-    submitFormData.append('timeAvailable', formData.timeAvailable)
+    const submitFormData = new FormData();
+    submitFormData.append('age', formData.age);
+    submitFormData.append('weight', formData.weight);
+    submitFormData.append('height', formData.height);
+    submitFormData.append('gender', formData.gender);
+    submitFormData.append('activityLevel', formData.activityLevel);
+    submitFormData.append('goal', formData.goal);
+    submitFormData.append('dietaryPreference', formData.dietaryPreference);
+    submitFormData.append('allergies', formData.allergies.join(','));
+    submitFormData.append('budgetLevel', formData.budgetLevel);
+    submitFormData.append('cookingSkillLevel', formData.cookingSkillLevel);
+    submitFormData.append('timeAvailable', formData.timeAvailable);
 
-    const result = await createUserProfile(submitFormData)
+    const result = await createUserProfile(submitFormData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     }
   }
 
   const handleNext = () => {
     if (step < TOTAL_STEPS) {
-      setStep((step + 1) as Step)
+      setStep((step + 1) as Step);
     } else {
-      handleSubmit()
+      handleSubmit();
     }
-  }
+  };
 
   const handleBack = () => {
     if (step > 1) {
-      setStep((step - 1) as Step)
+      setStep((step - 1) as Step);
     }
-  }
+  };
 
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.age && formData.weight && formData.height && formData.gender
+        return formData.age && formData.weight && formData.height && formData.gender;
       case 2:
-        return formData.activityLevel && formData.goal
+        return formData.activityLevel && formData.goal;
       case 3:
-        return formData.dietaryPreference
+        return formData.dietaryPreference;
       case 4:
-        return true
+        return true;
       default:
-        return false
+        return false;
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -122,7 +134,10 @@ export default function OnboardingPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="gender">Gender</Label>
-                    <Select value={formData.gender} onValueChange={(value) => updateField('gender', value)}>
+                    <Select
+                      value={formData.gender}
+                      onValueChange={(value) => updateField('gender', value)}
+                    >
                       <SelectTrigger id="gender">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
@@ -164,7 +179,10 @@ export default function OnboardingPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="activityLevel">Activity Level</Label>
-                    <Select value={formData.activityLevel} onValueChange={(value) => updateField('activityLevel', value)}>
+                    <Select
+                      value={formData.activityLevel}
+                      onValueChange={(value) => updateField('activityLevel', value)}
+                    >
                       <SelectTrigger id="activityLevel">
                         <SelectValue placeholder="Select activity level" />
                       </SelectTrigger>
@@ -179,7 +197,10 @@ export default function OnboardingPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="goal">Primary Goal</Label>
-                    <Select value={formData.goal} onValueChange={(value) => updateField('goal', value)}>
+                    <Select
+                      value={formData.goal}
+                      onValueChange={(value) => updateField('goal', value)}
+                    >
                       <SelectTrigger id="goal">
                         <SelectValue placeholder="Select your goal" />
                       </SelectTrigger>
@@ -201,7 +222,10 @@ export default function OnboardingPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="dietaryPreference">Diet Type</Label>
-                    <Select value={formData.dietaryPreference} onValueChange={(value) => updateField('dietaryPreference', value)}>
+                    <Select
+                      value={formData.dietaryPreference}
+                      onValueChange={(value) => updateField('dietaryPreference', value)}
+                    >
                       <SelectTrigger id="dietaryPreference">
                         <SelectValue placeholder="Select dietary preference" />
                       </SelectTrigger>
@@ -224,9 +248,15 @@ export default function OnboardingPage() {
                             checked={formData.allergies.includes(allergen.toLowerCase())}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                updateField('allergies', [...formData.allergies, allergen.toLowerCase()])
+                                updateField('allergies', [
+                                  ...formData.allergies,
+                                  allergen.toLowerCase(),
+                                ]);
                               } else {
-                                updateField('allergies', formData.allergies.filter(a => a !== allergen.toLowerCase()))
+                                updateField(
+                                  'allergies',
+                                  formData.allergies.filter((a) => a !== allergen.toLowerCase())
+                                );
                               }
                             }}
                           />
@@ -247,7 +277,10 @@ export default function OnboardingPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="cookingSkillLevel">Cooking Skill Level</Label>
-                    <Select value={formData.cookingSkillLevel} onValueChange={(value) => updateField('cookingSkillLevel', value)}>
+                    <Select
+                      value={formData.cookingSkillLevel}
+                      onValueChange={(value) => updateField('cookingSkillLevel', value)}
+                    >
                       <SelectTrigger id="cookingSkillLevel">
                         <SelectValue placeholder="Select skill level" />
                       </SelectTrigger>
@@ -260,7 +293,10 @@ export default function OnboardingPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="budgetLevel">Budget Level</Label>
-                    <Select value={formData.budgetLevel} onValueChange={(value) => updateField('budgetLevel', value)}>
+                    <Select
+                      value={formData.budgetLevel}
+                      onValueChange={(value) => updateField('budgetLevel', value)}
+                    >
                       <SelectTrigger id="budgetLevel">
                         <SelectValue placeholder="Select budget" />
                       </SelectTrigger>
@@ -272,7 +308,9 @@ export default function OnboardingPage() {
                     </Select>
                   </div>
                   <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="timeAvailable">Time Available for Meal Prep (minutes/day)</Label>
+                    <Label htmlFor="timeAvailable">
+                      Time Available for Meal Prep (minutes/day)
+                    </Label>
                     <Input
                       id="timeAvailable"
                       type="number"
@@ -300,11 +338,7 @@ export default function OnboardingPage() {
               >
                 Back
               </Button>
-              <Button
-                type="button"
-                onClick={handleNext}
-                disabled={!canProceed() || loading}
-              >
+              <Button type="button" onClick={handleNext} disabled={!canProceed() || loading}>
                 {step === TOTAL_STEPS ? (loading ? 'Creating profile...' : 'Complete') : 'Next'}
               </Button>
             </div>
@@ -312,5 +346,5 @@ export default function OnboardingPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

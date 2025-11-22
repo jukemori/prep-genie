@@ -1,6 +1,8 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/atoms/ui/button'
+import { LogOut, Moon, Sun, User } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/atoms/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,16 +10,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/atoms/ui/dropdown-menu'
-import { Moon, Sun, User, LogOut } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import { logout } from '@/features/auth/api/actions'
+} from '@/components/atoms/ui/dropdown-menu';
+import { logout } from '@/features/auth/api/actions';
 
 export function AppHeader() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
   async function handleLogout() {
-    await logout()
+    await logout();
   }
 
   return (
@@ -58,5 +58,5 @@ export function AppHeader() {
         </DropdownMenu>
       </div>
     </header>
-  )
+  );
 }

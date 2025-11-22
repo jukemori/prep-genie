@@ -1,26 +1,25 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Button } from '@/components/atoms/ui/button'
-import { Progress } from '@/components/atoms/ui/progress'
-import Link from 'next/link'
+import { Apple, CalendarDays, Flame, Target, TrendingUp, UtensilsCrossed } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/atoms/ui/button';
 import {
-  UtensilsCrossed,
-  CalendarDays,
-  TrendingUp,
-  Target,
-  Flame,
-  Apple
-} from 'lucide-react'
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card';
+import { Progress } from '@/components/atoms/ui/progress';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return null
+    return null;
   }
 
   // Fetch user profile
@@ -28,44 +27,42 @@ export default async function DashboardPage() {
     .from('user_profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single();
 
   // Fetch recent meals count
   const { count: mealsCount } = await supabase
     .from('meals')
     .select('*', { count: 'only', head: true })
-    .eq('user_id', user.id)
+    .eq('user_id', user.id);
 
   // Fetch active meal plans count
   const { count: mealPlansCount } = await supabase
     .from('meal_plans')
     .select('*', { count: 'only', head: true })
-    .eq('user_id', user.id)
+    .eq('user_id', user.id);
 
   // Fetch today's progress (if exists)
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toISOString().split('T')[0];
   const { data: todayProgress } = await supabase
     .from('progress_logs')
     .select('*')
     .eq('user_id', user.id)
     .eq('log_date', today)
-    .single()
+    .single();
 
   const caloriesProgress = todayProgress
     ? (todayProgress.calories_consumed / (profile?.daily_calorie_target || 2000)) * 100
-    : 0
+    : 0;
 
   const proteinProgress = todayProgress
     ? (todayProgress.protein_consumed / (profile?.target_protein || 150)) * 100
-    : 0
+    : 0;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Welcome back!</h1>
-        <p className="text-muted-foreground">
-          Here's an overview of your nutrition journey
-        </p>
+        <p className="text-muted-foreground">Here's an overview of your nutrition journey</p>
       </div>
 
       {/* Quick Stats */}
@@ -103,9 +100,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mealsCount || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              recipes in your library
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">recipes in your library</p>
           </CardContent>
         </Card>
 
@@ -116,9 +111,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mealPlansCount || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              meal plans created
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">meal plans created</p>
           </CardContent>
         </Card>
       </div>
@@ -139,9 +132,7 @@ export default async function DashboardPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">TDEE</span>
-              <span className="text-sm text-muted-foreground">
-                {profile?.tdee} kcal
-              </span>
+              <span className="text-sm text-muted-foreground">{profile?.tdee} kcal</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Daily Target</span>
@@ -193,5 +184,5 @@ export default async function DashboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -1,35 +1,39 @@
-import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Plus, CalendarDays, Sparkles } from 'lucide-react'
-import Link from 'next/link'
+import { CalendarDays, Plus, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { Badge } from '@/components/atoms/ui/badge';
+import { Button } from '@/components/atoms/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function MealPlansPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return null
+    return null;
   }
 
   const { data: mealPlans } = await supabase
     .from('meal_plans')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Meal Plans</h1>
-          <p className="text-muted-foreground">
-            Manage your weekly meal planning
-          </p>
+          <p className="text-muted-foreground">Manage your weekly meal planning</p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">
@@ -121,5 +125,5 @@ export default async function MealPlansPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

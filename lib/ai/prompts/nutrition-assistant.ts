@@ -31,14 +31,14 @@ export const NUTRITION_ASSISTANT_SYSTEM_PROMPT = `You are PrepGenie's AI nutriti
 - Clear and easy to understand
 - Practical and actionable
 - Evidence-based when making claims
-- Respectful of user's goals and preferences`
+- Respectful of user's goals and preferences`;
 
 export function generateNutritionQuestionPrompt(
   question: string,
   userContext?: {
-    goal?: string
-    dietaryPreference?: string
-    allergies?: string[]
+    goal?: string;
+    dietaryPreference?: string;
+    allergies?: string[];
   }
 ) {
   const contextStr = userContext
@@ -48,11 +48,11 @@ export function generateNutritionQuestionPrompt(
 - Dietary Preference: ${userContext.dietaryPreference || 'Not specified'}
 - Allergies: ${userContext.allergies?.join(', ') || 'None'}
 `
-    : ''
+    : '';
 
   return `${contextStr}
 
 **Question:** ${question}
 
-Please provide a helpful, evidence-based answer that considers the user's context.`
+Please provide a helpful, evidence-based answer that considers the user's context.`;
 }

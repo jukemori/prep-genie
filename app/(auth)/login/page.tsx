@@ -1,26 +1,32 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { login } from '@/features/auth/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Input } from '@/components/atoms/ui/input'
-import { Label } from '@/components/atoms/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import Link from 'next/link'
+import Link from 'next/link';
+import { useState } from 'react';
+import { Button } from '@/components/atoms/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card';
+import { Input } from '@/components/atoms/ui/input';
+import { Label } from '@/components/atoms/ui/label';
+import { login } from '@/features/auth/api/actions';
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
-    const result = await login(formData)
+    const result = await login(formData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     }
   }
 
@@ -56,13 +62,7 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                disabled={loading}
-              />
+              <Input id="password" name="password" type="password" required disabled={loading} />
             </div>
 
             {error && (
@@ -85,5 +85,5 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

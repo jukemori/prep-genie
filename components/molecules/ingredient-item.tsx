@@ -1,19 +1,19 @@
-import { Checkbox } from '@/components/atoms/ui/checkbox'
-import { Badge } from '@/components/atoms/ui/badge'
+import { Badge } from '@/components/atoms/ui/badge';
+import { Checkbox } from '@/components/atoms/ui/checkbox';
 
 interface Ingredient {
-  name: string
-  quantity: number
-  unit: string
-  category?: string
+  name: string;
+  quantity: number;
+  unit: string;
+  category?: string;
 }
 
 interface IngredientItemProps {
-  ingredient: Ingredient
-  checked?: boolean
-  onCheckedChange?: (checked: boolean) => void
-  showCheckbox?: boolean
-  showCategory?: boolean
+  ingredient: Ingredient;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  showCheckbox?: boolean;
+  showCategory?: boolean;
 }
 
 export function IngredientItem({
@@ -42,5 +42,5 @@ export function IngredientItem({
         </p>
       </div>
     </div>
-  )
+  );
 }

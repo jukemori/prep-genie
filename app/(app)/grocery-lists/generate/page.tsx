@@ -1,43 +1,43 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { generateGroceryListFromMealPlan } from '@/features/grocery-lists/api/actions'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent } from '@/components/atoms/ui/card'
-import { Loader2, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/atoms/ui/button';
+import { Card, CardContent } from '@/components/atoms/ui/card';
+import { generateGroceryListFromMealPlan } from '@/features/grocery-lists/api/actions';
 
 export default function GenerateGroceryListPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const mealPlanId = searchParams.get('mealPlanId')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const mealPlanId = searchParams.get('mealPlanId');
 
-  const [generating, setGenerating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [_generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!mealPlanId) {
-      router.push('/meal-plans')
-      return
+      router.push('/meal-plans');
+      return;
     }
 
     async function generate() {
-      setGenerating(true)
-      setError(null)
+      setGenerating(true);
+      setError(null);
 
-      const result = await generateGroceryListFromMealPlan(mealPlanId)
+      const result = await generateGroceryListFromMealPlan(mealPlanId);
 
       if (result.error) {
-        setError(result.error)
-        setGenerating(false)
+        setError(result.error);
+        setGenerating(false);
       } else if (result.data) {
-        router.push(`/grocery-lists/${result.data.id}`)
+        router.push(`/grocery-lists/${result.data.id}`);
       }
     }
 
-    generate()
-  }, [mealPlanId, router])
+    generate();
+  }, [mealPlanId, router]);
 
   if (error) {
     return (
@@ -58,7 +58,7 @@ export default function GenerateGroceryListPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -73,5 +73,5 @@ export default function GenerateGroceryListPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

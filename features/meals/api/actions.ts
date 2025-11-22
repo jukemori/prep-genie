@@ -1,76 +1,76 @@
-'use server'
+'use server';
 
-import { createClient } from '@/lib/supabase/server'
-import { mealSchema } from '@/lib/validations/meal.schema'
-import { revalidatePath } from 'next/cache'
-import type { MealInsert, MealUpdate } from '@/types'
+import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase/server';
+import { mealSchema } from '@/lib/validations/meal.schema';
+import type { MealInsert, MealUpdate } from '@/types';
 
 export async function getMeals() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   const { data, error } = await supabase
     .from('meals')
     .select('*')
     .or(`user_id.eq.${user.id},is_public.eq.true`)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  return { data }
+  return { data };
 }
 
 export async function getMeal(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
-  const { data, error } = await supabase.from('meals').select('*').eq('id', id).single()
+  const { data, error } = await supabase.from('meals').select('*').eq('id', id).single();
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
   // Check if user has access (own meal or public)
   if (data.user_id !== user.id && !data.is_public) {
-    return { error: 'Not authorized' }
+    return { error: 'Not authorized' };
   }
 
-  return { data }
+  return { data };
 }
 
 export async function createMeal(formData: FormData) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   // Parse JSON fields
-  const ingredients = JSON.parse(formData.get('ingredients') as string)
-  const instructions = JSON.parse(formData.get('instructions') as string)
+  const ingredients = JSON.parse(formData.get('ingredients') as string);
+  const instructions = JSON.parse(formData.get('instructions') as string);
   const tags = formData.get('tags')
     ? (formData.get('tags') as string).split(',').map((t) => t.trim())
-    : []
+    : [];
 
   const rawData = {
     name: formData.get('name') as string,
@@ -98,15 +98,15 @@ export async function createMeal(formData: FormData) {
     difficultyLevel: formData.get('difficultyLevel') as string,
     isPublic: formData.get('isPublic') === 'true',
     imageUrl: formData.get('imageUrl') as string,
-  }
+  };
 
   // Validate
-  const validation = mealSchema.safeParse(rawData)
+  const validation = mealSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message }
+    return { error: validation.error.errors[0].message };
   }
 
-  const validated = validation.data
+  const validated = validation.data;
 
   // Prepare insert data
   const mealData: MealInsert = {
@@ -129,42 +129,42 @@ export async function createMeal(formData: FormData) {
     is_public: validated.isPublic,
     is_ai_generated: false,
     image_url: validated.imageUrl || null,
-  }
+  };
 
-  const { data, error } = await supabase.from('meals').insert(mealData).select().single()
+  const { data, error } = await supabase.from('meals').insert(mealData).select().single();
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  revalidatePath('/meals')
-  return { data }
+  revalidatePath('/meals');
+  return { data };
 }
 
 export async function updateMeal(id: string, formData: FormData) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   // Verify ownership
-  const { data: existing } = await supabase.from('meals').select('user_id').eq('id', id).single()
+  const { data: existing } = await supabase.from('meals').select('user_id').eq('id', id).single();
 
   if (!existing || existing.user_id !== user.id) {
-    return { error: 'Not authorized' }
+    return { error: 'Not authorized' };
   }
 
   // Parse JSON fields
-  const ingredients = JSON.parse(formData.get('ingredients') as string)
-  const instructions = JSON.parse(formData.get('instructions') as string)
+  const ingredients = JSON.parse(formData.get('ingredients') as string);
+  const instructions = JSON.parse(formData.get('instructions') as string);
   const tags = formData.get('tags')
     ? (formData.get('tags') as string).split(',').map((t) => t.trim())
-    : []
+    : [];
 
   const rawData = {
     name: formData.get('name') as string,
@@ -192,15 +192,15 @@ export async function updateMeal(id: string, formData: FormData) {
     difficultyLevel: formData.get('difficultyLevel') as string,
     isPublic: formData.get('isPublic') === 'true',
     imageUrl: formData.get('imageUrl') as string,
-  }
+  };
 
   // Validate
-  const validation = mealSchema.safeParse(rawData)
+  const validation = mealSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message }
+    return { error: validation.error.errors[0].message };
   }
 
-  const validated = validation.data
+  const validated = validation.data;
 
   // Prepare update data
   const updateData: MealUpdate = {
@@ -221,43 +221,48 @@ export async function updateMeal(id: string, formData: FormData) {
     difficulty_level: validated.difficultyLevel || null,
     is_public: validated.isPublic,
     image_url: validated.imageUrl || null,
-  }
+  };
 
-  const { data, error } = await supabase.from('meals').update(updateData).eq('id', id).select().single()
+  const { data, error } = await supabase
+    .from('meals')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  revalidatePath('/meals')
-  revalidatePath(`/meals/${id}`)
-  return { data }
+  revalidatePath('/meals');
+  revalidatePath(`/meals/${id}`);
+  return { data };
 }
 
 export async function deleteMeal(id: string) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   // Verify ownership
-  const { data: existing } = await supabase.from('meals').select('user_id').eq('id', id).single()
+  const { data: existing } = await supabase.from('meals').select('user_id').eq('id', id).single();
 
   if (!existing || existing.user_id !== user.id) {
-    return { error: 'Not authorized' }
+    return { error: 'Not authorized' };
   }
 
-  const { error } = await supabase.from('meals').delete().eq('id', id)
+  const { error } = await supabase.from('meals').delete().eq('id', id);
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  revalidatePath('/meals')
-  return { success: true }
+  revalidatePath('/meals');
+  return { success: true };
 }

@@ -4,6 +4,7 @@ import './globals.css';
 import { QueryProvider } from '@/components/providers/query-provider';
 
 import { ThemeProvider } from '@/components/providers/theme-provider';
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],

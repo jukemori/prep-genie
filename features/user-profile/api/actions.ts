@@ -1,46 +1,46 @@
-'use server'
+'use server';
 
-import { createClient } from '@/lib/supabase/server'
-import { userProfileSchema } from '@/lib/validations/user-profile.schema'
-import { calculateTDEE } from '@/lib/nutrition/tdee'
-import { calculateMacros } from '@/lib/nutrition/macros'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import type { UserProfileInsert, UserProfileUpdate } from '@/types'
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { calculateMacros } from '@/lib/nutrition/macros';
+import { calculateTDEE } from '@/lib/nutrition/tdee';
+import { createClient } from '@/lib/supabase/server';
+import { userProfileSchema } from '@/lib/validations/user-profile.schema';
+import type { UserProfileInsert, UserProfileUpdate } from '@/types';
 
 export async function getUserProfile() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   const { data, error } = await supabase
     .from('user_profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single();
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  return { data }
+  return { data };
 }
 
 export async function createUserProfile(formData: FormData) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   // Parse form data
@@ -57,18 +57,16 @@ export async function createUserProfile(formData: FormData) {
       : [],
     budgetLevel: formData.get('budgetLevel') as string,
     cookingSkillLevel: formData.get('cookingSkillLevel') as string,
-    timeAvailable: formData.get('timeAvailable')
-      ? Number(formData.get('timeAvailable'))
-      : null,
-  }
+    timeAvailable: formData.get('timeAvailable') ? Number(formData.get('timeAvailable')) : null,
+  };
 
   // Validate
-  const validation = userProfileSchema.safeParse(rawData)
+  const validation = userProfileSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message }
+    return { error: validation.error.errors[0].message };
   }
 
-  const validated = validation.data
+  const validated = validation.data;
 
   // Calculate TDEE
   const tdee = calculateTDEE({
@@ -82,14 +80,14 @@ export async function createUserProfile(formData: FormData) {
       | 'moderate'
       | 'active'
       | 'very_active',
-  })
+  });
 
   // Calculate macros
   const macros = calculateMacros({
     tdee,
     goal: validated.goal as 'weight_loss' | 'maintain' | 'muscle_gain' | 'balanced',
     weight: validated.weight,
-  })
+  });
 
   // Prepare insert data
   const profileData: UserProfileInsert = {
@@ -110,27 +108,27 @@ export async function createUserProfile(formData: FormData) {
     target_protein: macros.protein,
     target_carbs: macros.carbs,
     target_fats: macros.fats,
-  }
+  };
 
-  const { error } = await supabase.from('user_profiles').insert(profileData)
+  const { error } = await supabase.from('user_profiles').insert(profileData);
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  revalidatePath('/', 'layout');
+  redirect('/dashboard');
 }
 
 export async function updateUserProfile(formData: FormData) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' }
+    return { error: 'Not authenticated' };
   }
 
   // Parse form data
@@ -147,18 +145,16 @@ export async function updateUserProfile(formData: FormData) {
       : [],
     budgetLevel: formData.get('budgetLevel') as string,
     cookingSkillLevel: formData.get('cookingSkillLevel') as string,
-    timeAvailable: formData.get('timeAvailable')
-      ? Number(formData.get('timeAvailable'))
-      : null,
-  }
+    timeAvailable: formData.get('timeAvailable') ? Number(formData.get('timeAvailable')) : null,
+  };
 
   // Validate
-  const validation = userProfileSchema.safeParse(rawData)
+  const validation = userProfileSchema.safeParse(rawData);
   if (!validation.success) {
-    return { error: validation.error.errors[0].message }
+    return { error: validation.error.errors[0].message };
   }
 
-  const validated = validation.data
+  const validated = validation.data;
 
   // Recalculate TDEE and macros
   const tdee = calculateTDEE({
@@ -172,13 +168,13 @@ export async function updateUserProfile(formData: FormData) {
       | 'moderate'
       | 'active'
       | 'very_active',
-  })
+  });
 
   const macros = calculateMacros({
     tdee,
     goal: validated.goal as 'weight_loss' | 'maintain' | 'muscle_gain' | 'balanced',
     weight: validated.weight,
-  })
+  });
 
   // Prepare update data
   const updateData: UserProfileUpdate = {
@@ -198,14 +194,14 @@ export async function updateUserProfile(formData: FormData) {
     target_protein: macros.protein,
     target_carbs: macros.carbs,
     target_fats: macros.fats,
-  }
+  };
 
-  const { error } = await supabase.from('user_profiles').update(updateData).eq('id', user.id)
+  const { error } = await supabase.from('user_profiles').update(updateData).eq('id', user.id);
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  revalidatePath('/settings')
-  return { success: true }
+  revalidatePath('/settings');
+  return { success: true };
 }
