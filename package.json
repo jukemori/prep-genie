@@ -11,7 +11,14 @@
     "format": "biome format --write --css-parse-tailwind-directives=true .",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "type-check": "tsc --noEmit",
+    "check": "pnpm run type-check && pnpm run lint && pnpm run test",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:types": "supabase gen types typescript --local > types/database.ts",
+    "supabase:migration": "supabase migration new"
   },
   "dependencies": {
     "@ai-sdk/rsc": "^1.0.100",
