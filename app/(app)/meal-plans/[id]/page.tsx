@@ -53,10 +53,12 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
   const groupedByDay = items?.reduce(
     (acc: Record<number, MealPlanItemWithMeal[]>, item: MealPlanItemWithMeal) => {
       const day = item.day_of_week;
-      if (!acc[day]) {
-        acc[day] = [];
+      if (day !== null) {
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(item);
       }
-      acc[day].push(item);
       return acc;
     },
     {}
@@ -129,10 +131,10 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
           .map((day: string) => (
             <Card key={day}>
               <CardHeader>
-                <CardTitle>{dayNames[day]}</CardTitle>
+                <CardTitle>{dayNames[Number(day)]}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {groupedByDay[day].map((item: MealPlanItemWithMeal) => (
+                {groupedByDay[Number(day)].map((item: MealPlanItemWithMeal) => (
                   <div key={item.id} className="flex items-start gap-3 rounded-lg border p-4">
                     <Checkbox />
                     <div className="flex-1">

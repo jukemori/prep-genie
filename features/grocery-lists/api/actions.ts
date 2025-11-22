@@ -91,7 +91,9 @@ export async function generateGroceryListFromMealPlan(mealPlanId: string) {
         const key = `${ingredient.name}-${ingredient.unit}`.toLowerCase();
         if (ingredientMap.has(key)) {
           const existing = ingredientMap.get(key);
-          existing.quantity += ingredient.quantity * (item.servings || 1);
+          if (existing) {
+            existing.quantity += ingredient.quantity * (item.servings || 1);
+          }
         } else {
           ingredientMap.set(key, {
             name: ingredient.name,

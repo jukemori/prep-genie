@@ -26,7 +26,7 @@ export default function GenerateGroceryListPage() {
       setGenerating(true);
       setError(null);
 
-      const result = await generateGroceryListFromMealPlan(mealPlanId);
+      const result = await generateGroceryListFromMealPlan(mealPlanId || '');
 
       if (result.error) {
         setError(result.error);
