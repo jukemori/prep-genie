@@ -1,6 +1,7 @@
 'use server';
 
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from '@ai-sdk/rsc';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { openai } from '@/lib/ai/openai';
 import {
   generateNutritionQuestionPrompt,
@@ -42,12 +43,17 @@ export async function chatWithNutritionAssistant(
 
     const userPrompt = generateNutritionQuestionPrompt(question, userContext);
 
-    const messages: Array<{ role: string; content: string }> = [
+    const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: NUTRITION_ASSISTANT_SYSTEM_PROMPT },
     ];
 
     if (conversationHistory && conversationHistory.length > 0) {
-      messages.push(...conversationHistory);
+      messages.push(
+        ...conversationHistory.map((msg) => ({
+          role: msg.role as 'user' | 'assistant' | 'system',
+          content: msg.content,
+        }))
+      );
     }
 
     messages.push({ role: 'user', content: userPrompt });

@@ -1,6 +1,6 @@
 'use server';
 
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from '@ai-sdk/rsc';
 import { revalidatePath } from 'next/cache';
 import { openai } from '@/lib/ai/openai';
 import { generateMealPlanPrompt } from '@/lib/ai/prompts/meal-plan-generator';

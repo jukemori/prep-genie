@@ -1,6 +1,6 @@
 'use client';
 
-import { readStreamableValue } from 'ai/rsc';
+import { readStreamableValue } from '@ai-sdk/rsc';
 import { Bot, Send, Sparkles, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/atoms/ui/button';

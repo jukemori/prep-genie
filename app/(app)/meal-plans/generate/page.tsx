@@ -22,7 +22,7 @@ interface GeneratedMeal {
   };
 }
 
-import { readStreamableValue } from 'ai/rsc';
+import { readStreamableValue } from '@ai-sdk/rsc';
 
 export default function GenerateMealPlanPage() {
   const router = useRouter();
