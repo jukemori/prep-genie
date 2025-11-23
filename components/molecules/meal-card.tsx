@@ -1,6 +1,9 @@
+'use client'
+
 import { Clock, Flame, Users } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/atoms/ui/card'
@@ -12,6 +15,7 @@ interface MealCardProps {
 }
 
 export function MealCard({ meal, showActions = true }: MealCardProps) {
+  const t = useTranslations()
   const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0)
 
   return (
@@ -26,7 +30,7 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
           <h3 className="line-clamp-1 text-lg font-semibold">{meal.name}</h3>
           {meal.difficulty_level && (
             <Badge variant="outline" className="capitalize">
-              {meal.difficulty_level}
+              {t(`difficulty.${meal.difficulty_level}`)}
             </Badge>
           )}
         </div>
@@ -43,19 +47,19 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
               <Flame className="h-3 w-3 text-orange-500" />
               <span className="text-xs font-medium">{meal.calories_per_serving || 0}</span>
             </div>
-            <p className="text-xs text-muted-foreground">cal</p>
+            <p className="text-xs text-muted-foreground">{t('nutrition.cal')}</p>
           </div>
           <div className="text-center">
             <p className="text-xs font-medium">{meal.protein_per_serving || 0}g</p>
-            <p className="text-xs text-muted-foreground">protein</p>
+            <p className="text-xs text-muted-foreground">{t('nutrition.protein')}</p>
           </div>
           <div className="text-center">
             <p className="text-xs font-medium">{meal.carbs_per_serving || 0}g</p>
-            <p className="text-xs text-muted-foreground">carbs</p>
+            <p className="text-xs text-muted-foreground">{t('nutrition.carbs')}</p>
           </div>
           <div className="text-center">
             <p className="text-xs font-medium">{meal.fats_per_serving || 0}g</p>
-            <p className="text-xs text-muted-foreground">fats</p>
+            <p className="text-xs text-muted-foreground">{t('nutrition.fats')}</p>
           </div>
         </div>
 
@@ -64,13 +68,17 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
           {totalTime > 0 && (
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>{totalTime} min</span>
+              <span>
+                {totalTime} {t('time.min')}
+              </span>
             </div>
           )}
           {meal.servings && (
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              <span>{meal.servings} servings</span>
+              <span>
+                {meal.servings} {t('units.servings')}
+              </span>
             </div>
           )}
         </div>
@@ -95,7 +103,7 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
       {showActions && (
         <CardFooter>
           <Button asChild className="w-full">
-            <Link href={`/meals/${meal.id}`}>View Recipe</Link>
+            <Link href={`/meals/${meal.id}`}>{t('meals.view_recipe')}</Link>
           </Button>
         </CardFooter>
       )}

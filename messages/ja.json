@@ -12,7 +12,23 @@
     "next": "次へ",
     "finish": "完了",
     "confirm": "確認",
-    "close": "閉じる"
+    "close": "閉じる",
+    "view": "表示",
+    "create": "作成",
+    "update": "更新",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並び替え"
+  },
+  "time": {
+    "min": "分",
+    "mins": "分",
+    "hour": "時間",
+    "hours": "時間",
+    "day": "日",
+    "days": "日",
+    "week": "週",
+    "weeks": "週"
   },
   "units": {
     "weight": "体重",
@@ -23,17 +39,22 @@
     "cups": "カップ",
     "ml": "mL",
     "tablespoon": "大さじ",
-    "teaspoon": "小さじ"
+    "teaspoon": "小さじ",
+    "serving": "人前",
+    "servings": "人前"
   },
   "nutrition": {
     "calories": "カロリー",
+    "cal": "kcal",
     "protein": "タンパク質",
     "carbs": "炭水化物",
     "fats": "脂質",
     "daily_target": "1日の目標",
     "macros": "マクロ栄養素",
     "tdee": "総エネルギー消費量",
-    "nutrition_goals": "栄養目標"
+    "nutrition_goals": "栄養目標",
+    "per_serving": "1人前あたり",
+    "total": "合計"
   },
   "meals": {
     "breakfast": "朝食",
@@ -46,7 +67,25 @@
     "saved_meals": "お気に入りの食事",
     "meal_plans": "食事プラン",
     "create_meal": "食事を作成",
-    "edit_meal": "食事を編集"
+    "edit_meal": "食事を編集",
+    "view_recipe": "レシピを表示",
+    "view_details": "詳細を表示",
+    "ingredients": "材料",
+    "instructions": "作り方",
+    "prep_time": "下準備時間",
+    "cook_time": "調理時間",
+    "total_time": "合計時間",
+    "difficulty": "難易度",
+    "cuisine_type": "料理の種類",
+    "meal_type": "食事の種類"
+  },
+  "difficulty": {
+    "easy": "簡単",
+    "medium": "普通",
+    "hard": "難しい",
+    "beginner": "初心者",
+    "intermediate": "中級者",
+    "advanced": "上級者"
   },
   "settings": {
     "settings": "設定",
@@ -81,5 +120,15 @@
     "shopping_cart": "カート",
     "purchased": "購入済み",
     "total_items": "合計アイテム数"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "meals": "食事",
+    "meal_plans": "食事プラン",
+    "grocery_lists": "買い物リスト",
+    "progress": "進捗",
+    "chat": "AIアシスタント",
+    "settings": "設定",
+    "analyze": "レシピ分析"
   }
 }

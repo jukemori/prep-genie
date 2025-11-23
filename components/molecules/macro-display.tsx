@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/atoms/ui/card'
 import { Progress } from '@/components/atoms/ui/progress'
 
@@ -20,6 +23,7 @@ export function MacroDisplay({
   targetFats,
   showProgress = false,
 }: MacroDisplayProps) {
+  const t = useTranslations('nutrition')
   const proteinPercent = targetProtein ? (protein / targetProtein) * 100 : 0
   const carbsPercent = targetCarbs ? (carbs / targetCarbs) * 100 : 0
   const fatsPercent = targetFats ? (fats / targetFats) * 100 : 0
@@ -30,7 +34,7 @@ export function MacroDisplay({
         {/* Protein */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Protein</span>
+            <span className="text-sm font-medium">{t('protein')}</span>
             <span className="text-sm text-muted-foreground">
               {protein}g {targetProtein && `/ ${targetProtein}g`}
             </span>
@@ -41,7 +45,7 @@ export function MacroDisplay({
         {/* Carbs */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Carbs</span>
+            <span className="text-sm font-medium">{t('carbs')}</span>
             <span className="text-sm text-muted-foreground">
               {carbs}g {targetCarbs && `/ ${targetCarbs}g`}
             </span>
@@ -52,7 +56,7 @@ export function MacroDisplay({
         {/* Fats */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Fats</span>
+            <span className="text-sm font-medium">{t('fats')}</span>
             <span className="text-sm text-muted-foreground">
               {fats}g {targetFats && `/ ${targetFats}g`}
             </span>

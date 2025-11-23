@@ -12,7 +12,23 @@
     "next": "Next",
     "finish": "Finish",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "view": "View",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort"
+  },
+  "time": {
+    "min": "min",
+    "mins": "mins",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days",
+    "week": "week",
+    "weeks": "weeks"
   },
   "units": {
     "weight": "Weight",
@@ -26,17 +42,22 @@
     "cups": "cups",
     "ml": "mL",
     "tablespoon": "tbsp",
-    "teaspoon": "tsp"
+    "teaspoon": "tsp",
+    "serving": "serving",
+    "servings": "servings"
   },
   "nutrition": {
     "calories": "Calories",
+    "cal": "cal",
     "protein": "Protein",
     "carbs": "Carbs",
     "fats": "Fats",
     "daily_target": "Daily Target",
     "macros": "Macros",
     "tdee": "TDEE",
-    "nutrition_goals": "Nutrition Goals"
+    "nutrition_goals": "Nutrition Goals",
+    "per_serving": "per serving",
+    "total": "Total"
   },
   "meals": {
     "breakfast": "Breakfast",
@@ -49,7 +70,25 @@
     "saved_meals": "Saved Meals",
     "meal_plans": "Meal Plans",
     "create_meal": "Create Meal",
-    "edit_meal": "Edit Meal"
+    "edit_meal": "Edit Meal",
+    "view_recipe": "View Recipe",
+    "view_details": "View Details",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "prep_time": "Prep Time",
+    "cook_time": "Cook Time",
+    "total_time": "Total Time",
+    "difficulty": "Difficulty",
+    "cuisine_type": "Cuisine Type",
+    "meal_type": "Meal Type"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
   },
   "settings": {
     "settings": "Settings",
@@ -85,5 +124,15 @@
     "shopping_cart": "Shopping Cart",
     "purchased": "Purchased",
     "total_items": "Total Items"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "meals": "Meals",
+    "meal_plans": "Meal Plans",
+    "grocery_lists": "Grocery Lists",
+    "progress": "Progress",
+    "chat": "AI Assistant",
+    "settings": "Settings",
+    "analyze": "Recipe Analyzer"
   }
 }
