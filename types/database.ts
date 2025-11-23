@@ -367,17 +367,20 @@ export type Database = {
           budget_level: string | null
           cooking_skill_level: string | null
           created_at: string | null
+          currency: string | null
           daily_calorie_target: number | null
           dietary_preference: string | null
           gender: string | null
           goal: string | null
           height: number | null
           id: string
+          locale: string | null
           target_carbs: number | null
           target_fats: number | null
           target_protein: number | null
           tdee: number | null
           time_available: number | null
+          unit_system: string | null
           updated_at: string | null
           weight: number | null
         }
@@ -388,17 +391,20 @@ export type Database = {
           budget_level?: string | null
           cooking_skill_level?: string | null
           created_at?: string | null
+          currency?: string | null
           daily_calorie_target?: number | null
           dietary_preference?: string | null
           gender?: string | null
           goal?: string | null
           height?: number | null
           id: string
+          locale?: string | null
           target_carbs?: number | null
           target_fats?: number | null
           target_protein?: number | null
           tdee?: number | null
           time_available?: number | null
+          unit_system?: string | null
           updated_at?: string | null
           weight?: number | null
         }
@@ -409,17 +415,20 @@ export type Database = {
           budget_level?: string | null
           cooking_skill_level?: string | null
           created_at?: string | null
+          currency?: string | null
           daily_calorie_target?: number | null
           dietary_preference?: string | null
           gender?: string | null
           goal?: string | null
           height?: number | null
           id?: string
+          locale?: string | null
           target_carbs?: number | null
           target_fats?: number | null
           target_protein?: number | null
           tdee?: number | null
           time_available?: number | null
+          unit_system?: string | null
           updated_at?: string | null
           weight?: number | null
         }
