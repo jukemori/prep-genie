@@ -1,17 +1,15 @@
+import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Button } from '@/components/atoms/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { MealPlanItemCard } from '@/features/meal-plans/components/meal-plan-item-card'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal, MealPlanItem } from '@/types'
 
 interface MealPlanItemWithMeal extends MealPlanItem {
   meals: Meal
 }
-
-import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Checkbox } from '@/components/atoms/ui/checkbox'
 
 interface PageProps {
   params: Promise<{
@@ -135,33 +133,7 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
               </CardHeader>
               <CardContent className="space-y-3">
                 {groupedByDay[Number(day)].map((item: MealPlanItemWithMeal) => (
-                  <div key={item.id} className="flex items-start gap-3 rounded-lg border p-4">
-                    <Checkbox />
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-start justify-between gap-2">
-                        <div>
-                          <Link
-                            href={`/meals/${item.meal_id}`}
-                            className="font-semibold hover:underline"
-                          >
-                            {item.meals.name}
-                          </Link>
-                          {item.meals.description && (
-                            <p className="text-sm text-muted-foreground">
-                              {item.meals.description}
-                            </p>
-                          )}
-                        </div>
-                        <Badge className="capitalize">{item.meal_time}</Badge>
-                      </div>
-                      <div className="flex gap-4 text-sm text-muted-foreground">
-                        <span>{item.meals.calories_per_serving || 0} cal</span>
-                        <span>{item.meals.protein_per_serving || 0}g protein</span>
-                        <span>{item.meals.carbs_per_serving || 0}g carbs</span>
-                        <span>{item.meals.fats_per_serving || 0}g fats</span>
-                      </div>
-                    </div>
-                  </div>
+                  <MealPlanItemCard key={item.id} item={item} mealPlanId={id} />
                 ))}
               </CardContent>
             </Card>

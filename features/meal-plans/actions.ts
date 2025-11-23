@@ -249,6 +249,31 @@ export async function deleteMealPlan(id: string) {
   return { success: true }
 }
 
+export async function toggleMealCompleted(mealPlanItemId: string, isCompleted: boolean) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const { data, error } = await supabase
+    .from('meal_plan_items')
+    .update({ is_completed: isCompleted })
+    .eq('id', mealPlanItemId)
+    .select()
+    .single()
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  return { data }
+}
+
 type SwapType = 'budget' | 'speed' | 'dietary' | 'macro'
 type DietaryRestriction = 'dairy_free' | 'gluten_free' | 'vegan' | 'low_fodmap'
 type MacroGoal = 'high_protein' | 'low_carb' | 'low_fat'
@@ -314,8 +339,7 @@ export async function swapMeal(input: SwapMealInput) {
         timeAvailable: profile.time_available || 60,
         budgetLevel: profile.budget_level || 'medium',
       },
-      // TODO: Get locale from user profile once locale field is added to database
-      locale: 'en' as 'en' | 'ja',
+      locale: (profile.locale || 'en') as 'en' | 'ja',
     }
 
     // Import swap prompts
