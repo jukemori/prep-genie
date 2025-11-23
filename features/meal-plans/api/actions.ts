@@ -68,7 +68,7 @@ export async function getMealPlan(id: string) {
   return { data: { ...mealPlan, items } }
 }
 
-export async function generateAIMealPlan() {
+export async function generateAIMealPlan(cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal') {
   const supabase = await createClient()
 
   const {
@@ -93,7 +93,8 @@ export async function generateAIMealPlan() {
   const stream = createStreamableValue('')
 
   ;(async () => {
-    const prompt = generateMealPlanPrompt(profile)
+    const locale = (profile.locale || 'en') as 'en' | 'ja'
+    const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-5-nano',

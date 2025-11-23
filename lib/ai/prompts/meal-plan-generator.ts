@@ -1,5 +1,7 @@
 import type { UserProfile } from '@/types'
 
+import { getCuisineGuidance, type CuisineType } from './cultural-cuisine-guidelines'
+
 export const MEAL_PLAN_GENERATOR_SYSTEM_PROMPT = `You are PrepGenie's AI meal plan generator, an expert in creating personalized, balanced meal plans that meet specific nutritional goals.
 
 **Nutritional Accuracy:**
@@ -11,7 +13,11 @@ export const MEAL_PLAN_GENERATOR_SYSTEM_PROMPT = `You are PrepGenie's AI meal pl
 **Response Format:**
 Return ONLY valid JSON following the exact structure specified. No markdown, no explanations.`
 
-export function generateMealPlanPrompt(profile: UserProfile, locale: 'en' | 'ja' = 'en') {
+export function generateMealPlanPrompt(
+  profile: UserProfile,
+  locale: 'en' | 'ja' = 'en',
+  cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
+) {
   const isJapanese = locale === 'ja'
   
   const localeInstructions = isJapanese
@@ -29,6 +35,11 @@ export function generateMealPlanPrompt(profile: UserProfile, locale: 'en' | 'ja'
 - Temperature: Celsius (°C)
 - Currency: $ (USD)
 `
+
+  // Add cuisine-specific guidance if cuisineType is specified
+  const cuisineGuidance = cuisineType
+    ? `\n${getCuisineGuidance(cuisineType)}\n\n**IMPORTANT:** All meals MUST follow the ${cuisineType} cuisine guidelines above. Use authentic ingredients, cooking methods, and meal structures specific to this cuisine.\n`
+    : ''
 
   return `Generate a personalized meal plan based on the following user profile:
 
@@ -52,7 +63,7 @@ export function generateMealPlanPrompt(profile: UserProfile, locale: 'en' | 'ja'
 - Fats: ${profile.target_fats}g
 
 ${localeInstructions}
-
+${cuisineGuidance}
 **Requirements:**
 1. Generate a complete weekly meal plan (7 days)
 2. Include 3 main meals per day (breakfast, lunch, dinner)
@@ -67,7 +78,7 @@ ${localeInstructions}
    - Meal prep information (storage, reheating, batch cooking recommendations)
 4. Ensure meals align with dietary preferences and avoid allergens
 5. Consider cooking skill level and time constraints
-6. Vary cuisine types for diversity
+6. ${cuisineType ? `Focus exclusively on ${cuisineType} cuisine with authentic recipes` : 'Vary cuisine types for diversity'}
 7. Optimize for batch cooking where possible (mark meal_prep_friendly: true for suitable meals)
 8. For meal prep friendly meals, provide:
    - Clear storage instructions

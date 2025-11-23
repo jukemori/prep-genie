@@ -5,6 +5,7 @@ import { Input } from '@/components/atoms/ui/input'
 import { MealCard } from '@/components/molecules/meal-card'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal } from '@/types'
+import { MealFilters } from '@/features/meals/components/meal-filters'
 
 interface PageProps {
   searchParams: Promise<{
@@ -64,17 +65,11 @@ export default async function MealsPage({ searchParams }: PageProps) {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search meals..."
-            className="pl-9"
-            defaultValue={params.search}
-            name="search"
-          />
-        </div>
-      </div>
+      <MealFilters
+        defaultSearch={params.search}
+        defaultCuisine={params.cuisine}
+        defaultMealType={params.mealType}
+      />
 
       {/* Meals Grid */}
       {meals && meals.length > 0 ? (

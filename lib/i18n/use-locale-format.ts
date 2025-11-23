@@ -21,7 +21,7 @@ export function useLocaleFormat() {
     /**
      * Format dates with locale-specific formatting
      */
-    date: (date: Date, options?: Intl.DateTimeFormatOptions) => format.dateTime(date, options),
+    date: (date: Date) => format.dateTime(date),
 
     /**
      * Format weight with appropriate unit

@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/
 import { Progress } from '@/components/atoms/ui/progress'
 import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions'
 
+import { CuisineSelector } from '@/features/meal-plans/components/cuisine-selector'
+
 interface GeneratedMeal {
   name: string
   description: string
@@ -31,6 +33,9 @@ export default function GenerateMealPlanPage() {
   const [saving, setSaving] = useState(false)
   const [generatedPlan, setGeneratedPlan] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
+  const [selectedCuisine, setSelectedCuisine] = useState<
+    'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal' | undefined
+  >(undefined)
 
   async function handleGenerate() {
     setLoading(true)
@@ -39,7 +44,7 @@ export default function GenerateMealPlanPage() {
     setGeneratedPlan('')
 
     try {
-      const { stream } = await generateAIMealPlan()
+      const { stream } = await generateAIMealPlan(selectedCuisine)
       let fullContent = ''
 
       for await (const chunk of readStreamableValue(stream)) {
@@ -128,6 +133,19 @@ export default function GenerateMealPlanPage() {
                 <span>Budget and ingredient preferences</span>
               </li>
             </ul>
+
+            {/* Cuisine Type Selector */}
+            <div className="space-y-2 border-t pt-4">
+              <label htmlFor="cuisine" className="text-sm font-medium">
+                Cuisine Type (Optional)
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Select a specific cuisine for authentic cultural recipes, or leave unselected for
+                variety
+              </p>
+              <CuisineSelector value={selectedCuisine} onValueChange={setSelectedCuisine} />
+            </div>
+
             <Button onClick={handleGenerate} className="w-full">
               <Sparkles className="mr-2 h-4 w-4" />
               Generate Meal Plan
@@ -141,7 +159,11 @@ export default function GenerateMealPlanPage() {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
             <h3 className="mb-2 text-lg font-semibold">Generating Your Meal Plan</h3>
-            <p className="text-sm text-muted-foreground">This may take a minute...</p>
+            <p className="text-sm text-muted-foreground">
+              {selectedCuisine
+                ? `Creating ${selectedCuisine} cuisine meals...`
+                : 'This may take a minute...'}
+            </p>
             {generating && (
               <div className="mt-4 w-full max-w-md">
                 <Progress value={undefined} className="h-2" />
