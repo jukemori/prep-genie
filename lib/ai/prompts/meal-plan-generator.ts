@@ -11,7 +11,25 @@ export const MEAL_PLAN_GENERATOR_SYSTEM_PROMPT = `You are PrepGenie's AI meal pl
 **Response Format:**
 Return ONLY valid JSON following the exact structure specified. No markdown, no explanations.`
 
-export function generateMealPlanPrompt(profile: UserProfile) {
+export function generateMealPlanPrompt(profile: UserProfile, locale: 'en' | 'ja' = 'en') {
+  const isJapanese = locale === 'ja'
+  
+  const localeInstructions = isJapanese
+    ? `**日本語対応:**
+- すべての応答を日本語で生成してください
+- カップ: 200mL（米国の240mLではありません）
+- 重量: kg、g
+- 温度: 摂氏（℃）
+- 通貨: ¥（円）
+`
+    : `**English Language:**
+- Generate all responses in English
+- Cups: 240mL (US standard)
+- Weight: kg, g (metric standard)
+- Temperature: Celsius (°C)
+- Currency: $ (USD)
+`
+
   return `Generate a personalized meal plan based on the following user profile:
 
 **User Profile:**
@@ -32,6 +50,8 @@ export function generateMealPlanPrompt(profile: UserProfile) {
 - Protein: ${profile.target_protein}g
 - Carbs: ${profile.target_carbs}g
 - Fats: ${profile.target_fats}g
+
+${localeInstructions}
 
 **Requirements:**
 1. Generate a complete weekly meal plan (7 days)

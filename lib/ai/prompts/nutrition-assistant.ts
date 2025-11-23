@@ -35,12 +35,33 @@ export const NUTRITION_ASSISTANT_SYSTEM_PROMPT = `You are PrepGenie's AI nutriti
 
 export function generateNutritionQuestionPrompt(
   question: string,
+  locale: 'en' | 'ja' = 'en',
   userContext?: {
     goal?: string
     dietaryPreference?: string
     allergies?: string[]
   }
 ) {
+  const isJapanese = locale === 'ja'
+  
+  const localeInstructions = isJapanese
+    ? `
+**日本語対応:**
+- すべての応答を日本語で生成してください
+- カップ: 200mL（米国の240mLではありません）
+- 重量: kg、g
+- 温度: 摂氏（℃）
+- 通貨: ¥（円）
+`
+    : `
+**Language:**
+- Respond in English
+- Cups: 240mL (US standard)
+- Weight: kg, g (metric)
+- Temperature: Celsius (°C)
+- Currency: $ (USD)
+`
+
   const contextStr = userContext
     ? `
 **User Context:**
@@ -50,9 +71,9 @@ export function generateNutritionQuestionPrompt(
 `
     : ''
 
-  return `${contextStr}
+  return `${localeInstructions}${contextStr}
 
 **Question:** ${question}
 
-Please provide a helpful, evidence-based answer that considers the user's context.`
+Please provide a helpful, evidence-based answer that considers the user's context and language preference.`
 }
