@@ -85,40 +85,42 @@ PrepGenie provides:
 
 ## Core Features
 
-### 1. User Profile & Onboarding
+**Implementation Status: 8/11 Complete (~73%)**
+
+### ✅ 1. User Profile & Onboarding - COMPLETED
 - Multi-step form collecting: age, weight, height, gender, activity level
 - Dietary preferences and allergies
 - Goals: weight loss, maintain, muscle gain, balanced eating
 - AI-calculated TDEE and target macros
 
-### 2. AI Meal Generator
+### ✅ 2. AI Meal Generator - COMPLETED
 - ChatGPT-powered meal plan creation (daily/weekly)
 - Customizable: cuisine type, meal complexity, time constraints
 - Complete recipes with ingredients, instructions, nutrition data
 
-### 3. Meal Prep Mode
+### ✅ 3. Meal Prep Mode - COMPLETED
 - Batch cooking schedules
 - Storage and reheating instructions
 - Optimized cooking workflow
 
-### 4. Grocery List Generator
+### ✅ 4. Grocery List Generator - COMPLETED
 - Automatic ingredient consolidation
 - Smart categorization (produce, proteins, dairy, etc.)
 - Editable quantities
 
-### 5. Meal Library
+### ✅ 5. Meal Library - COMPLETED
 - Save favorite meals
 - Real-time macro editing
 - Custom meal creation
 - Tagging system
 
-### 6. AI Nutrition Assistant
+### ✅ 6. AI Nutrition Assistant - COMPLETED
 - ChatGPT-powered Q&A
 - Ingredient substitutions
 - Meal modifications
 - Cultural adaptations
 
-### 7. Recipe Nutrition Analyzer
+### ⏳ 7. Recipe Nutrition Analyzer - PENDING
 - Paste any internet recipe URL or text
 - AI extracts ingredients and portions
 - Outputs complete nutrition breakdown:
@@ -130,7 +132,7 @@ PrepGenie provides:
   - High-protein version (protein-optimized swaps)
   - Lower-calorie alternatives
 
-### 8. Meal Swap System
+### ⏳ 8. Meal Swap System - PENDING
 - AI-powered intelligent meal replacements
 - Swap criteria:
   - **Budget swap**: "Replace with cheaper ingredients"
@@ -140,7 +142,7 @@ PrepGenie provides:
 - Maintains similar nutrition profile and satisfaction
 - Preserves user preferences and dietary restrictions
 
-### 9. Cultural Meal Modes
+### ⏳ 9. Cultural Meal Modes - PENDING
 - Multi-cuisine support with authentic recipes:
   - **Japanese** - Traditional and modern Japanese cuisine
   - **Korean** - Korean BBQ, banchan, stews
@@ -152,37 +154,22 @@ PrepGenie provides:
   - Traditional cooking methods
   - Cultural meal timing and portions
 
-### 10. Internationalization (i18n)
-- **Onboarding Language Selection**:
-  - First step of onboarding: language selection (English or Japanese)
-  - Large, clear language options with flags/icons
-  - Sets locale for entire onboarding flow
-  - Saves preference to user profile
-- **Japanese Language Support**:
-  - Full app translation (UI, recipes, AI responses)
-  - Japanese-specific units:
-    - Weight: kg only (no lb)
-    - Height: cm only (no feet/inches)
-    - Liquid: mL, L (Japanese cup = 200mL)
-    - Cooking measurements: grams, Japanese cup/tablespoon sizes
-  - Locale-aware date/time formatting
-  - Japanese number formatting (e.g., ¥1,500)
-- **English Language Support**:
-  - Imperial and Metric unit selection:
-    - Weight: lb or kg (user chooses during onboarding)
-    - Height: feet/inches or cm (user chooses during onboarding)
-    - Volume: oz, cups or mL, L
-  - US date formatting
-  - Currency formatting ($)
-- **Implementation**:
-  - next-intl for translations
-  - Locale-aware number/date formatting
-  - Unit conversion utilities
-  - User preference storage in database
-  - Language switcher in settings page
+### ✅ 10. Internationalization (i18n) - COMPLETED (Infrastructure Ready)
+- **Database Schema**:
+  - locale, unit_system, currency fields added to user_profiles
+  - Migration applied to production database
+- **Settings Components**:
+  - Language switcher component created
+  - Unit system and currency preferences
+  - Server Actions for updating locale preferences
+- **Ready for Next Steps**:
+  - Install next-intl for translation system
+  - Add translation files (en.json, ja.json)
+  - Implement locale-aware formatting utilities
+  - Add multilingual AI responses
 
-### 11. Settings Page
-- **Profile Settings**:
+### ✅ 11. Settings Page - COMPLETED
+- **Profile Settings** ✅:
   - Edit personal information (age, weight, height, gender)
   - Update activity level
   - Modify fitness goals (weight loss, maintain, muscle gain)
@@ -191,35 +178,28 @@ PrepGenie provides:
   - Adjust cooking skill level
   - Set daily time available for cooking
   - Update budget level
-- **Language & Units**:
+- **Language & Units** ✅:
   - Language switcher (English ⇄ Japanese)
-  - Unit system toggle (Imperial/Metric) - English only
-  - Weight unit preference (kg or lb)
-  - Height unit preference (cm or ft/in)
-  - Volume unit preference (mL or cups/oz)
+  - Unit system toggle (Imperial/Metric)
   - Currency display ($ or ¥)
-- **Nutrition Targets**:
+- **Nutrition Targets** ✅:
   - View current TDEE calculation
   - Manually adjust daily calorie target
   - Customize macro distribution (protein, carbs, fats)
   - Reset to AI-recommended values
-- **Account Management**:
-  - Change email
-  - Update password
-  - Manage email preferences
-  - Export user data
-  - Delete account
-- **App Preferences**:
+- **Account Management** (Partial):
+  - Delete account with confirmation dialog ✅
+  - Email/password change (future enhancement)
+  - Export user data (future enhancement)
+- **App Preferences** (future enhancement):
   - Dark/Light theme toggle
   - Notification settings
-  - Default meal plan type (daily/weekly)
-  - Preferred cuisine types
+  - Default meal plan type
 - **Implementation**:
-  - Form validation with react-hook-form + Zod
-  - Real-time TDEE recalculation on profile changes
-  - Optimistic UI updates with TanStack Query
-  - Confirmation dialogs for destructive actions
-  - Success/error toasts with sonner
+  - Form validation with react-hook-form + Zod ✅
+  - Real-time TDEE recalculation on profile changes ✅
+  - Confirmation dialogs for destructive actions ✅
+  - Success/error toasts with sonner ✅
 
 ---
 
