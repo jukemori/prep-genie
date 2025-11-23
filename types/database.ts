@@ -191,8 +191,10 @@ export type Database = {
       }
       meals: {
         Row: {
+          batch_cooking_multiplier: number | null
           calories_per_serving: number | null
           carbs_per_serving: number | null
+          container_type: string | null
           cook_time: number | null
           created_at: string | null
           cuisine_type: string | null
@@ -205,19 +207,25 @@ export type Database = {
           instructions: string[] | null
           is_ai_generated: boolean | null
           is_public: boolean | null
+          meal_prep_friendly: boolean | null
           meal_type: string | null
           name: string
           prep_time: number | null
           protein_per_serving: number | null
           rating: number | null
+          reheating_instructions: string | null
           servings: number | null
+          storage_duration_days: number | null
+          storage_instructions: string | null
           tags: string[] | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          batch_cooking_multiplier?: number | null
           calories_per_serving?: number | null
           carbs_per_serving?: number | null
+          container_type?: string | null
           cook_time?: number | null
           created_at?: string | null
           cuisine_type?: string | null
@@ -230,19 +238,25 @@ export type Database = {
           instructions?: string[] | null
           is_ai_generated?: boolean | null
           is_public?: boolean | null
+          meal_prep_friendly?: boolean | null
           meal_type?: string | null
           name: string
           prep_time?: number | null
           protein_per_serving?: number | null
           rating?: number | null
+          reheating_instructions?: string | null
           servings?: number | null
+          storage_duration_days?: number | null
+          storage_instructions?: string | null
           tags?: string[] | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          batch_cooking_multiplier?: number | null
           calories_per_serving?: number | null
           carbs_per_serving?: number | null
+          container_type?: string | null
           cook_time?: number | null
           created_at?: string | null
           cuisine_type?: string | null
@@ -255,12 +269,16 @@ export type Database = {
           instructions?: string[] | null
           is_ai_generated?: boolean | null
           is_public?: boolean | null
+          meal_prep_friendly?: boolean | null
           meal_type?: string | null
           name?: string
           prep_time?: number | null
           protein_per_serving?: number | null
           rating?: number | null
+          reheating_instructions?: string | null
           servings?: number | null
+          storage_duration_days?: number | null
+          storage_instructions?: string | null
           tags?: string[] | null
           updated_at?: string | null
           user_id?: string | null
