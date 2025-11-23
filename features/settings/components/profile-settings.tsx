@@ -55,13 +55,35 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
       age: profile.age || 0,
       weight: profile.weight ? Number(profile.weight) : 0,
       height: profile.height ? Number(profile.height) : 0,
-      gender: profile.gender || 'other',
-      activity_level: profile.activity_level || 'moderate',
-      goal: profile.goal || 'maintain',
-      dietary_preference: profile.dietary_preference || 'omnivore',
-      cooking_skill_level: profile.cooking_skill_level || 'intermediate',
+      gender: (profile.gender as 'male' | 'female' | 'other' | undefined) || 'other',
+      activity_level:
+        (profile.activity_level as
+          | 'sedentary'
+          | 'light'
+          | 'moderate'
+          | 'active'
+          | 'very_active'
+          | undefined) || 'moderate',
+      goal:
+        (profile.goal as
+          | 'weight_loss'
+          | 'maintain'
+          | 'muscle_gain'
+          | 'balanced'
+          | undefined) || 'maintain',
+      dietary_preference:
+        (profile.dietary_preference as
+          | 'omnivore'
+          | 'vegetarian'
+          | 'vegan'
+          | 'pescatarian'
+          | 'halal'
+          | undefined) || 'omnivore',
+      cooking_skill_level:
+        (profile.cooking_skill_level as 'beginner' | 'intermediate' | 'advanced' | undefined) ||
+        'intermediate',
       time_available: profile.time_available || 60,
-      budget_level: profile.budget_level || 'medium',
+      budget_level: (profile.budget_level as 'low' | 'medium' | 'high' | undefined) || 'medium',
       allergies: profile.allergies?.join(', ') || '',
     },
   })
@@ -104,7 +126,15 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <FormItem>
                 <FormLabel>Age</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    value={field.value as number}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    disabled={field.disabled}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -141,7 +171,16 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <FormItem>
                 <FormLabel>Weight (kg)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.1" {...field} />
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={field.value as number}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    disabled={field.disabled}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +194,15 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <FormItem>
                 <FormLabel>Height (cm)</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    value={field.value as number}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    disabled={field.disabled}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -283,7 +330,15 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <FormItem>
                 <FormLabel>Time Available (min/day)</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    value={field.value as number}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    disabled={field.disabled}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

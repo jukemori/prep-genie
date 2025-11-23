@@ -115,7 +115,15 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
               <FormItem>
                 <FormLabel>Daily Calorie Target</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    value={field.value as number}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    disabled={field.disabled}
+                  />
                 </FormControl>
                 <FormDescription>Customize your daily calorie goal</FormDescription>
                 <FormMessage />
@@ -131,7 +139,15 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                 <FormItem>
                   <FormLabel>Protein (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      value={field.value as number}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={field.disabled}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,7 +161,15 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                 <FormItem>
                   <FormLabel>Carbs (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      value={field.value as number}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={field.disabled}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,7 +183,15 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                 <FormItem>
                   <FormLabel>Fats (g)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      value={field.value as number}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={field.disabled}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
