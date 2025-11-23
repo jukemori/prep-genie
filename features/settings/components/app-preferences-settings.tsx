@@ -1,8 +1,8 @@
 'use client'
 
-import { Label } from '@/components/atoms/ui/label'
-import { Button } from '@/components/atoms/ui/button'
 import { useTheme } from 'next-themes'
+import { Button } from '@/components/atoms/ui/button'
+import { Label } from '@/components/atoms/ui/label'
 import {
   Select,
   SelectContent,
@@ -25,9 +25,7 @@ export function AppPreferencesSettings({ profile }: AppPreferencesSettingsProps)
         <Label htmlFor="theme" className="text-base">
           Theme
         </Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          Choose your preferred color scheme
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">Choose your preferred color scheme</p>
         <Select value={theme} onValueChange={setTheme}>
           <SelectTrigger id="theme" className="w-full">
             <SelectValue placeholder="Select theme" />
@@ -42,9 +40,7 @@ export function AppPreferencesSettings({ profile }: AppPreferencesSettingsProps)
 
       <div>
         <Label className="text-base">Default Meal Plan Type</Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          Your preferred meal planning frequency
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">Your preferred meal planning frequency</p>
         <Select defaultValue="weekly">
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select default plan type" />
@@ -58,9 +54,7 @@ export function AppPreferencesSettings({ profile }: AppPreferencesSettingsProps)
 
       <div>
         <Label className="text-base">Preferred Cuisines</Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          Cuisine types you enjoy (coming soon)
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">Cuisine types you enjoy (coming soon)</p>
         <Button variant="outline" disabled>
           Manage Cuisines
         </Button>

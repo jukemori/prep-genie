@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent } from '@/components/atoms/ui/card'
 import { Input } from '@/components/atoms/ui/input'
-import { chatWithNutritionAssistant } from '@/features/ai-chat/api/actions'
+import { chatWithNutritionAssistant } from '@/features/ai-chat/actions'
 
 interface Message {
   role: 'user' | 'assistant'

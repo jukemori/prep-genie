@@ -7,7 +7,7 @@ import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
 import { Checkbox } from '@/components/atoms/ui/checkbox'
-import { getGroceryList, updateGroceryListItems } from '@/features/grocery-lists/api/actions'
+import { getGroceryList, updateGroceryListItems } from '@/features/grocery-lists/actions'
 import type { GroceryList } from '@/types'
 
 interface PageProps {

@@ -1,6 +1,18 @@
 'use client'
 
+import { Clock, DollarSign, Leaf, Loader2, RefreshCw, TrendingUp } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/atoms/ui/alert-dialog'
 import { Button } from '@/components/atoms/ui/button'
 import {
   DropdownMenu,
@@ -13,19 +25,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/atoms/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/atoms/ui/alert-dialog'
-import { RefreshCw, DollarSign, Clock, Leaf, TrendingUp, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { swapMeal } from '../api/actions'
+import { swapMeal } from '../actions'
 
 interface MealSwapMenuProps {
   mealPlanId: string
@@ -117,9 +117,7 @@ export function MealSwapMenu({
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() =>
-              initiateSwap('Speed Swap', 'Faster cooking time', { swapType: 'speed' })
-            }
+            onClick={() => initiateSwap('Speed Swap', 'Faster cooking time', { swapType: 'speed' })}
           >
             <Clock className="mr-2 h-4 w-4" />
             Speed Swap
@@ -226,8 +224,8 @@ export function MealSwapMenu({
               Current meal: <strong>{mealName}</strong>
               <br />
               <br />
-              This will replace the current meal with an AI-generated alternative that matches
-              your criteria while maintaining your dietary preferences and nutrition goals.
+              This will replace the current meal with an AI-generated alternative that matches your
+              criteria while maintaining your dietary preferences and nutrition goals.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,23 +1,10 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Button } from '@/components/atoms/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/atoms/ui/form'
-import { Input } from '@/components/atoms/ui/input'
-import { toast } from 'sonner'
-import { updateNutritionTargets, resetNutritionTargets } from '../api/actions'
-import type { Tables } from '@/types/database'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +16,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/atoms/ui/alert-dialog'
+import { Button } from '@/components/atoms/ui/button'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/atoms/ui/form'
+import { Input } from '@/components/atoms/ui/input'
+import type { Tables } from '@/types/database'
+import { resetNutritionTargets, updateNutritionTargets } from '../actions'
 
 const nutritionSchema = z.object({
   daily_calorie_target: z.coerce.number().min(1000).max(5000),
@@ -117,9 +117,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
-                <FormDescription>
-                  Customize your daily calorie goal
-                </FormDescription>
+                <FormDescription>Customize your daily calorie goal</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -184,9 +182,8 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                 <AlertDialogHeader>
                   <AlertDialogTitle>Reset Nutrition Targets?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will recalculate your nutrition targets based on your current profile
-                    (age, weight, height, activity level, and goals). Your custom values will be
-                    replaced.
+                    This will recalculate your nutrition targets based on your current profile (age,
+                    weight, height, activity level, and goals). Your custom values will be replaced.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

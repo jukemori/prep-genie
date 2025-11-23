@@ -1,14 +1,20 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Badge } from '@/components/atoms/ui/badge'
-import { Button } from '@/components/atoms/ui/button'
-import { Separator } from '@/components/atoms/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
-import { Clock, Users, TrendingDown, TrendingUp, DollarSign } from 'lucide-react'
+import { Clock, DollarSign, TrendingDown, TrendingUp, Users } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { saveAnalyzedRecipe } from '../api/actions'
+import { Badge } from '@/components/atoms/ui/badge'
+import { Button } from '@/components/atoms/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card'
+import { Separator } from '@/components/atoms/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
+import { saveAnalyzedRecipe } from '../actions'
 
 interface RecipeAnalysisResultProps {
   recipe: {
@@ -177,9 +183,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       <Card>
         <CardHeader>
           <CardTitle>AI-Powered Improvements</CardTitle>
-          <CardDescription>
-            Three ways to optimize this recipe for different goals
-          </CardDescription>
+          <CardDescription>Three ways to optimize this recipe for different goals</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="budget">
@@ -199,10 +203,15 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
             </TabsList>
 
             <TabsContent value="budget" className="space-y-4">
-              <p className="text-sm text-muted-foreground">{recipe.improvements.budget.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {recipe.improvements.budget.description}
+              </p>
               <div className="space-y-2">
                 {recipe.improvements.budget.ingredient_swaps.map((swap, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-3 bg-muted rounded-lg"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium line-through text-muted-foreground">
                         {swap.original}
@@ -225,10 +234,15 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
             </TabsContent>
 
             <TabsContent value="protein" className="space-y-4">
-              <p className="text-sm text-muted-foreground">{recipe.improvements.high_protein.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {recipe.improvements.high_protein.description}
+              </p>
               <div className="space-y-2">
                 {recipe.improvements.high_protein.ingredient_swaps.map((swap, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-3 bg-muted rounded-lg"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium line-through text-muted-foreground">
                         {swap.original}
@@ -245,16 +259,25 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                   {recipe.improvements.high_protein.new_protein}g per serving
                 </p>
               </div>
-              <Button onClick={() => handleSave('high_protein')} disabled={isSaving} className="w-full">
+              <Button
+                onClick={() => handleSave('high_protein')}
+                disabled={isSaving}
+                className="w-full"
+              >
                 {isSaving ? 'Saving...' : 'Save High-Protein Version'}
               </Button>
             </TabsContent>
 
             <TabsContent value="calorie" className="space-y-4">
-              <p className="text-sm text-muted-foreground">{recipe.improvements.lower_calorie.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {recipe.improvements.lower_calorie.description}
+              </p>
               <div className="space-y-2">
                 {recipe.improvements.lower_calorie.ingredient_swaps.map((swap, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-3 bg-muted rounded-lg"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium line-through text-muted-foreground">
                         {swap.original}
@@ -271,7 +294,11 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                   {recipe.improvements.lower_calorie.new_calories} kcal per serving
                 </p>
               </div>
-              <Button onClick={() => handleSave('lower_calorie')} disabled={isSaving} className="w-full">
+              <Button
+                onClick={() => handleSave('lower_calorie')}
+                disabled={isSaving}
+                className="w-full"
+              >
                 {isSaving ? 'Saving...' : 'Save Lower-Calorie Version'}
               </Button>
             </TabsContent>

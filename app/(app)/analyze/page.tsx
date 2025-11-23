@@ -1,7 +1,13 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { redirect } from 'next/navigation'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card'
 import { RecipeAnalyzer } from '@/features/recipes/components/recipe-analyzer'
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 
 export default async function AnalyzePage() {
   const supabase = await createClient()

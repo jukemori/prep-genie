@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent } from '@/components/atoms/ui/card'
-import { generateGroceryListFromMealPlan } from '@/features/grocery-lists/api/actions'
+import { generateGroceryListFromMealPlan } from '@/features/grocery-lists/actions'
 
 export default function GenerateGroceryListPage() {
   const router = useRouter()

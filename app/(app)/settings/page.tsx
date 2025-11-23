@@ -1,12 +1,18 @@
+import { redirect } from 'next/navigation'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { ProfileSettings } from '@/features/settings/components/profile-settings'
-import { LanguageUnitsSettings } from '@/features/settings/components/language-units-settings'
-import { NutritionTargetsSettings } from '@/features/settings/components/nutrition-targets-settings'
 import { AccountSettings } from '@/features/settings/components/account-settings'
 import { AppPreferencesSettings } from '@/features/settings/components/app-preferences-settings'
+import { LanguageUnitsSettings } from '@/features/settings/components/language-units-settings'
+import { NutritionTargetsSettings } from '@/features/settings/components/nutrition-targets-settings'
+import { ProfileSettings } from '@/features/settings/components/profile-settings'
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -34,9 +40,7 @@ export default async function SettingsPage() {
     <div className="container max-w-4xl py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
@@ -52,9 +56,7 @@ export default async function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Profile Settings</CardTitle>
-              <CardDescription>
-                Update your personal information and fitness goals
-              </CardDescription>
+              <CardDescription>Update your personal information and fitness goals</CardDescription>
             </CardHeader>
             <CardContent>
               <ProfileSettings profile={profile} />
@@ -66,9 +68,7 @@ export default async function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Language & Units</CardTitle>
-              <CardDescription>
-                Change your language and measurement preferences
-              </CardDescription>
+              <CardDescription>Change your language and measurement preferences</CardDescription>
             </CardHeader>
             <CardContent>
               <LanguageUnitsSettings profile={profile} />
@@ -94,9 +94,7 @@ export default async function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Account Management</CardTitle>
-              <CardDescription>
-                Manage your account security and data
-              </CardDescription>
+              <CardDescription>Manage your account security and data</CardDescription>
             </CardHeader>
             <CardContent>
               <AccountSettings user={user} />
@@ -108,9 +106,7 @@ export default async function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>App Preferences</CardTitle>
-              <CardDescription>
-                Customize your PrepGenie experience
-              </CardDescription>
+              <CardDescription>Customize your PrepGenie experience</CardDescription>
             </CardHeader>
             <CardContent>
               <AppPreferencesSettings profile={profile} />

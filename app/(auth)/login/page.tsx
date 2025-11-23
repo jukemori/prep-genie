@@ -12,7 +12,7 @@ import {
 } from '@/components/atoms/ui/card'
 import { Input } from '@/components/atoms/ui/input'
 import { Label } from '@/components/atoms/ui/label'
-import { login } from '@/features/auth/api/actions'
+import { login } from '@/features/auth/actions'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)

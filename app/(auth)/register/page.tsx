@@ -13,7 +13,7 @@ import {
 } from '@/components/atoms/ui/card'
 import { Input } from '@/components/atoms/ui/input'
 import { Label } from '@/components/atoms/ui/label'
-import { register } from '@/features/auth/api/actions'
+import { register } from '@/features/auth/actions'
 
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)

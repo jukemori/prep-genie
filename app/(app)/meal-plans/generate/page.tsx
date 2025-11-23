@@ -8,7 +8,7 @@ import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
 import { Progress } from '@/components/atoms/ui/progress'
-import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/api/actions'
+import { generateAIMealPlan, saveMealPlan } from '@/features/meal-plans/actions'
 
 import { CuisineSelector } from '@/features/meal-plans/components/cuisine-selector'
 

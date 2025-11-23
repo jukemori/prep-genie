@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/ui/select'
-import { createUserProfile } from '@/features/user-profile/api/actions'
+import { createUserProfile } from '@/features/user-profile/actions'
 
 type Step = 1 | 2 | 3 | 4
 

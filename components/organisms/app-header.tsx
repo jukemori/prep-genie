@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/atoms/ui/dropdown-menu'
-import { logout } from '@/features/auth/api/actions'
+import { logout } from '@/features/auth/actions'
 
 export function AppHeader() {
   const { theme, setTheme } = useTheme()

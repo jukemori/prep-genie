@@ -1,7 +1,8 @@
 'use client'
 
-import { Button } from '@/components/atoms/ui/button'
-import { Label } from '@/components/atoms/ui/label'
+import type { User } from '@supabase/supabase-js'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,10 +14,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/atoms/ui/alert-dialog'
-import { toast } from 'sonner'
-import { deleteAccount } from '../api/actions'
-import { useState } from 'react'
-import type { User } from '@supabase/supabase-js'
+import { Button } from '@/components/atoms/ui/button'
+import { Label } from '@/components/atoms/ui/label'
+import { deleteAccount } from '../actions'
 
 interface AccountSettingsProps {
   user: User
@@ -47,9 +47,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
     <div className="space-y-6">
       <div>
         <Label className="text-base">Email</Label>
-        <p className="text-sm text-muted-foreground mb-2">
-          Your registered email address
-        </p>
+        <p className="text-sm text-muted-foreground mb-2">Your registered email address</p>
         <p className="font-medium">{user.email}</p>
       </div>
 

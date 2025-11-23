@@ -9,7 +9,7 @@ import { Input } from '@/components/atoms/ui/input'
 import { Label } from '@/components/atoms/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
 import { Textarea } from '@/components/atoms/ui/textarea'
-import { getProgressLogs, logProgress } from '@/features/progress/api/actions'
+import { getProgressLogs, logProgress } from '@/features/progress/actions'
 import { createClient } from '@/lib/supabase/client'
 import type { ProgressLog, UserProfile } from '@/types'
 

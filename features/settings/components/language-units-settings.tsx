@@ -1,6 +1,8 @@
 'use client'
 
-import { LanguageSwitcher } from '@/components/molecules/language-switcher'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/atoms/ui/button'
 import { Label } from '@/components/atoms/ui/label'
 import {
   Select,
@@ -9,11 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/ui/select'
-import { Button } from '@/components/atoms/ui/button'
-import { toast } from 'sonner'
-import { updateLocalePreferences } from '../api/actions'
+import { LanguageSwitcher } from '@/components/molecules/language-switcher'
 import type { Tables } from '@/types/database'
-import { useState } from 'react'
+import { updateLocalePreferences } from '../actions'
 
 interface LanguageUnitsSettingsProps {
   profile: Tables<'user_profiles'>

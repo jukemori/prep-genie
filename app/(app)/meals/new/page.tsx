@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/atoms/ui/select'
 import { Textarea } from '@/components/atoms/ui/textarea'
-import { createMeal } from '@/features/meals/api/actions'
+import { createMeal } from '@/features/meals/actions'
 
 interface Ingredient {
   id: string

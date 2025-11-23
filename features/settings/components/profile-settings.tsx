@@ -1,7 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/atoms/ui/button'
 import {
@@ -21,10 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/ui/select'
-import { toast } from 'sonner'
-import { updateProfile } from '../api/actions'
 import type { Tables } from '@/types/database'
-import { useState } from 'react'
+import { updateProfile } from '../actions'
 
 const profileSchema = z.object({
   age: z.coerce.number().min(13).max(120),
@@ -70,7 +70,10 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
     setIsLoading(true)
     try {
       const allergiesArray = data.allergies
-        ? data.allergies.split(',').map((a) => a.trim()).filter(Boolean)
+        ? data.allergies
+            .split(',')
+            .map((a) => a.trim())
+            .filter(Boolean)
         : []
 
       const result = await updateProfile({
@@ -188,7 +191,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
         <FormField
           control={form.control}
           name="goal"
-          render={({ field}) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Fitness Goal</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -243,9 +246,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <FormControl>
                 <Input placeholder="e.g., peanuts, shellfish, dairy" {...field} />
               </FormControl>
-              <FormDescription>
-                Comma-separated list of allergies
-              </FormDescription>
+              <FormDescription>Comma-separated list of allergies</FormDescription>
               <FormMessage />
             </FormItem>
           )}

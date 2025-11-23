@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/atoms/ui/button'
 import {
@@ -15,12 +17,10 @@ import {
   FormMessage,
 } from '@/components/atoms/ui/form'
 import { Input } from '@/components/atoms/ui/input'
-import { Textarea } from '@/components/atoms/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
-import { toast } from 'sonner'
-import { analyzeRecipe } from '../api/actions'
+import { Textarea } from '@/components/atoms/ui/textarea'
+import { analyzeRecipe } from '../actions'
 import { RecipeAnalysisResult } from './recipe-analysis-result'
-import { Loader2 } from 'lucide-react'
 
 const recipeSchema = z.object({
   input: z.string().min(10, 'Recipe input must be at least 10 characters'),
@@ -142,9 +142,7 @@ export function RecipeAnalyzer({ locale }: RecipeAnalyzerProps) {
                         disabled={isAnalyzing}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Paste a link to any online recipe
-                    </FormDescription>
+                    <FormDescription>Paste a link to any online recipe</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -192,9 +190,7 @@ export function RecipeAnalyzer({ locale }: RecipeAnalyzerProps) {
         </TabsContent>
       </Tabs>
 
-      {analyzedRecipe && (
-        <RecipeAnalysisResult recipe={analyzedRecipe} locale={locale} />
-      )}
+      {analyzedRecipe && <RecipeAnalysisResult recipe={analyzedRecipe} locale={locale} />}
     </div>
   )
 }
