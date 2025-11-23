@@ -101,6 +101,189 @@ pnpm supabase:types
 
 ---
 
+## 🏗️ Architecture & Code Organization
+
+### **CRITICAL: Strict Separation of Concerns**
+
+This project follows a **feature-based architecture** with strict boundaries between UI, utilities, and business logic.
+
+#### 1. **`components/` - UI Components ONLY**
+**Purpose:** Pure presentational components without business logic.
+
+**✅ ALLOWED:**
+- Receive props and render UI
+- Simple display calculations (e.g., `const totalTime = prep + cook`)
+- Event handlers that call passed-in functions
+- useState for UI-only state (modals, tooltips, dropdowns)
+
+**❌ NOT ALLOWED:**
+- Data fetching (no `fetch`, no Supabase queries)
+- Business logic or domain calculations
+- Complex state management
+- Server Action definitions
+- API calls
+
+**Example (Correct):**
+```typescript
+// components/molecules/meal-card.tsx ✅
+export function MealCard({ meal, onSave }: MealCardProps) {
+  const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0) // Simple display logic
+
+  return (
+    <Card>
+      <h3>{meal.name}</h3>
+      <p>{totalTime} min</p>
+      <Button onClick={() => onSave(meal.id)}>Save</Button>
+    </Card>
+  )
+}
+```
+
+---
+
+#### 2. **`lib/` - Common Utilities ONLY**
+**Purpose:** Shared, reusable utilities used across multiple features.
+
+**✅ ALLOWED:**
+- Infrastructure setup (Supabase client, OpenAI client)
+- Shared utility functions (cn, format, constants)
+- i18n utilities (unit conversion, locale formatting)
+- Generic helpers (date formatting, string manipulation)
+
+**❌ NOT ALLOWED:**
+- Feature-specific business logic
+- Domain calculations (TDEE, macros, nutrition)
+- AI prompts
+- Validation schemas (Zod)
+
+**Example (Correct):**
+```typescript
+// lib/utils/format.ts ✅
+export function formatCurrency(amount: number, locale: string): string {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(amount)
+}
+
+// lib/ai/openai.ts ✅
+export const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+```
+
+**Example (Incorrect - Move to features/):**
+```typescript
+// ❌ lib/nutrition/tdee.ts - This is BUSINESS LOGIC, belongs in features/nutrition/utils/
+export function calculateTDEE(input: TDEEInput): number {
+  const bmr = calculateBMR(input) // Domain calculation
+  return Math.round(bmr * activityMultiplier)
+}
+```
+
+---
+
+#### 3. **`features/` - Business Logic & Domain Code**
+**Purpose:** All feature-specific business logic, calculations, and data operations.
+
+**✅ SHOULD CONTAIN:**
+- **`actions.ts`** - Server Actions (NOT `api/actions.ts`)
+- **`components/`** - Feature-specific components (if tightly coupled)
+- **`hooks/`** - Feature-specific React hooks
+- **`utils/`** - Feature-specific utility functions and calculations
+- **`schemas/`** - Zod validation schemas
+- **`prompts/`** - AI prompts (for features using AI)
+- **`types/`** - Feature-specific TypeScript types
+
+**Folder Structure:**
+```
+features/
+├── [feature-name]/
+│   ├── actions.ts              # Server Actions (module-level 'use server')
+│   ├── components/             # Feature-specific components
+│   ├── hooks/                  # Feature-specific hooks
+│   ├── utils/                  # Feature-specific utilities
+│   ├── schemas/                # Zod validation schemas
+│   ├── prompts/                # AI prompts (if applicable)
+│   └── types/                  # Feature-specific types
+```
+
+**Example (Correct - Server Actions):**
+```typescript
+// features/meals/actions.ts ✅
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
+
+export async function createMeal(data: TablesInsert<'meals'>) {
+  const supabase = await createClient()
+  const { data: meal, error } = await supabase.from('meals').insert(data).select().single()
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/meals')
+  return meal
+}
+```
+
+**Example (Correct - Business Logic):**
+```typescript
+// features/nutrition/utils/tdee.ts ✅
+export function calculateTDEE(input: TDEEInput): number {
+  const bmr = calculateBMR(input)
+  const activityMultiplier = ACTIVITY_MULTIPLIERS[input.activityLevel]
+  return Math.round(bmr * activityMultiplier)
+}
+```
+
+**Example (Correct - AI Prompts):**
+```typescript
+// features/meal-plans/prompts/meal-plan-generator.ts ✅
+export function generateMealPlanPrompt(profile: UserProfile, locale: 'en' | 'ja') {
+  return `Generate a personalized meal plan for...`
+}
+```
+
+---
+
+### **Server Actions: NO `api/` Subfolder**
+
+**❌ OLD (Incorrect):**
+```
+features/
+├── meals/
+│   ├── api/
+│   │   └── actions.ts          # ❌ Unnecessary nesting
+```
+
+**✅ NEW (Correct):**
+```
+features/
+├── meals/
+│   └── actions.ts               # ✅ Simplified, no api/ folder
+```
+
+**Why?**
+- Server Actions are NOT API routes
+- `app/api/*/route.ts` is for API route handlers
+- Server Actions are just server-side functions
+- Simpler imports: `@/features/meals/actions` vs `@/features/meals/api/actions`
+
+**Usage:**
+```typescript
+// features/meals/actions.ts
+'use server'
+
+export async function createMeal(data: MealInsert) {
+  // Server Action logic
+}
+
+// app/(app)/meals/new/page.tsx or components
+import { createMeal } from '@/features/meals/actions'
+
+export default function NewMealPage() {
+  return <form action={createMeal}>...</form>
+}
+```
+
+---
+
 ## 📋 Core Features Implementation Status
 
 Based on REQUIREMENTS.md Core Features (11 features):
@@ -1627,58 +1810,37 @@ npx husky add .husky/pre-commit "pnpm lint-staged"
 
 ## 📁 Project Structure
 
+**NEW Architecture** (after refactoring):
+
 ```
 prep-genie/
 ├── app/
-│   ├── (auth)/
+│   ├── (auth)/                    # Auth route group
 │   │   ├── login/
-│   │   │   ├── page.tsx
-│   │   │   └── actions.ts
 │   │   ├── register/
-│   │   │   ├── page.tsx
-│   │   │   └── actions.ts
 │   │   └── onboarding/
-│   │       ├── page.tsx
-│   │       └── components/
-│   ├── (app)/
+│   ├── (app)/                     # Protected app routes
 │   │   ├── dashboard/
-│   │   │   └── page.tsx
 │   │   ├── meals/
-│   │   │   ├── page.tsx
-│   │   │   ├── [id]/
-│   │   │   │   └── page.tsx
-│   │   │   └── new/
-│   │   │       └── page.tsx
 │   │   ├── meal-plans/
-│   │   │   ├── page.tsx
-│   │   │   ├── [id]/
-│   │   │   │   └── page.tsx
-│   │   │   └── generate/
-│   │   │       └── page.tsx
 │   │   ├── grocery-lists/
-│   │   │   ├── page.tsx
-│   │   │   └── [id]/
-│   │   │       └── page.tsx
 │   │   ├── progress/
-│   │   │   └── page.tsx
 │   │   ├── chat/
-│   │   │   └── page.tsx
 │   │   └── settings/
-│   │       └── page.tsx
 │   ├── api/
-│   │   └── webhooks/
-│   │       └── route.ts
+│   │   └── webhooks/              # API route handlers ONLY
 │   ├── layout.tsx
 │   ├── globals.css
 │   └── page.tsx
 │
-├── components/
+├── components/                    # ✅ UI COMPONENTS ONLY (No business logic)
 │   ├── atoms/
-│   │   └── ui/              # shadcn/ui components
-│   ├── molecules/
+│   │   └── ui/                    # shadcn/ui components
+│   ├── molecules/                 # Pure presentational components
 │   │   ├── meal-card.tsx
 │   │   ├── macro-display.tsx
 │   │   ├── ingredient-item.tsx
+│   │   ├── language-switcher.tsx
 │   │   └── nutrition-ring.tsx
 │   ├── organisms/
 │   │   ├── meal-planner/
@@ -1693,63 +1855,84 @@ prep-genie/
 │       ├── store-provider.tsx
 │       └── theme-provider.tsx
 │
-├── features/
+├── features/                      # ✅ BUSINESS LOGIC & DOMAIN CODE
 │   ├── meals/
-│   │   ├── api/
+│   │   ├── actions.ts             # Server Actions (NOT api/actions.ts)
 │   │   ├── components/
 │   │   ├── hooks/
-│   │   ├── types/
+│   │   ├── schemas/
+│   │   │   └── meal.schema.ts     # Moved from lib/validations/
 │   │   └── utils/
 │   ├── meal-plans/
-│   ├── grocery-lists/
-│   ├── nutrition/
-│   ├── ai-chat/
-│   ├── progress/
-│   └── auth/
-│
-├── lib/
-│   ├── ai/
-│   │   ├── openai.ts
-│   │   ├── prompts/
+│   │   ├── actions.ts
+│   │   ├── components/
+│   │   ├── prompts/               # Moved from lib/ai/prompts/
 │   │   │   ├── meal-plan-generator.ts
-│   │   │   ├── grocery-list-generator.ts
-│   │   │   ├── meal-modifier.ts
-│   │   │   └── nutrition-assistant.ts
-│   │   └── streaming.ts
+│   │   │   ├── meal-swap.ts
+│   │   │   └── cultural-cuisine-guidelines.ts
+│   │   ├── schemas/
+│   │   │   └── meal-plan.schema.ts
+│   │   └── utils/
+│   ├── recipes/
+│   │   ├── actions.ts
+│   │   ├── components/
+│   │   ├── prompts/
+│   │   │   └── recipe-analyzer.ts
+│   │   └── schemas/
+│   ├── grocery-lists/
+│   │   ├── actions.ts
+│   │   └── schemas/
+│   │       └── grocery-list.schema.ts
+│   ├── nutrition/
+│   │   └── utils/                 # Moved from lib/nutrition/
+│   │       ├── tdee.ts
+│   │       └── macros.ts
+│   ├── ai-chat/
+│   │   ├── actions.ts
+│   │   └── prompts/
+│   │       └── nutrition-assistant.ts
+│   ├── user-profile/
+│   │   ├── actions.ts
+│   │   └── schemas/
+│   │       └── user-profile.schema.ts
+│   ├── settings/
+│   │   ├── actions.ts
+│   │   └── components/
+│   ├── progress/
+│   │   └── actions.ts
+│   └── auth/
+│       └── actions.ts
+│
+├── lib/                           # ✅ COMMON UTILITIES ONLY
+│   ├── ai/
+│   │   └── openai.ts              # OpenAI client setup (infrastructure)
 │   ├── supabase/
 │   │   ├── client.ts
 │   │   ├── server.ts
 │   │   └── middleware.ts
-│   ├── nutrition/
-│   │   ├── tdee.ts
-│   │   ├── macros.ts
-│   │   └── conversions.ts
-│   ├── utils/
-│   │   ├── cn.ts
-│   │   ├── format.ts
-│   │   └── constants.ts
-│   └── validations/
-│       ├── user-profile.schema.ts
-│       ├── meal.schema.ts
-│       ├── meal-plan.schema.ts
-│       └── grocery-list.schema.ts
+│   ├── i18n/
+│   │   ├── units.ts               # Unit conversion utilities
+│   │   └── use-locale-format.ts
+│   └── utils/
+│       ├── cn.ts
+│       ├── format.ts
+│       └── constants.ts
 │
-├── stores/
+├── stores/                        # Zustand client state
 │   ├── ui-store.ts
 │   ├── meal-store.ts
 │   └── index.ts
 │
 ├── types/
-│   ├── database.ts
-│   ├── meal.ts
-│   ├── nutrition.ts
-│   └── user.ts
+│   ├── database.ts                # Auto-generated from Supabase
+│   └── index.ts
+│
+├── messages/                      # i18n translations
+│   ├── en.json
+│   └── ja.json
 │
 ├── supabase/
-│   ├── migrations/
-│   │   └── 20250101000000_initial_schema.sql
-│   ├── seed.sql
-│   └── config.toml
+│   └── migrations/
 │
 ├── tests/
 │   ├── setup.ts
@@ -1758,8 +1941,6 @@ prep-genie/
 │   └── mocks/
 │
 ├── public/
-│   ├── images/
-│   └── icons/
 │
 ├── .env.local
 ├── .env.example
@@ -1773,6 +1954,12 @@ prep-genie/
 ├── REQUIREMENTS.md
 └── CLAUDE.md
 ```
+
+**Key Refactoring Changes:**
+- ❌ Removed `lib/ai/prompts/` → ✅ Moved to `features/*/prompts/`
+- ❌ Removed `lib/nutrition/` → ✅ Moved to `features/nutrition/utils/`
+- ❌ Removed `lib/validations/` → ✅ Moved to `features/*/schemas/`
+- ❌ Removed `features/*/api/` subfolder → ✅ Simplified to `features/*/actions.ts`
 
 ---
 

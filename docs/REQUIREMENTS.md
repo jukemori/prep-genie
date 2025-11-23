@@ -243,6 +243,55 @@ PrepGenie provides:
 
 ## Architecture & Best Practices
 
+### 🏗️ Code Organization Principles
+
+**Strict Separation of Concerns:**
+
+1. **`components/` - UI Components ONLY**
+   - ✅ Pure presentational components
+   - ✅ Receive props and render UI
+   - ✅ Simple calculations for display (e.g., `totalTime = prep + cook`)
+   - ❌ NO business logic
+   - ❌ NO data fetching
+   - ❌ NO complex calculations
+   - ❌ NO API calls
+
+2. **`lib/` - Common Utilities ONLY**
+   - ✅ Shared utility functions (cn, format, constants)
+   - ✅ Infrastructure setup (Supabase client, OpenAI client)
+   - ✅ i18n utilities (unit conversion, formatting)
+   - ❌ NO feature-specific business logic
+   - ❌ NO domain-specific calculations
+   - ❌ NO feature-specific prompts or schemas
+
+3. **`features/` - Business Logic & Domain Code**
+   - ✅ Server Actions (data mutations)
+   - ✅ Business logic and domain calculations
+   - ✅ Feature-specific utilities
+   - ✅ Feature-specific schemas (Zod validations)
+   - ✅ Feature-specific AI prompts
+   - ✅ Feature-specific hooks
+   - ✅ Feature-specific components (if tightly coupled to feature)
+
+**Feature Folder Structure:**
+```typescript
+features/
+├── [feature-name]/
+│   ├── actions.ts              # Server Actions (NO api/ subfolder)
+│   ├── components/             # Feature-specific components
+│   ├── hooks/                  # Feature-specific hooks
+│   ├── utils/                  # Feature-specific utilities
+│   ├── schemas/                # Zod validation schemas
+│   ├── prompts/                # AI prompts (if applicable)
+│   └── types/                  # Feature-specific types
+```
+
+**Why NO `api/` subfolder for Server Actions?**
+- Server Actions are NOT API routes
+- Next.js `app/api/*/route.ts` is for actual API route handlers
+- Server Actions are just server-side functions, colocated with features
+- Simpler imports: `features/meals/actions.ts` vs `features/meals/api/actions.ts`
+
 ### ✅ Verified Patterns from Context7 MCP
 
 #### Next.js 16 + React 19 Architecture
@@ -252,10 +301,33 @@ PrepGenie provides:
 - Use `'use client'` only when needed (interactivity, hooks)
 - Async params/id in Next.js 16 (breaking change)
 
-**Server Actions:**
-- Form submissions without client-side JavaScript
-- Type-safe with Zod validation
-- Revalidation with `revalidatePath`
+**Server Actions - Module-level Definition:**
+```typescript
+// features/meals/actions.ts
+'use server'
+
+export async function createMeal(data: MealInsert) {
+  // Business logic here
+  const supabase = await createClient()
+  const { data: meal } = await supabase.from('meals').insert(data)
+  revalidatePath('/meals')
+  return meal
+}
+```
+
+**Server Actions - Usage in Components:**
+```typescript
+// app/(app)/meals/new/page.tsx or components
+import { createMeal } from '@/features/meals/actions'
+
+export default function NewMealPage() {
+  return (
+    <form action={createMeal}>
+      {/* form fields */}
+    </form>
+  )
+}
+```
 
 **Turbopack:**
 - Enabled by default (no `--turbo` flag needed)
@@ -848,44 +920,87 @@ prep-genie/
 │   │   ├── chat/
 │   │   └── settings/
 │   ├── api/
-│   │   └── webhooks/
-│   └── layout.tsx           # StoreProvider, QueryProvider
+│   │   └── webhooks/         # API route handlers ONLY
+│   └── layout.tsx            # StoreProvider, QueryProvider
 │
-├── components/
-│   ├── atoms/
-│   ├── molecules/
-│   ├── organisms/
-│   ├── templates/
-│   └── providers/
+├── components/               # UI COMPONENTS ONLY (No business logic)
+│   ├── atoms/                # shadcn/ui components
+│   ├── molecules/            # Composite UI components
+│   ├── organisms/            # Complex UI sections
+│   ├── templates/            # Page layouts
+│   └── providers/            # React context providers
 │
-├── features/                 # Feature-based architecture
+├── features/                 # BUSINESS LOGIC & DOMAIN CODE
 │   ├── meals/
+│   │   ├── actions.ts        # Server Actions (NOT api/actions.ts)
+│   │   ├── components/       # Feature-specific components
+│   │   ├── hooks/            # Feature-specific hooks
+│   │   ├── schemas/          # Zod validation schemas
+│   │   └── utils/            # Feature-specific utilities
 │   ├── meal-plans/
-│   ├── grocery-lists/
-│   ├── nutrition/
-│   ├── ai-chat/
-│   └── auth/
-│
-├── lib/
-│   ├── ai/
+│   │   ├── actions.ts
+│   │   ├── components/
+│   │   ├── prompts/          # AI prompts for meal generation
+│   │   │   ├── meal-plan-generator.ts
+│   │   │   ├── meal-swap.ts
+│   │   │   └── cultural-cuisine-guidelines.ts
+│   │   ├── schemas/
+│   │   └── utils/
+│   ├── recipes/
+│   │   ├── actions.ts
+│   │   ├── components/
 │   │   ├── prompts/
-│   │   └── streaming.ts
-│   ├── supabase/
-│   │   ├── client.ts
-│   │   └── server.ts
+│   │   │   └── recipe-analyzer.ts
+│   │   └── schemas/
+│   ├── grocery-lists/
+│   │   ├── actions.ts
+│   │   └── schemas/
 │   ├── nutrition/
-│   │   ├── tdee.ts
-│   │   └── macros.ts
-│   ├── utils/
-│   └── validations/
+│   │   └── utils/            # TDEE, macros calculations
+│   │       ├── tdee.ts
+│   │       └── macros.ts
+│   ├── ai-chat/
+│   │   ├── actions.ts
+│   │   └── prompts/
+│   │       └── nutrition-assistant.ts
+│   ├── user-profile/
+│   │   ├── actions.ts
+│   │   └── schemas/
+│   ├── settings/
+│   │   ├── actions.ts
+│   │   └── components/
+│   ├── progress/
+│   │   └── actions.ts
+│   └── auth/
+│       └── actions.ts
 │
-├── stores/                   # Zustand stores
+├── lib/                      # COMMON UTILITIES ONLY
+│   ├── ai/
+│   │   └── openai.ts         # OpenAI client setup
+│   ├── supabase/
+│   │   ├── client.ts         # Supabase client
+│   │   ├── server.ts         # Supabase server client
+│   │   └── middleware.ts     # Auth middleware
+│   ├── i18n/
+│   │   ├── units.ts          # Unit conversion utilities
+│   │   └── use-locale-format.ts
+│   └── utils/
+│       ├── cn.ts             # Tailwind utility
+│       ├── format.ts         # Formatting helpers
+│       └── constants.ts      # App-wide constants
+│
+├── stores/                   # Zustand stores (client state)
 │   ├── ui-store.ts
 │   ├── meal-store.ts
 │   └── index.ts
 │
 ├── types/
-│   └── database.ts
+│   ├── database.ts           # Generated from Supabase
+│   └── index.ts              # Type exports
+│
+├── messages/                 # i18n translations
+│   ├── en.json
+│   └── ja.json
 │
 ├── supabase/
 │   └── migrations/
@@ -897,6 +1012,13 @@ prep-genie/
 ├── vitest.config.mts
 └── package.json
 ```
+
+**Key Changes from Old Structure:**
+- ❌ Removed `lib/ai/prompts/` → Moved to `features/*/prompts/`
+- ❌ Removed `lib/nutrition/` → Moved to `features/nutrition/utils/`
+- ❌ Removed `lib/validations/` → Moved to `features/*/schemas/`
+- ❌ Removed `features/*/api/` subfolder → Simplified to `features/*/actions.ts`
+- ✅ Clear separation: UI (components), Utils (lib), Business Logic (features)
 
 ---
 
