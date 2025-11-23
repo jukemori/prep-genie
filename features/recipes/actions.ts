@@ -1,11 +1,11 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
-import { openai } from '@/lib/ai/openai'
 import {
-  RECIPE_ANALYZER_SYSTEM_PROMPT,
   generateRecipeAnalysisPrompt,
-} from '@/lib/ai/prompts/recipe-analyzer'
+  RECIPE_ANALYZER_SYSTEM_PROMPT,
+} from '@/features/recipes/prompts/recipe-analyzer'
+import { openai } from '@/lib/ai/openai'
+import { createClient } from '@/lib/supabase/server'
 
 interface AnalyzeRecipeInput {
   input: string

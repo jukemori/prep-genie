@@ -2,8 +2,8 @@
 
 import { createStreamableValue } from '@ai-sdk/rsc'
 import { revalidatePath } from 'next/cache'
+import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
 import { openai } from '@/lib/ai/openai'
-import { generateMealPlanPrompt } from '@/lib/ai/prompts/meal-plan-generator'
 import { createClient } from '@/lib/supabase/server'
 import type { MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
 
@@ -68,7 +68,9 @@ export async function getMealPlan(id: string) {
   return { data: { ...mealPlan, items } }
 }
 
-export async function generateAIMealPlan(cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal') {
+export async function generateAIMealPlan(
+  cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
+) {
   const supabase = await createClient()
 
   const {
@@ -322,7 +324,7 @@ export async function swapMeal(input: SwapMealInput) {
       generateSpeedSwapPrompt,
       generateDietarySwapPrompt,
       generateMacroSwapPrompt,
-    } = await import('@/lib/ai/prompts/meal-swap')
+    } = await import('@/features/meal-plans/prompts/meal-swap')
 
     // Generate appropriate prompt based on swap type
     let prompt: string

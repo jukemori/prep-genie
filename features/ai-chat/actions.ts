@@ -2,11 +2,11 @@
 
 import { createStreamableValue } from '@ai-sdk/rsc'
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
-import { openai } from '@/lib/ai/openai'
 import {
   generateNutritionQuestionPrompt,
   NUTRITION_ASSISTANT_SYSTEM_PROMPT,
-} from '@/lib/ai/prompts/nutrition-assistant'
+} from '@/features/ai-chat/prompts/nutrition-assistant'
+import { openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
 
 export async function chatWithNutritionAssistant(

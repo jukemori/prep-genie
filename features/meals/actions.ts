@@ -1,8 +1,8 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { mealSchema } from '@/features/meals/schemas/meal.schema'
 import { createClient } from '@/lib/supabase/server'
-import { mealSchema } from '@/lib/validations/meal.schema'
 import type { MealInsert, MealUpdate } from '@/types'
 
 export async function getMeals() {

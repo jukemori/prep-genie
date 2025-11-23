@@ -1,10 +1,10 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { calculateTDEE } from '@/lib/nutrition/tdee'
-import { calculateMacros } from '@/lib/nutrition/macros'
+import { calculateMacros } from '@/features/nutrition/utils/macros'
+import { calculateTDEE } from '@/features/nutrition/utils/tdee'
+import { createClient } from '@/lib/supabase/server'
 
 interface UpdateProfileData {
   age: number
@@ -220,10 +220,7 @@ export async function deleteAccount() {
     }
 
     // Delete user profile (cascade will delete related data via RLS)
-    const { error: profileError } = await supabase
-      .from('user_profiles')
-      .delete()
-      .eq('id', user.id)
+    const { error: profileError } = await supabase.from('user_profiles').delete().eq('id', user.id)
 
     if (profileError) {
       return { error: profileError.message }

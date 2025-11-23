@@ -2,10 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { calculateMacros } from '@/lib/nutrition/macros'
-import { calculateTDEE } from '@/lib/nutrition/tdee'
+import { calculateMacros } from '@/features/nutrition/utils/macros'
+import { calculateTDEE } from '@/features/nutrition/utils/tdee'
+import { userProfileSchema } from '@/features/user-profile/schemas/user-profile.schema'
 import { createClient } from '@/lib/supabase/server'
-import { userProfileSchema } from '@/lib/validations/user-profile.schema'
 import type { UserProfileInsert, UserProfileUpdate } from '@/types'
 
 export async function getUserProfile() {
