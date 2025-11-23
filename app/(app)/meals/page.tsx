@@ -1,7 +1,6 @@
-import { Plus, Search } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/atoms/ui/button'
-import { Input } from '@/components/atoms/ui/input'
 import { MealCard } from '@/components/molecules/meal-card'
 import { MealFilters } from '@/features/meals/components/meal-filters'
 import { createClient } from '@/lib/supabase/server'

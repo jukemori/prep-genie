@@ -111,7 +111,7 @@ export function RecipeAnalyzer({ locale }: RecipeAnalyzerProps) {
         setAnalyzedRecipe(result.data)
         toast.success('Recipe analyzed successfully!')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to analyze recipe')
     } finally {
       setIsAnalyzing(false)

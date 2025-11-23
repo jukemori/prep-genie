@@ -1,6 +1,6 @@
 import type { UserProfile } from '@/types'
 
-import { type CuisineType, getCuisineGuidance } from './cultural-cuisine-guidelines'
+import { getCuisineGuidance } from './cultural-cuisine-guidelines'
 
 export const MEAL_PLAN_GENERATOR_SYSTEM_PROMPT = `You are PrepGenie's AI meal plan generator, an expert in creating personalized, balanced meal plans that meet specific nutritional goals.
 

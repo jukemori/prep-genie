@@ -67,7 +67,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
       } else {
         toast.success('Nutrition targets updated successfully!')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to update nutrition targets')
     } finally {
       setIsLoading(false)
@@ -89,7 +89,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
         form.setValue('target_fats', result.data.target_fats)
         toast.success('Nutrition targets reset to AI-recommended values!')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to reset nutrition targets')
     } finally {
       setIsResetting(false)

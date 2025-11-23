@@ -37,7 +37,7 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
       } else {
         toast.success('Preferences updated successfully!')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to update preferences')
     } finally {
       setIsLoading(false)

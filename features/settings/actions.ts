@@ -62,7 +62,7 @@ export async function updateProfile(data: UpdateProfileData) {
 
     revalidatePath('/settings')
     return { success: true }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to update profile' }
   }
 }
@@ -99,7 +99,7 @@ export async function updateLocalePreferences(data: UpdateLocalePreferencesData)
 
     revalidatePath('/settings')
     return { success: true }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to update preferences' }
   }
 }
@@ -137,7 +137,7 @@ export async function updateNutritionTargets(data: UpdateNutritionTargetsData) {
 
     revalidatePath('/settings')
     return { success: true }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to update nutrition targets' }
   }
 }
@@ -202,7 +202,7 @@ export async function resetNutritionTargets() {
         target_fats: macros.fats,
       },
     }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to reset nutrition targets' }
   }
 }
@@ -236,7 +236,7 @@ export async function deleteAccount() {
     // Sign out and redirect
     await supabase.auth.signOut()
     redirect('/login')
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to delete account' }
   }
 }

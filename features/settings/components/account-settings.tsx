@@ -37,7 +37,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
         toast.success('Account deleted successfully')
         // Redirect will happen via server action
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete account')
       setIsDeleting(false)
     }
