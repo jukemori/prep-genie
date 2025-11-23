@@ -43,7 +43,7 @@ export function generateNutritionQuestionPrompt(
   }
 ) {
   const isJapanese = locale === 'ja'
-  
+
   const localeInstructions = isJapanese
     ? `
 **日本語対応:**

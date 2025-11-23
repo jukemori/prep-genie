@@ -1,6 +1,6 @@
 import type { UserProfile } from '@/types'
 
-import { getCuisineGuidance, type CuisineType } from './cultural-cuisine-guidelines'
+import { type CuisineType, getCuisineGuidance } from './cultural-cuisine-guidelines'
 
 export const MEAL_PLAN_GENERATOR_SYSTEM_PROMPT = `You are PrepGenie's AI meal plan generator, an expert in creating personalized, balanced meal plans that meet specific nutritional goals.
 
@@ -19,7 +19,7 @@ export function generateMealPlanPrompt(
   cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
 ) {
   const isJapanese = locale === 'ja'
-  
+
   const localeInstructions = isJapanese
     ? `**日本語対応:**
 - すべての応答を日本語で生成してください

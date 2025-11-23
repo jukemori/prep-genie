@@ -111,7 +111,9 @@ export function generateSpeedSwapPrompt(context: MealSwapContext) {
   const { originalMeal, userPreferences, locale } = context
   const isJapanese = locale === 'ja'
 
-  const localeInstructions = isJapanese ? `すべての応答を日本語で生成してください` : `Respond in English`
+  const localeInstructions = isJapanese
+    ? `すべての応答を日本語で生成してください`
+    : `Respond in English`
 
   return `${localeInstructions}
 
