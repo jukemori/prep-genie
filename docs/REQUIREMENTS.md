@@ -118,6 +118,63 @@ PrepGenie provides:
 - Meal modifications
 - Cultural adaptations
 
+### 7. Recipe Nutrition Analyzer
+- Paste any internet recipe URL or text
+- AI extracts ingredients and portions
+- Outputs complete nutrition breakdown:
+  - Total calories
+  - Macro distribution (protein, carbs, fats)
+  - Per-serving calculations
+- AI-suggested improvements:
+  - Budget-friendly version (cheaper ingredients)
+  - High-protein version (protein-optimized swaps)
+  - Lower-calorie alternatives
+
+### 8. Meal Swap System
+- AI-powered intelligent meal replacements
+- Swap criteria:
+  - **Budget swap**: "Replace with cheaper ingredients"
+  - **Speed swap**: "Faster cooking alternative"
+  - **Dietary swap**: "Dairy-free / Gluten-free / Vegan version"
+  - **Macro swap**: "Higher protein / Lower carb alternative"
+- Maintains similar nutrition profile and satisfaction
+- Preserves user preferences and dietary restrictions
+
+### 9. Cultural Meal Modes
+- Multi-cuisine support with authentic recipes:
+  - **Japanese** - Traditional and modern Japanese cuisine
+  - **Korean** - Korean BBQ, banchan, stews
+  - **Mediterranean** - Greek, Italian, Middle Eastern
+  - **Western** - American, British, European classics
+  - **Halal** - Halal-certified ingredients and preparation
+- Cuisine-specific:
+  - Authentic ingredient recommendations
+  - Traditional cooking methods
+  - Cultural meal timing and portions
+
+### 10. Internationalization (i18n)
+- **Japanese Language Support**:
+  - Full app translation (UI, recipes, AI responses)
+  - Japanese-specific units:
+    - Weight: kg only (no lb)
+    - Height: cm only (no feet/inches)
+    - Liquid: mL, L (Japanese cup = 200mL)
+    - Cooking measurements: grams, Japanese cup/tablespoon sizes
+  - Locale-aware date/time formatting
+  - Japanese number formatting (e.g., ¥1,500)
+- **English Language Support**:
+  - Imperial and Metric unit selection:
+    - Weight: lb or kg
+    - Height: feet/inches or cm
+    - Volume: oz, cups or mL, L
+  - US date formatting
+  - Currency formatting ($)
+- **Implementation**:
+  - next-intl for translations
+  - Locale-aware number/date formatting
+  - Unit conversion utilities
+  - User preference storage
+
 ---
 
 ## Tech Stack Summary
