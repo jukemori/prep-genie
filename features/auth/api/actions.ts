@@ -65,7 +65,7 @@ export async function register(formData: FormData) {
 
   const origin = (await headers()).get('origin')
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -77,6 +77,13 @@ export async function register(formData: FormData) {
     return { error: error.message }
   }
 
+  // Check if email confirmation is required
+  if (data.user && !data.session) {
+    // Email confirmation required - return success with email
+    return { success: true, email, requiresConfirmation: true }
+  }
+
+  // Auto-confirmed (email confirmation disabled) - redirect to onboarding
   redirect('/onboarding')
 }
 
