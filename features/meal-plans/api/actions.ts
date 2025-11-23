@@ -175,6 +175,12 @@ export async function saveMealPlan(mealPlanData: string) {
           is_public: false,
           is_ai_generated: true,
           image_url: null,
+          meal_prep_friendly: meal.meal_prep_friendly || false,
+          storage_instructions: meal.storage_instructions || null,
+          reheating_instructions: meal.reheating_instructions || null,
+          storage_duration_days: meal.storage_duration_days || null,
+          container_type: meal.container_type || null,
+          batch_cooking_multiplier: meal.batch_cooking_multiplier || 1,
         }
 
         const { data: createdMeal, error: mealError } = await supabase
