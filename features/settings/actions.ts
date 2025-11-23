@@ -41,7 +41,11 @@ export async function updateProfile(data: UpdateProfileData) {
       activityLevel: data.activity_level,
     })
 
-    const macros = calculateMacros(tdee, data.goal)
+    const macros = calculateMacros({
+      tdee,
+      goal: data.goal,
+      weight: data.weight,
+    })
 
     const { error } = await supabase
       .from('user_profiles')
@@ -174,7 +178,11 @@ export async function resetNutritionTargets() {
       activityLevel: profile.activity_level || 'moderate',
     })
 
-    const macros = calculateMacros(tdee, profile.goal || 'maintain')
+    const macros = calculateMacros({
+      tdee,
+      goal: profile.goal || 'maintain',
+      weight: Number(profile.weight),
+    })
 
     const { error } = await supabase
       .from('user_profiles')

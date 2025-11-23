@@ -49,7 +49,7 @@ interface ProfileSettingsProps {
 export function ProfileSettings({ profile }: ProfileSettingsProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<ProfileFormValues>({
+  const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       age: profile.age || 0,

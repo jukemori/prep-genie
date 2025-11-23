@@ -47,7 +47,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
   const [isLoading, setIsLoading] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
 
-  const form = useForm<NutritionFormValues>({
+  const form = useForm({
     resolver: zodResolver(nutritionSchema),
     defaultValues: {
       daily_calorie_target: profile.daily_calorie_target || 2000,

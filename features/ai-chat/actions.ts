@@ -41,7 +41,8 @@ export async function chatWithNutritionAssistant(
         }
       : undefined
 
-    const userPrompt = generateNutritionQuestionPrompt(question, userContext)
+    // TODO: Get locale from user profile once locale field is added to database
+    const userPrompt = generateNutritionQuestionPrompt(question, 'en', userContext)
 
     const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: NUTRITION_ASSISTANT_SYSTEM_PROMPT },

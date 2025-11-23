@@ -20,8 +20,10 @@ interface LanguageUnitsSettingsProps {
 }
 
 export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
-  const [unitSystem, setUnitSystem] = useState(profile.unit_system || 'metric')
-  const [currency, setCurrency] = useState(profile.currency || 'USD')
+  const [unitSystem, setUnitSystem] = useState<'metric' | 'imperial'>(
+    (profile.unit_system as 'metric' | 'imperial') || 'metric'
+  )
+  const [currency, setCurrency] = useState<'USD' | 'JPY'>((profile.currency as 'USD' | 'JPY') || 'USD')
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSave() {
@@ -63,7 +65,10 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
         <p className="text-sm text-muted-foreground mb-3">
           Select your preferred measurement system
         </p>
-        <Select value={unitSystem} onValueChange={setUnitSystem}>
+        <Select
+          value={unitSystem}
+          onValueChange={(value) => setUnitSystem(value as 'metric' | 'imperial')}
+        >
           <SelectTrigger id="unit-system" className="w-full">
             <SelectValue placeholder="Select unit system" />
           </SelectTrigger>
@@ -81,7 +86,7 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
         <p className="text-sm text-muted-foreground mb-3">
           Choose your preferred currency for cost displays
         </p>
-        <Select value={currency} onValueChange={setCurrency}>
+        <Select value={currency} onValueChange={(value) => setCurrency(value as 'USD' | 'JPY')}>
           <SelectTrigger id="currency" className="w-full">
             <SelectValue placeholder="Select currency" />
           </SelectTrigger>

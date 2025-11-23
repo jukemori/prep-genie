@@ -301,10 +301,10 @@ export async function swapMeal(input: SwapMealInput) {
     const context = {
       originalMeal: {
         name: originalMeal.name,
-        calories: originalMeal.calories_per_serving,
-        protein: originalMeal.protein_per_serving,
-        carbs: originalMeal.carbs_per_serving,
-        fats: originalMeal.fats_per_serving,
+        calories: originalMeal.calories_per_serving ?? 0,
+        protein: originalMeal.protein_per_serving ?? 0,
+        carbs: originalMeal.carbs_per_serving ?? 0,
+        fats: originalMeal.fats_per_serving ?? 0,
         mealType: mealPlanItem.meal_time,
       },
       userPreferences: {
@@ -314,7 +314,8 @@ export async function swapMeal(input: SwapMealInput) {
         timeAvailable: profile.time_available || 60,
         budgetLevel: profile.budget_level || 'medium',
       },
-      locale: (profile.locale || 'en') as 'en' | 'ja',
+      // TODO: Get locale from user profile once locale field is added to database
+      locale: 'en' as 'en' | 'ja',
     }
 
     // Import swap prompts
