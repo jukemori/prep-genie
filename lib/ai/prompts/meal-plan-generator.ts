@@ -44,10 +44,17 @@ export function generateMealPlanPrompt(profile: UserProfile) {
    - Prep time and cook time
    - Nutrition per serving (calories, protein, carbs, fats)
    - Servings
+   - Meal prep information (storage, reheating, batch cooking recommendations)
 4. Ensure meals align with dietary preferences and avoid allergens
 5. Consider cooking skill level and time constraints
 6. Vary cuisine types for diversity
-7. Optimize for batch cooking where possible
+7. Optimize for batch cooking where possible (mark meal_prep_friendly: true for suitable meals)
+8. For meal prep friendly meals, provide:
+   - Clear storage instructions
+   - Reheating instructions
+   - Storage duration (how many days it stays fresh)
+   - Recommended container type
+   - Suggested batch cooking multiplier (e.g., 4x for meal prepping 4 portions)
 
 **Output Format (JSON):**
 {
@@ -86,7 +93,13 @@ export function generateMealPlanPrompt(profile: UserProfile) {
           },
           "tags": ["tag1", "tag2", ...],
           "cuisine_type": "string",
-          "difficulty_level": "easy" | "medium" | "hard"
+          "difficulty_level": "easy" | "medium" | "hard",
+          "meal_prep_friendly": boolean,
+          "storage_instructions": "string (how to store)",
+          "reheating_instructions": "string (how to reheat)",
+          "storage_duration_days": number (how many days it keeps),
+          "container_type": "glass" | "plastic" | "freezer-safe" | null,
+          "batch_cooking_multiplier": number (recommended batch size, e.g. 4 for 4x recipe)
         }
       ]
     }
