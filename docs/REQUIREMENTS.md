@@ -153,6 +153,11 @@ PrepGenie provides:
   - Cultural meal timing and portions
 
 ### 10. Internationalization (i18n)
+- **Onboarding Language Selection**:
+  - First step of onboarding: language selection (English or Japanese)
+  - Large, clear language options with flags/icons
+  - Sets locale for entire onboarding flow
+  - Saves preference to user profile
 - **Japanese Language Support**:
   - Full app translation (UI, recipes, AI responses)
   - Japanese-specific units:
@@ -164,8 +169,8 @@ PrepGenie provides:
   - Japanese number formatting (e.g., ¥1,500)
 - **English Language Support**:
   - Imperial and Metric unit selection:
-    - Weight: lb or kg
-    - Height: feet/inches or cm
+    - Weight: lb or kg (user chooses during onboarding)
+    - Height: feet/inches or cm (user chooses during onboarding)
     - Volume: oz, cups or mL, L
   - US date formatting
   - Currency formatting ($)
@@ -173,7 +178,48 @@ PrepGenie provides:
   - next-intl for translations
   - Locale-aware number/date formatting
   - Unit conversion utilities
-  - User preference storage
+  - User preference storage in database
+  - Language switcher in settings page
+
+### 11. Settings Page
+- **Profile Settings**:
+  - Edit personal information (age, weight, height, gender)
+  - Update activity level
+  - Modify fitness goals (weight loss, maintain, muscle gain)
+  - Update dietary preferences (omnivore, vegetarian, vegan, pescatarian, halal)
+  - Manage allergies list
+  - Adjust cooking skill level
+  - Set daily time available for cooking
+  - Update budget level
+- **Language & Units**:
+  - Language switcher (English ⇄ Japanese)
+  - Unit system toggle (Imperial/Metric) - English only
+  - Weight unit preference (kg or lb)
+  - Height unit preference (cm or ft/in)
+  - Volume unit preference (mL or cups/oz)
+  - Currency display ($ or ¥)
+- **Nutrition Targets**:
+  - View current TDEE calculation
+  - Manually adjust daily calorie target
+  - Customize macro distribution (protein, carbs, fats)
+  - Reset to AI-recommended values
+- **Account Management**:
+  - Change email
+  - Update password
+  - Manage email preferences
+  - Export user data
+  - Delete account
+- **App Preferences**:
+  - Dark/Light theme toggle
+  - Notification settings
+  - Default meal plan type (daily/weekly)
+  - Preferred cuisine types
+- **Implementation**:
+  - Form validation with react-hook-form + Zod
+  - Real-time TDEE recalculation on profile changes
+  - Optimistic UI updates with TanStack Query
+  - Confirmation dialogs for destructive actions
+  - Success/error toasts with sonner
 
 ---
 

@@ -103,7 +103,7 @@ pnpm supabase:types
 
 ## 📋 Core Features Implementation Status
 
-Based on REQUIREMENTS.md Core Features (10 features):
+Based on REQUIREMENTS.md Core Features (11 features):
 
 ### ✅ Feature 1: User Profile & Onboarding - COMPLETED
 - [x] Multi-step form collecting: age, weight, height, gender, activity level
@@ -244,6 +244,12 @@ Based on REQUIREMENTS.md Core Features (10 features):
 - Add cultural dietary restrictions to onboarding
 
 ### ⏳ Feature 10: Internationalization (i18n) - PENDING
+- [ ] Onboarding language selection:
+  - First step of onboarding flow
+  - Large, clear language options (English / 日本語)
+  - Flag/icon display for visual clarity
+  - Sets locale for entire onboarding
+  - Saves preference to user profile
 - [ ] Japanese language support:
   - kg/cm measurements only (no imperial)
   - 200mL cup standard (not 240mL US cup)
@@ -252,16 +258,55 @@ Based on REQUIREMENTS.md Core Features (10 features):
   - Japanese text throughout UI
   - AI responses in Japanese
 - [ ] English language support:
-  - Unit preference selection (lb or kg, feet/inches or cm)
-  - Imperial/Metric toggle
+  - Unit preference selection during onboarding (lb or kg, feet/inches or cm)
+  - Imperial/Metric toggle in settings
   - $ currency formatting
   - Standard 240mL US cups
 - [ ] Locale-aware formatting (dates, numbers, measurements)
 - [ ] User preference storage in database
-- [ ] Language switcher in settings
+- [ ] Language switcher in settings page
 
 **Implementation Plan:**
-See detailed i18n implementation guide below.
+- Create language selection component for onboarding step 1
+- Implement unit preference selection based on chosen language
+- Add language switcher to settings page
+- See detailed i18n implementation guide below.
+
+### ⏳ Feature 11: Settings Page - PENDING
+- [ ] Profile Settings section:
+  - Edit personal info (age, weight, height, gender)
+  - Update activity level and fitness goals
+  - Modify dietary preferences and allergies
+  - Adjust cooking skill and time available
+  - Update budget level
+- [ ] Language & Units section:
+  - Language switcher (English ⇄ Japanese)
+  - Unit system toggle (Imperial/Metric) - English only
+  - Weight/Height/Volume unit preferences
+  - Currency display preference
+- [ ] Nutrition Targets section:
+  - View current TDEE calculation
+  - Manually adjust calorie/macro targets
+  - Reset to AI-recommended values
+- [ ] Account Management section:
+  - Change email/password
+  - Email preferences
+  - Export user data
+  - Delete account (with confirmation)
+- [ ] App Preferences section:
+  - Dark/Light theme toggle
+  - Notification settings
+  - Default meal plan type
+  - Preferred cuisine types
+
+**Implementation Plan:**
+- Create `app/(app)/settings/page.tsx` with tabbed layout
+- Create `features/settings/components/` for each settings section
+- Create `features/settings/api/actions.ts` for update operations
+- Use react-hook-form + Zod for form validation
+- Implement optimistic UI updates with TanStack Query
+- Add confirmation dialogs for destructive actions
+- Real-time TDEE recalculation on profile changes
 
 ---
 
@@ -765,7 +810,7 @@ export function MacroDisplay({ calories, protein, carbs, fats }: Props) {
 
 ## 🎯 Development Status
 
-**Overall:** ~60% Complete (6/10 Core Features Implemented)
+**Overall:** ~55% Complete (6/11 Core Features Implemented)
 
 **Completed (6 features):**
 - ✅ Feature 1: User Profile & Onboarding
@@ -775,18 +820,21 @@ export function MacroDisplay({ calories, protein, carbs, fats }: Props) {
 - ✅ Feature 5: Meal Library
 - ✅ Feature 6: AI Nutrition Assistant
 
-**In Progress (4 features):**
+**In Progress (5 features):**
 - ⏳ Feature 7: Recipe Nutrition Analyzer
 - ⏳ Feature 8: Meal Swap System
 - ⏳ Feature 9: Cultural Meal Modes
 - ⏳ Feature 10: Internationalization (i18n)
+- ⏳ Feature 11: Settings Page
 
 **Next Steps:**
 1. Install next-intl and configure i18n
-2. Implement Recipe Nutrition Analyzer
-3. Implement Meal Swap System
-4. Expand Cultural Meal Modes
-5. Add multilingual AI responses
+2. Add language selection to onboarding (step 1)
+3. Implement Settings Page with all sections
+4. Implement Recipe Nutrition Analyzer
+5. Implement Meal Swap System
+6. Expand Cultural Meal Modes
+7. Add multilingual AI responses
 
 **Optional Enhancements (Not Required):**
 - [ ] OAuth providers (Google, GitHub)
