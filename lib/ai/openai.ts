@@ -11,4 +11,8 @@ export const openai = new OpenAI({
 export const MODELS = {
   GPT4O: 'gpt-4o',
   GPT4O_MINI: 'gpt-4o-mini',
+  GPT5_NANO: 'gpt-5-nano',
+  GPT5_MINI: 'gpt-5-mini',
+  GPT5: 'gpt-5',
+  GPT5_1: 'gpt-5.1',
 } as const

@@ -59,10 +59,9 @@ export async function chatWithNutritionAssistant(
     messages.push({ role: 'user', content: userPrompt })
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-5-nano',
       messages,
       stream: true,
-      temperature: 0.7,
     })
 
     for await (const chunk of completion) {

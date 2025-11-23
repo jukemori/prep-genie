@@ -235,7 +235,7 @@ PrepGenie provides:
 | **Server State** | TanStack Query | 5.84.1+ | Data fetching, caching, prefetching |
 | **Client State** | Zustand | 5.0.8+ | Atomic state, persist middleware |
 | **Database** | Supabase | 2.58.0+ | PostgreSQL, Auth, Real-time, Storage |
-| **AI** | OpenAI | 6.1.0+ | GPT-4o for meal generation, streaming |
+| **AI** | OpenAI | 6.1.0+ | GPT-5-nano for meal generation, streaming |
 | **Testing** | Vitest | 4.0.7+ | Unit, integration testing |
 | **Linting** | Biome | 2.2.4+ | Fast linting + formatting |
 
@@ -435,7 +435,7 @@ const client = new OpenAI()
 export async function generateMealPlan(userProfile: UserProfile) {
   try {
     const stream = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-5-nano',
       messages: [{
         role: 'system',
         content: 'You are a nutrition expert...'
@@ -672,8 +672,9 @@ CREATE POLICY "Users can update own profile" ON user_profiles
 - **Installation**: `pnpm add openai@latest`
 
 **Models:**
-- `gpt-4o` - Complex meal generation, meal plans
-- `gpt-4o-mini` - Quick queries, modifications, chat
+- `gpt-5-nano` - Primary model for meal generation, meal plans, chat
+- `gpt-5-mini` - Alternative for more complex reasoning (optional)
+- `gpt-5` / `gpt-5.1` - Advanced reasoning models (future upgrade path)
 
 **Implementation:**
 

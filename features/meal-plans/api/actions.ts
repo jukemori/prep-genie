@@ -96,7 +96,7 @@ export async function generateAIMealPlan() {
     const prompt = generateMealPlanPrompt(profile)
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-5-nano',
       messages: [{ role: 'user', content: prompt }],
       stream: true,
       response_format: { type: 'json_object' },

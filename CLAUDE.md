@@ -14,7 +14,7 @@ This document provides step-by-step instructions for building PrepGenie using Cl
 - Zustand 5.0.8+ (client state)
 - TanStack Query 5.84.1+ (server state)
 - Supabase 2.58.0+ (PostgreSQL, Auth, Storage)
-- OpenAI 6.1.0+ (GPT-4o for meal generation)
+- OpenAI 6.1.0+ (GPT-5-nano for meal generation)
 - Tailwind CSS v4 + shadcn/ui
 - Biome 2.2.4+ (linting/formatting)
 - Vitest 4.0.7+ (testing)
