@@ -23,7 +23,9 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
   const [unitSystem, setUnitSystem] = useState<'metric' | 'imperial'>(
     (profile.unit_system as 'metric' | 'imperial') || 'metric'
   )
-  const [currency, setCurrency] = useState<'USD' | 'JPY'>((profile.currency as 'USD' | 'JPY') || 'USD')
+  const [currency, setCurrency] = useState<'USD' | 'JPY'>(
+    (profile.currency as 'USD' | 'JPY') || 'USD'
+  )
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSave() {

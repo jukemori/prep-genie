@@ -65,12 +65,8 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           | 'very_active'
           | undefined) || 'moderate',
       goal:
-        (profile.goal as
-          | 'weight_loss'
-          | 'maintain'
-          | 'muscle_gain'
-          | 'balanced'
-          | undefined) || 'maintain',
+        (profile.goal as 'weight_loss' | 'maintain' | 'muscle_gain' | 'balanced' | undefined) ||
+        'maintain',
       dietary_preference:
         (profile.dietary_preference as
           | 'omnivore'
