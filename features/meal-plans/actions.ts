@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
 import { openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
-import type { MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
+import type { Meal, MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
 
 export async function getMealPlans() {
   const supabase = await createClient()
@@ -295,7 +295,7 @@ export async function swapMeal(input: SwapMealInput) {
       return { error: 'Meal not found' }
     }
 
-    const originalMeal = mealPlanItem.meals as any
+    const originalMeal = mealPlanItem.meals as unknown as Meal
 
     // Prepare context for AI
     const context = {

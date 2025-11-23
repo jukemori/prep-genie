@@ -45,7 +45,11 @@ export function MealSwapMenu({
   const [pendingSwap, setPendingSwap] = useState<{
     type: string
     description: string
-    params: any
+    params: {
+      swapType: 'budget' | 'speed' | 'dietary' | 'macro'
+      dietaryRestriction?: 'dairy_free' | 'gluten_free' | 'vegan' | 'low_fodmap'
+      macroGoal?: 'high_protein' | 'low_carb' | 'low_fat'
+    }
   } | null>(null)
 
   async function handleSwap(
@@ -69,7 +73,7 @@ export function MealSwapMenu({
         toast.success('Meal swapped successfully!')
         onSwapComplete?.()
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to swap meal')
     } finally {
       setIsSwapping(false)
@@ -78,7 +82,15 @@ export function MealSwapMenu({
     }
   }
 
-  function initiateSwap(type: string, description: string, params: any) {
+  function initiateSwap(
+    type: string,
+    description: string,
+    params: {
+      swapType: 'budget' | 'speed' | 'dietary' | 'macro'
+      dietaryRestriction?: 'dairy_free' | 'gluten_free' | 'vegan' | 'low_fodmap'
+      macroGoal?: 'high_protein' | 'low_carb' | 'low_fat'
+    }
+  ) {
     setPendingSwap({ type, description, params })
     setShowConfirmDialog(true)
   }
