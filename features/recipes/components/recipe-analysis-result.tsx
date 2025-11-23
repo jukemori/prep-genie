@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/atoms/ui/card'
-import { Separator } from '@/components/atoms/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
 import { saveAnalyzedRecipe } from '../actions'
 
@@ -85,7 +84,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       } else {
         toast.success('Recipe saved to your meal library!')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save recipe')
     } finally {
       setIsSaving(false)
@@ -151,8 +150,11 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index} className="flex justify-between">
+            {recipe.ingredients.map((ingredient) => (
+              <li
+                key={`${ingredient.name}-${ingredient.quantity}`}
+                className="flex justify-between"
+              >
                 <span>{ingredient.name}</span>
                 <span className="text-muted-foreground">
                   {ingredient.quantity} {ingredient.unit}
@@ -170,8 +172,8 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
         </CardHeader>
         <CardContent>
           <ol className="list-decimal list-inside space-y-2">
-            {recipe.instructions.map((step, index) => (
-              <li key={index} className="text-sm">
+            {recipe.instructions.map((step) => (
+              <li key={step.substring(0, 50)} className="text-sm">
                 {step}
               </li>
             ))}
@@ -207,9 +209,9 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 {recipe.improvements.budget.description}
               </p>
               <div className="space-y-2">
-                {recipe.improvements.budget.ingredient_swaps.map((swap, index) => (
+                {recipe.improvements.budget.ingredient_swaps.map((swap) => (
                   <div
-                    key={index}
+                    key={`${swap.original}-${swap.replacement}`}
                     className="flex justify-between items-center p-3 bg-muted rounded-lg"
                   >
                     <div className="space-y-1">
@@ -238,9 +240,9 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 {recipe.improvements.high_protein.description}
               </p>
               <div className="space-y-2">
-                {recipe.improvements.high_protein.ingredient_swaps.map((swap, index) => (
+                {recipe.improvements.high_protein.ingredient_swaps.map((swap) => (
                   <div
-                    key={index}
+                    key={`${swap.original}-${swap.replacement}`}
                     className="flex justify-between items-center p-3 bg-muted rounded-lg"
                   >
                     <div className="space-y-1">
@@ -273,9 +275,9 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 {recipe.improvements.lower_calorie.description}
               </p>
               <div className="space-y-2">
-                {recipe.improvements.lower_calorie.ingredient_swaps.map((swap, index) => (
+                {recipe.improvements.lower_calorie.ingredient_swaps.map((swap) => (
                   <div
-                    key={index}
+                    key={`${swap.original}-${swap.replacement}`}
                     className="flex justify-between items-center p-3 bg-muted rounded-lg"
                   >
                     <div className="space-y-1">
