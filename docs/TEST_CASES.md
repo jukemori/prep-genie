@@ -1,6 +1,6 @@
 # PrepGenie - Test Cases
 
-**Last Updated:** 2025-11-23
+**Last Updated:** 2025-11-24
 **Test Environment:** Development (http://localhost:3000)
 **Testing Tool:** Playwright MCP
 
@@ -9,12 +9,12 @@
 ## Test Coverage Summary
 
 - **Total Features:** 11
-- **Total Test Cases:** 15/206
-- **Pass Rate:** 7.3%
-- **Bugs Found:** 1 (High Priority)
-- **Last Test Run:** Feature 2 - AI Meal Generator (TC-036 to TC-041)
+- **Total Test Cases:** 18/206
+- **Pass Rate:** 8.7%
+- **Bugs Found:** 3 (All Fixed)
+- **Last Test Run:** Feature 2 - AI Meal Generator (TC-041, TC-044, TC-047)
   - ✅ Feature 1 - User Profile & Settings (TC-141 to TC-153) - All Passed
-  - ⚠️ Feature 2 - AI Meal Generator (TC-036, TC-038) - Partial, 1 Bug Found
+  - ✅ Feature 2 - AI Meal Generator (TC-036, TC-038, TC-041, TC-044, TC-047) - All Passed
 
 ---
 
@@ -81,13 +81,13 @@
 - [x] TC-038: User can select cuisine type
 - [ ] TC-039: User can select meal complexity (easy/medium/hard) - NOT IMPLEMENTED (uses profile)
 - [ ] TC-040: User can set time constraints (prep + cook time) - NOT IMPLEMENTED (uses profile)
-- [ ] TC-041: AI generates complete meal plan with all meals - FAILED (OpenAI API ECONNRESET error)
+- [x] TC-041: AI generates complete meal plan with all meals - PASSED (17.2s generation time)
 - [ ] TC-042: Generated meals include name, description, ingredients
 - [ ] TC-043: Generated meals include instructions
-- [ ] TC-044: Generated meals include nutrition data (calories, protein, carbs, fats)
+- [x] TC-044: Generated meals include nutrition data (calories, protein, carbs, fats) - PASSED
 - [ ] TC-045: Generated meals respect user's dietary preferences
 - [ ] TC-046: Generated meals respect user's allergies
-- [ ] TC-047: User can save generated meal plan
+- [x] TC-047: User can save generated meal plan - PASSED (saved and redirected to meal plan details)
 
 ### 3.2 Meal Plan Details
 - [ ] TC-048: Each meal shows prep time and cook time
@@ -414,8 +414,9 @@ const password = process.env.LOGIN_PASSWORD
 
 | Test Case | Status | Bug ID | Priority | Notes |
 |-----------|--------|--------|----------|-------|
-| TC-041    | PASSED | BUG-001| Critical | ~~OpenAI API connection error (ECONNRESET)~~ FIXED: Changed model from 'gpt-5-nano' to 'gpt-4o' and added error handling |
-| TC-041    | PASSED | BUG-002| Critical | ~~Next.js 16 dynamic rendering issue with cookies()~~ FIXED: (1) Added `connection()` to i18n/request.ts and generateAIMealPlan server action (2) Disabled `cacheComponents: true` in next.config.ts (incompatible with dynamic rendering). Root cause: Next.js 16 requires explicit opt-in to dynamic rendering when using cookies()/headers(). Pages now load cleanly without "Maximum call stack size exceeded" errors. |
+| TC-041    | PASSED | BUG-001| Critical | ~~OpenAI API connection error (ECONNRESET)~~ FIXED: Changed model from 'gpt-5-nano' to 'gpt-4o' and added error handling in features/meal-plans/actions.ts:107,119-122 |
+| TC-041    | PASSED | BUG-002| Critical | ~~Next.js 16 dynamic rendering issue with cookies()~~ FIXED: (1) Removed incorrect `connection()` call from i18n/request.ts (2) Added `connection()` to app/layout.tsx:32 and generateAIMealPlan server action (3) Disabled `cacheComponents: true` in next.config.ts. Root cause: next-intl's `getRequestConfig` should call `await cookies()` directly without `connection()`. The `connection()` call belongs at the layout/page level, not inside config functions. Server now runs cleanly without "Maximum call stack size exceeded" errors. |
+| TC-041    | PASSED | BUG-003| High     | ~~OpenAI API key typo~~ FIXED: Removed extra "s" from beginning of API key in .env.local (ssk-proj → sk-proj). Required dev server restart to pick up new environment variable. |
 
 ---
 
