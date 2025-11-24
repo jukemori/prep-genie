@@ -387,7 +387,7 @@ export async function swapMeal(input: SwapMealInput) {
 
     // Call AI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-5-nano',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: MEAL_SWAP_SYSTEM_PROMPT },
         { role: 'user', content: prompt },
