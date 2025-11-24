@@ -217,6 +217,59 @@ export default async function MealDetailPage({ params }: PageProps) {
               )}
             </CardContent>
           </Card>
+
+          {/* Meal Prep Info */}
+          {(meal.meal_prep_friendly ||
+            meal.storage_instructions ||
+            meal.reheating_instructions ||
+            meal.storage_duration_days ||
+            meal.container_type ||
+            meal.batch_cooking_multiplier) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Meal Prep Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                {meal.meal_prep_friendly && (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      Meal Prep Friendly
+                    </Badge>
+                  </div>
+                )}
+                {meal.batch_cooking_multiplier && meal.batch_cooking_multiplier > 1 && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Batch Multiplier</span>
+                    <span className="font-medium">{meal.batch_cooking_multiplier}x</span>
+                  </div>
+                )}
+                {meal.storage_duration_days && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Storage Duration</span>
+                    <span className="font-medium">{meal.storage_duration_days} days</span>
+                  </div>
+                )}
+                {meal.container_type && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Container Type</span>
+                    <span className="capitalize font-medium">{meal.container_type}</span>
+                  </div>
+                )}
+                {meal.storage_instructions && (
+                  <div className="space-y-1">
+                    <span className="font-medium text-muted-foreground">Storage Instructions</span>
+                    <p className="text-foreground">{meal.storage_instructions}</p>
+                  </div>
+                )}
+                {meal.reheating_instructions && (
+                  <div className="space-y-1">
+                    <span className="font-medium text-muted-foreground">Reheating Instructions</span>
+                    <p className="text-foreground">{meal.reheating_instructions}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
