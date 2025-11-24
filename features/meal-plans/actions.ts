@@ -2,6 +2,7 @@
 
 import { createStreamableValue } from '@ai-sdk/rsc'
 import { revalidatePath } from 'next/cache'
+import { connection } from 'next/server'
 import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
 import { openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
@@ -71,6 +72,9 @@ export async function getMealPlan(id: string) {
 export async function generateAIMealPlan(
   cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
 ) {
+  // Force dynamic rendering to prevent caching issues with cookies()
+  await connection()
+
   const supabase = await createClient()
 
   const {
@@ -95,22 +99,27 @@ export async function generateAIMealPlan(
   const stream = createStreamableValue('')
 
   ;(async () => {
-    const locale = (profile.locale || 'en') as 'en' | 'ja'
-    const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
+    try {
+      const locale = (profile.locale || 'en') as 'en' | 'ja'
+      const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-5-nano',
-      messages: [{ role: 'user', content: prompt }],
-      stream: true,
-      response_format: { type: 'json_object' },
-    })
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        stream: true,
+        response_format: { type: 'json_object' },
+      })
 
-    for await (const chunk of completion) {
-      const content = chunk.choices[0]?.delta?.content || ''
-      stream.update(content)
+      for await (const chunk of completion) {
+        const content = chunk.choices[0]?.delta?.content || ''
+        stream.update(content)
+      }
+
+      stream.done()
+    } catch (error) {
+      console.error('AI meal plan generation error:', error)
+      stream.error(error)
     }
-
-    stream.done()
   })()
 
   return { stream: stream.value }
