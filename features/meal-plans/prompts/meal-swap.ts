@@ -112,8 +112,17 @@ export function generateSpeedSwapPrompt(context: MealSwapContext) {
   const isJapanese = locale === 'ja'
 
   const localeInstructions = isJapanese
-    ? `すべての応答を日本語で生成してください`
-    : `Respond in English`
+    ? `**日本語対応:**
+- すべての応答を日本語で生成してください
+- カップ: 200mL
+- 重量: kg、g
+- 温度: 摂氏（℃）
+`
+    : `**Language:**
+- Respond in English
+- Cups: 240mL (US standard)
+- Weight: kg, g
+`
 
   return `${localeInstructions}
 
@@ -122,22 +131,49 @@ Generate a faster/easier meal swap for:
 **Original Meal:** ${originalMeal.name}
 - Meal Type: ${originalMeal.mealType}
 - Calories: ${originalMeal.calories} kcal
-- Protein: ${originalMeal.protein}g, Carbs: ${originalMeal.carbs}g, Fats: ${originalMeal.fats}g
+- Protein: ${originalMeal.protein}g
+- Carbs: ${originalMeal.carbs}g
+- Fats: ${originalMeal.fats}g
 
 **User Preferences:**
 - Dietary Preference: ${userPreferences.dietaryPreference}
 - Allergies: ${userPreferences.allergies.join(', ') || 'None'}
 - Cooking Skill: ${userPreferences.cookingSkill}
-- Target: Reduce cooking time significantly
+- Time Available: ${userPreferences.timeAvailable} minutes
+- Budget Level: ${userPreferences.budgetLevel}
 
 **Requirements:**
 1. Suggest faster cooking methods or pre-prepped ingredients
 2. Reduce total time by at least 30%
-3. Maintain nutrition profile within ±100 kcal
+3. Maintain nutrition profile within ±100 kcal and ±10g macros
 4. Respect dietary preferences and allergies
-5. Specify time saved
+5. Keep similar flavor profile and meal type
+6. Specify time saved in description
+7. Include complete recipe details
 
-Same JSON output format as budget swap, but add "time_saved": "string (e.g., '15 minutes faster')"`
+**Output Format (JSON):**
+{
+  "name": "string",
+  "description": "string (explain why this is faster + time saved, e.g., '15 minutes faster than original')",
+  "ingredients": [
+    {
+      "name": "string",
+      "quantity": number,
+      "unit": "string",
+      "category": "produce" | "protein" | "dairy" | "grains" | "pantry" | "spices" | "other"
+    }
+  ],
+  "instructions": ["step1", "step2", ...],
+  "prep_time": number (minutes),
+  "cook_time": number (minutes),
+  "servings": number,
+  "nutrition_per_serving": {
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fats": number
+  }
+}`
 }
 
 export function generateDietarySwapPrompt(
@@ -154,23 +190,66 @@ export function generateDietarySwapPrompt(
     low_fodmap: isJapanese ? '低FODMAP' : 'Low-FODMAP',
   }
 
-  return `Create a ${restrictionLabels[dietaryRestriction]} version of:
+  const localeInstructions = isJapanese
+    ? `**日本語対応:**
+- すべての応答を日本語で生成してください
+- カップ: 200mL
+- 重量: kg、g
+`
+    : `**Language:**
+- Respond in English
+- Cups: 240mL (US standard)
+- Weight: kg, g
+`
+
+  return `${localeInstructions}
+
+Create a ${restrictionLabels[dietaryRestriction]} version of:
 
 **Original Meal:** ${originalMeal.name}
-- Nutrition: ${originalMeal.calories} kcal, ${originalMeal.protein}g protein
+- Meal Type: ${originalMeal.mealType}
+- Calories: ${originalMeal.calories} kcal
+- Protein: ${originalMeal.protein}g
+- Carbs: ${originalMeal.carbs}g
+- Fats: ${originalMeal.fats}g
 
 **User Preferences:**
 - Current Dietary Preference: ${userPreferences.dietaryPreference}
 - Allergies: ${userPreferences.allergies.join(', ') || 'None'}
+- Cooking Skill: ${userPreferences.cookingSkill}
+- Time Available: ${userPreferences.timeAvailable} minutes
 
 **Requirements:**
 1. Replace all ingredients that contain the restricted item
-2. Maintain similar nutrition profile
+2. Maintain similar nutrition profile within ±100 kcal and ±10g macros
 3. Keep similar flavor and texture where possible
 4. Respect existing allergies
-5. Specify what was substituted
+5. Specify what was substituted in description
+6. Include complete recipe details
 
-Same JSON output format, add "substitutions": [{original: "string", replacement: "string"}]`
+**Output Format (JSON):**
+{
+  "name": "string",
+  "description": "string (explain substitutions made, e.g., 'Uses almond milk instead of dairy milk')",
+  "ingredients": [
+    {
+      "name": "string",
+      "quantity": number,
+      "unit": "string",
+      "category": "produce" | "protein" | "dairy" | "grains" | "pantry" | "spices" | "other"
+    }
+  ],
+  "instructions": ["step1", "step2", ...],
+  "prep_time": number (minutes),
+  "cook_time": number (minutes),
+  "servings": number,
+  "nutrition_per_serving": {
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fats": number
+  }
+}`
 }
 
 export function generateMacroSwapPrompt(
@@ -192,14 +271,31 @@ export function generateMacroSwapPrompt(
     low_fat: `Reduce fats by at least 30%`,
   }
 
-  return `Create a ${goalLabels[macroGoal]} version of:
+  const localeInstructions = isJapanese
+    ? `**日本語対応:**
+- すべての応答を日本語で生成してください
+- カップ: 200mL
+- 重量: kg、g
+`
+    : `**Language:**
+- Respond in English
+- Cups: 240mL (US standard)
+- Weight: kg, g
+`
+
+  return `${localeInstructions}
+
+Create a ${goalLabels[macroGoal]} version of:
 
 **Original Meal:** ${originalMeal.name}
-- Current Nutrition: ${originalMeal.protein}g protein, ${originalMeal.carbs}g carbs, ${originalMeal.fats}g fats
+- Meal Type: ${originalMeal.mealType}
+- Current Nutrition: ${originalMeal.calories} kcal, ${originalMeal.protein}g protein, ${originalMeal.carbs}g carbs, ${originalMeal.fats}g fats
 
 **User Preferences:**
 - Dietary Preference: ${userPreferences.dietaryPreference}
 - Allergies: ${userPreferences.allergies.join(', ') || 'None'}
+- Cooking Skill: ${userPreferences.cookingSkill}
+- Time Available: ${userPreferences.timeAvailable} minutes
 
 **Macro Goal:** ${targets[macroGoal]}
 
@@ -208,6 +304,30 @@ export function generateMacroSwapPrompt(
 2. Keep calories within ±150 kcal
 3. Maintain meal satisfaction and flavor
 4. Respect dietary preferences and allergies
+5. Specify macro improvements in description
+6. Include complete recipe details
 
-Same JSON output format, add "macro_improvement": "string (specific macro change)"`
+**Output Format (JSON):**
+{
+  "name": "string",
+  "description": "string (explain macro changes, e.g., 'High-protein version with +25g protein using Greek yogurt')",
+  "ingredients": [
+    {
+      "name": "string",
+      "quantity": number,
+      "unit": "string",
+      "category": "produce" | "protein" | "dairy" | "grains" | "pantry" | "spices" | "other"
+    }
+  ],
+  "instructions": ["step1", "step2", ...],
+  "prep_time": number (minutes),
+  "cook_time": number (minutes),
+  "servings": number,
+  "nutrition_per_serving": {
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fats": number
+  }
+}`
 }
