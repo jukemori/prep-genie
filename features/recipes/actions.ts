@@ -6,6 +6,7 @@ import {
 } from '@/features/recipes/prompts/recipe-analyzer'
 import { openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
 
 interface AnalyzeRecipeInput {
   input: string
@@ -32,7 +33,7 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
     const prompt = generateRecipeAnalysisPrompt(recipeText, data.locale)
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-5-nano',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: RECIPE_ANALYZER_SYSTEM_PROMPT },
         { role: 'user', content: prompt },
@@ -118,8 +119,11 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
       .single()
 
     if (error) {
+      console.error('Supabase insert error:', error)
       return { error: error.message }
     }
+
+    revalidatePath('/meals')
 
     return { data: savedMeal }
   } catch (error) {
