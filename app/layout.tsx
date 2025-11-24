@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+import { connection } from 'next/server'
 import { QueryProvider } from '@/components/providers/query-provider'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
@@ -27,6 +28,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Force dynamic rendering to prevent caching issues with i18n cookies
+  await connection()
+
   const messages = await getMessages()
 
   return (

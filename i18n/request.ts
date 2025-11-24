@@ -1,14 +1,10 @@
 import { cookies } from 'next/headers'
-import { connection } from 'next/server'
 import { getRequestConfig } from 'next-intl/server'
 
 export const locales = ['en', 'ja'] as const
 export type Locale = (typeof locales)[number]
 
 export default getRequestConfig(async () => {
-  // Force dynamic rendering to prevent caching issues with cookies()
-  await connection()
-
   // Get locale from cookie or default to 'en'
   const cookieStore = await cookies()
   const locale = (cookieStore.get('NEXT_LOCALE')?.value || 'en') as Locale
