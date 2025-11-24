@@ -9,18 +9,18 @@
 ## Test Coverage Summary
 
 - **Total Features:** 11
-- **Total Test Cases:** 69/206
-- **Pass Rate:** 33.5%
-- **Bugs Found:** 7 (7 Fixed, 0 Active) ✅
-- **Last Test Run:** 2025-11-24 - Fixed BUG-006 and BUG-007, verified with Playwright
-  - ✅ Feature 1 - User Profile & Settings (TC-141 to TC-153) - 13 Passed
+- **Total Test Cases:** 80/206
+- **Pass Rate:** 38.8%
+- **Bugs Found:** 8 (8 Fixed, 0 Active) ✅
+- **Last Test Run:** 2025-11-24 - Fixed BUG-008 (Speed Swap) + tested TC-108, all swap prompts now have explicit JSON schemas
+  - ✅ Feature 1 - Authentication & User Profile (TC-007-011, TC-141 to TC-153) - 18 Passed
   - ✅ Feature 2 - AI Meal Generator (TC-036, TC-038, TC-041-043, TC-044, TC-047-051) - 8 Passed
   - ✅ Feature 3 - Meal Prep Mode (TC-052-057) - 6 Passed
   - ✅ Feature 4 - Grocery List Generator (TC-058-062, TC-064-065, TC-067) - 7 Passed
-  - ✅ Feature 5 - Meal Library (TC-068-072) - 5 Passed ✅ BUG-006 FIXED
+  - ✅ Feature 5 - Meal Library (TC-068-074) - 7 Passed, 6 Unblocked ✅ BUG-006 FIXED
   - ✅ Feature 6 - AI Nutrition Assistant (TC-081-086) - 6 Passed
   - ✅ Feature 7 - Recipe Nutrition Analyzer (TC-091, TC-093-100) - 9 Passed ✅ BUG-007 FIXED
-  - ✅ Feature 8 - Meal Swap System (TC-101-107, TC-111-115) - 15 Passed
+  - ✅ Feature 8 - Meal Swap System (TC-101-108, TC-111-118) - 19 Passed ✅ BUG-008 FIXED
 
 ---
 
@@ -37,11 +37,11 @@
 - [ ] TC-006: User can click confirmation link and verify email
 
 ### 1.2 User Login
-- [ ] TC-007: User can login with valid credentials
-- [ ] TC-008: Login fails with incorrect password
-- [ ] TC-009: Login fails with non-existent email
-- [ ] TC-010: User is redirected to dashboard after successful login
-- [ ] TC-011: Unauthenticated user is redirected to login page
+- [x] TC-007: User can login with valid credentials - PASSED (Successfully logged in with jukemori@gmail.com)
+- [x] TC-008: Login fails with incorrect password - PASSED (Error: "Invalid login credentials", stayed on login page)
+- [x] TC-009: Login fails with non-existent email - PASSED (Error: "Invalid login credentials" for nonexistent@example.com)
+- [x] TC-010: User is redirected to dashboard after successful login - PASSED (Redirected to /dashboard)
+- [x] TC-011: Unauthenticated user is redirected to login page - PASSED (Attempted /dashboard while logged out, redirected to /login)
 
 ### 1.3 Password Reset
 - [ ] TC-012: User can request password reset
@@ -141,16 +141,16 @@
 - [x] TC-070: User can filter meals by tags - PASSED (Clicked "dinner" tag, URL updated to ?tag=dinner, filtered to 1 meal with dinner tag. Clear tag button (✕) correctly removes filter and shows all meals again.)
 - [x] TC-071: User can filter meals by meal type (breakfast/lunch/dinner/snack) - PASSED (URL updated to ?mealType=breakfast, filtered to 3 breakfast meals)
 - [x] TC-072: User can filter meals by cuisine type - PASSED (URL updated to ?cuisine=japanese, correctly shows "No meals found" when no meals match cuisine_type)
-- [ ] TC-073: Public meals are displayed
-- [ ] TC-074: User's private meals are displayed
+- [x] TC-073: Public meals are displayed - PASSED (Marked "Chicken Teriyaki" as public via database, verified it still appears in meal library alongside private meals)
+- [x] TC-074: User's private meals are displayed - PASSED (All 5 private meals displayed correctly in meal library)
 
 ### 6.2 Meal Management
-- [ ] TC-075: User can create custom meal - BLOCKED by BUG-005
-- [ ] TC-076: User can save meal to favorites - BLOCKED by BUG-005
-- [ ] TC-077: User can remove meal from favorites - BLOCKED by BUG-005
-- [ ] TC-078: User can edit own meal - BLOCKED by BUG-005
-- [ ] TC-079: User can delete own meal - BLOCKED by BUG-005
-- [ ] TC-080: User cannot edit/delete other users' public meals - BLOCKED by BUG-005
+- [ ] TC-075: User can create custom meal - UNBLOCKED (BUG-005 fixed, form accessible and functional with validation)
+- [ ] TC-076: User can save meal to favorites - UNBLOCKED (BUG-005 fixed)
+- [ ] TC-077: User can remove meal from favorites - UNBLOCKED (BUG-005 fixed)
+- [ ] TC-078: User can edit own meal - UNBLOCKED (BUG-005 fixed)
+- [ ] TC-079: User can delete own meal - UNBLOCKED (BUG-005 fixed)
+- [ ] TC-080: User cannot edit/delete other users' public meals - UNBLOCKED (BUG-005 fixed)
 
 ---
 
@@ -202,9 +202,9 @@
 
 ### 9.2 Swap Execution
 - [x] TC-107: Budget swap suggests cheaper alternatives with cost savings - PASSED (Swapped "Natto with Rice" to "Chicken and Veggie Stir-fry" with description mentioning "cheaper per serving" and "more cost-effective")
-- [ ] TC-108: Speed swap suggests faster cooking methods with time reduction
-- [ ] TC-109: Dietary swap suggests (dairy-free/gluten-free/vegan/low-FODMAP) options
-- [ ] TC-110: Macro swap suggests (high-protein/low-carb/low-fat) versions
+- [x] TC-108: Speed swap suggests faster cooking methods with time reduction - PASSED ✅ BUG-008 FIXED (Swapped "Chicken Teriyaki with Steamed Vegetables" to "Quick Teriyaki Chicken Stir-Fry", description: "saving 30 minutes versus making everything from scratch", meal saved with swap_speed tag)
+- [ ] TC-109: Dietary swap suggests (dairy-free/gluten-free/vegan/low-FODMAP) options - Ready to test (prompts fixed with explicit JSON schemas)
+- [ ] TC-110: Macro swap suggests (high-protein/low-carb/low-fat) versions - Ready to test (prompts fixed with explicit JSON schemas)
 - [x] TC-111: Swapped meal maintains similar nutrition profile - PASSED (Original: 440 cal, Swapped: 510 cal = 70 cal difference, within ±100 tolerance)
 - [x] TC-112: Confirmation dialog appears before swap - PASSED
 - [x] TC-113: User can cancel swap - PASSED (Cancel button present in dialog)
@@ -212,9 +212,9 @@
 - [x] TC-115: Meal is replaced in meal plan after swap - PASSED (Meal successfully replaced, "swap_budget" tag visible in meal details)
 
 ### 9.3 Meal Completion
-- [ ] TC-116: User can mark meal as completed (checkbox)
-- [ ] TC-117: Meal completion status is saved
-- [ ] TC-118: Completed meals are visually distinct
+- [x] TC-116: User can mark meal as completed (checkbox) - PASSED (Checkbox toggles to checked state)
+- [x] TC-117: Meal completion status is saved - PASSED (Completion persists after page refresh)
+- [x] TC-118: Completed meals are visually distinct - PASSED (Green "Done" badge appears for completed meals)
 
 ---
 
@@ -427,6 +427,7 @@ const password = process.env.LOGIN_PASSWORD
 | TC-071    | BLOCKED| BUG-005| Critical | ~~**Authentication/Network Timeout Issue**~~ **RESOLVED**: Issue was caused by stale cached code or hanging connections in the dev server. **Solution**: Restart dev server (`pkill -9 -f "next dev" && pnpm dev`). Root cause: Next.js 16 Turbopack cache or hanging fetch requests needed to be cleared. Authentication now works correctly - login succeeds and redirects to dashboard. Note: `proxy.ts` (not `middleware.ts`) is the correct pattern for Next.js 16. |
 | TC-070    | PASSED | BUG-006| Medium   | ~~**Tag Filtering Not Implemented**~~ **FIXED**: (1) Updated `app/(app)/meals/page.tsx` to accept `tag` query parameter and filter meals using `.contains('tags', [params.tag])` (2) Updated `features/meals/components/meal-filters.tsx` to show active tag badge with clear button (3) Made tags clickable in `components/molecules/meal-card.tsx` by wrapping Badge in Link component. Tags now navigate to `/meals?tag={tagName}` and correctly filter the meal list. Clear tag button (✕) removes filter. **Files Modified**: meal-card.tsx (lines 89-94), meal-filters.tsx (added tag badge UI), meals/page.tsx (added tag filtering logic). |
 | TC-100    | PASSED | BUG-007| High     | ~~**Recipe Analyzer Save Functionality Not Working**~~ **FIXED**: (1) Changed invalid OpenAI model from 'gpt-5-nano' to 'gpt-4o' in `analyzeRecipe` function (line 35) (2) Added `revalidatePath('/meals')` to `saveAnalyzedRecipe` function after successful insert (line 123) to clear Next.js cache (3) Added better error logging. Recipe save now works correctly - analyzed recipes are persisted to database and appear in Meal Library. **Files Modified**: features/recipes/actions.ts (model fix + cache revalidation). |
+| TC-108    | PASSED | BUG-008| High     | ~~**Speed Swap Fails Silently**~~ **FIXED**: Root cause was vague prompt structure in `generateSpeedSwapPrompt` - it said "Same JSON output format as budget swap" without explicitly specifying the schema. OpenAI couldn't infer the correct structure, causing JSON parsing to fail silently. **Solution**: Updated all 3 swap prompts (speed, dietary, macro) in `features/meal-plans/prompts/meal-swap.ts` to include explicit JSON schema with all required fields (name, description, ingredients[], instructions[], prep_time, cook_time, servings, nutrition_per_serving{}). Speed Swap now works correctly - generates faster meals with time savings mentioned in description, properly tagged with 'swap_speed'. **Test Result**: Swapped "Chicken Teriyaki" (550 cal, 60min total) to "Quick Teriyaki Chicken Stir-Fry" (540 cal, 30min total, description: "saving 30 minutes"). |
 
 ---
 
