@@ -1,4 +1,4 @@
-import { ArrowLeft, Clock, Edit, Trash2, Users } from 'lucide-react'
+import { ArrowLeft, Clock, Edit, Users } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -6,8 +6,11 @@ import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
 import { Separator } from '@/components/atoms/ui/separator'
+import { DeleteMealButton } from '@/components/molecules/delete-meal-button'
+import { FavoriteButton } from '@/components/molecules/favorite-button'
 import { IngredientItem } from '@/components/molecules/ingredient-item'
 import { MacroDisplay } from '@/components/molecules/macro-display'
+import { checkMealIsSaved } from '@/features/meals/actions'
 import { createClient } from '@/lib/supabase/server'
 
 interface PageProps {
@@ -41,6 +44,7 @@ export default async function MealDetailPage({ params }: PageProps) {
 
   const isOwner = meal.user_id === user.id
   const totalTime = (meal.prep_time || 0) + (meal.cook_time || 0)
+  const { isSaved } = await checkMealIsSaved(id)
 
   return (
     <div className="space-y-6">
@@ -51,19 +55,20 @@ export default async function MealDetailPage({ params }: PageProps) {
             Back to Meals
           </Link>
         </Button>
-        {isOwner && (
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <Link href={`/meals/${id}/edit`}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </Link>
-            </Button>
-            <Button variant="destructive" size="icon">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-2">
+          <FavoriteButton mealId={id} initialIsSaved={isSaved} />
+          {isOwner && (
+            <>
+              <Button variant="outline" asChild>
+                <Link href={`/meals/${id}/edit`}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+              <DeleteMealButton mealId={id} mealName={meal.name} />
+            </>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
