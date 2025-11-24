@@ -93,11 +93,11 @@ export async function createMeal(formData: FormData) {
       ? Number(formData.get('fatsPerServing'))
       : undefined,
     tags,
-    cuisineType: formData.get('cuisineType') as string,
-    mealType: formData.get('mealType') as string,
-    difficultyLevel: formData.get('difficultyLevel') as string,
+    cuisineType: formData.get('cuisineType') || undefined,
+    mealType: formData.get('mealType') || undefined,
+    difficultyLevel: formData.get('difficultyLevel') || undefined,
     isPublic: formData.get('isPublic') === 'true',
-    imageUrl: formData.get('imageUrl') as string,
+    imageUrl: formData.get('imageUrl') || undefined,
   }
 
   // Validate
@@ -187,11 +187,11 @@ export async function updateMeal(id: string, formData: FormData) {
       ? Number(formData.get('fatsPerServing'))
       : undefined,
     tags,
-    cuisineType: formData.get('cuisineType') as string,
-    mealType: formData.get('mealType') as string,
-    difficultyLevel: formData.get('difficultyLevel') as string,
+    cuisineType: formData.get('cuisineType') || undefined,
+    mealType: formData.get('mealType') || undefined,
+    difficultyLevel: formData.get('difficultyLevel') || undefined,
     isPublic: formData.get('isPublic') === 'true',
-    imageUrl: formData.get('imageUrl') as string,
+    imageUrl: formData.get('imageUrl') || undefined,
   }
 
   // Validate
@@ -265,4 +265,92 @@ export async function deleteMeal(id: string) {
 
   revalidatePath('/meals')
   return { success: true }
+}
+
+export async function saveMealToFavorites(mealId: string) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  // Check if already saved
+  const { data: existing } = await supabase
+    .from('saved_meals')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('meal_id', mealId)
+    .single()
+
+  if (existing) {
+    return { error: 'Meal already saved to favorites' }
+  }
+
+  const { data, error } = await supabase
+    .from('saved_meals')
+    .insert({
+      user_id: user.id,
+      meal_id: mealId,
+    })
+    .select()
+    .single()
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/meals')
+  revalidatePath(`/meals/${mealId}`)
+  return { data }
+}
+
+export async function removeMealFromFavorites(mealId: string) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const { error } = await supabase
+    .from('saved_meals')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('meal_id', mealId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/meals')
+  revalidatePath(`/meals/${mealId}`)
+  return { success: true }
+}
+
+export async function checkMealIsSaved(mealId: string) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { isSaved: false }
+  }
+
+  const { data } = await supabase
+    .from('saved_meals')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('meal_id', mealId)
+    .single()
+
+  return { isSaved: !!data }
 }
