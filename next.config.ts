@@ -5,7 +5,8 @@ const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  cacheComponents: true,
+  // Disabled: incompatible with dynamic rendering using cookies() or connection()
+  // cacheComponents: true,
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
