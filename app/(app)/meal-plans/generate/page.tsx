@@ -3,7 +3,7 @@
 import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useTransition, useDeferredValue } from 'react'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
@@ -28,10 +28,12 @@ import { readStreamableValue } from '@ai-sdk/rsc'
 
 export default function GenerateMealPlanPage() {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [saving, setSaving] = useState(false)
   const [generatedPlan, setGeneratedPlan] = useState<string>('')
+  const deferredPlan = useDeferredValue(generatedPlan)
   const [error, setError] = useState<string | null>(null)
   const [selectedCuisine, setSelectedCuisine] = useState<
     'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal' | undefined
@@ -46,14 +48,33 @@ export default function GenerateMealPlanPage() {
     try {
       const { stream } = await generateAIMealPlan(selectedCuisine)
       let fullContent = ''
+      let lastUpdateTime = Date.now()
+      // Increased to 1000ms (1 second) to drastically reduce re-renders
+      // This reduces ~3200 chunks to ~50-60 updates over 50-60 seconds
+      const UPDATE_INTERVAL_MS = 1000
 
       for await (const chunk of readStreamableValue(stream)) {
         if (chunk) {
           fullContent += chunk
-          setGeneratedPlan(fullContent)
+
+          // Throttle + startTransition + useDeferredValue to prevent stack overflow:
+          // 1. Throttle: Only update every 1 second (reduces ~3200 chunks to ~50-60 updates)
+          // 2. startTransition: Mark updates as non-urgent/lower-priority
+          // 3. useDeferredValue: Defer value changes to prevent immediate re-renders
+          const now = Date.now()
+          if (now - lastUpdateTime >= UPDATE_INTERVAL_MS) {
+            startTransition(() => {
+              setGeneratedPlan(fullContent)
+            })
+            lastUpdateTime = now
+          }
         }
       }
 
+      // Final update with complete content (also wrapped in startTransition)
+      startTransition(() => {
+        setGeneratedPlan(fullContent)
+      })
       setGenerating(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate meal plan')
@@ -81,8 +102,9 @@ export default function GenerateMealPlanPage() {
 
   let parsedPlan = null
   try {
-    if (generatedPlan && !generating) {
-      parsedPlan = JSON.parse(generatedPlan)
+    // Use deferredPlan for rendering to reduce re-renders
+    if (deferredPlan && !generating) {
+      parsedPlan = JSON.parse(deferredPlan)
     }
   } catch {
     // Still generating or invalid JSON

@@ -100,8 +100,12 @@ export async function generateAIMealPlan(
 
   ;(async () => {
     try {
+      console.log(`[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`)
+      
       const locale = (profile.locale || 'en') as 'en' | 'ja'
       const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
+      
+      console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
 
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o',
@@ -110,14 +114,37 @@ export async function generateAIMealPlan(
         response_format: { type: 'json_object' },
       })
 
+      console.log(`[generateAIMealPlan] OpenAI stream started for ${cuisineType || 'default'}`)
+      
+      let chunkCount = 0
+      let totalContent = ''
+
       for await (const chunk of completion) {
         const content = chunk.choices[0]?.delta?.content || ''
-        stream.update(content)
+        if (content) {
+          chunkCount++
+          totalContent += content
+          stream.update(content)
+        }
+      }
+
+      console.log(`[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`)
+      
+      // Validate JSON before marking stream as done
+      try {
+        JSON.parse(totalContent)
+        console.log(`[generateAIMealPlan] JSON validation passed for ${cuisineType || 'default'}`)
+      } catch (jsonError) {
+        console.error(`[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`, jsonError)
+        console.error(`[generateAIMealPlan] First 500 chars of response:`, totalContent.substring(0, 500))
+        console.error(`[generateAIMealPlan] Last 500 chars of response:`, totalContent.substring(totalContent.length - 500))
+        throw new Error(`Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`)
       }
 
       stream.done()
+      console.log(`[generateAIMealPlan] Stream marked as done for ${cuisineType || 'default'}`)
     } catch (error) {
-      console.error('AI meal plan generation error:', error)
+      console.error(`[generateAIMealPlan] ERROR for ${cuisineType || 'default'}:`, error)
       stream.error(error)
     }
   })()
@@ -126,6 +153,9 @@ export async function generateAIMealPlan(
 }
 
 export async function saveMealPlan(mealPlanData: string) {
+  console.log('[saveMealPlan] Starting save process')
+  console.log('[saveMealPlan] Received data length:', mealPlanData.length)
+  
   const supabase = await createClient()
 
   const {
@@ -133,12 +163,29 @@ export async function saveMealPlan(mealPlanData: string) {
   } = await supabase.auth.getUser()
 
   if (!user) {
+    console.error('[saveMealPlan] Not authenticated')
     return { error: 'Not authenticated' }
   }
 
+  console.log('[saveMealPlan] User authenticated:', user.id)
+
   try {
+    console.log('[saveMealPlan] Parsing JSON data...')
     const parsedData = JSON.parse(mealPlanData)
+    console.log('[saveMealPlan] JSON parsed successfully')
+    
     const { week_summary, meal_plan } = parsedData
+
+    if (!week_summary || !meal_plan) {
+      console.error('[saveMealPlan] Missing required fields:', { 
+        hasWeekSummary: !!week_summary, 
+        hasMealPlan: !!meal_plan 
+      })
+      return { error: 'Invalid meal plan data structure' }
+    }
+
+    console.log('[saveMealPlan] Week summary:', week_summary)
+    console.log('[saveMealPlan] Number of days:', meal_plan.length)
 
     // Create meal plan
     const mealPlanInsert: MealPlanInsert = {
@@ -153,6 +200,7 @@ export async function saveMealPlan(mealPlanData: string) {
       total_fats: week_summary.total_fats,
     }
 
+    console.log('[saveMealPlan] Creating meal plan record...')
     const { data: createdPlan, error: planError } = await supabase
       .from('meal_plans')
       .insert(mealPlanInsert)
@@ -160,12 +208,22 @@ export async function saveMealPlan(mealPlanData: string) {
       .single()
 
     if (planError || !createdPlan) {
+      console.error('[saveMealPlan] Failed to create meal plan:', planError)
       return { error: planError?.message || 'Failed to create meal plan' }
     }
 
+    console.log('[saveMealPlan] Meal plan created:', createdPlan.id)
+
     // Create meals and meal plan items
+    let mealsCreated = 0
+    let mealsFailed = 0
+
     for (const day of meal_plan) {
+      console.log(`[saveMealPlan] Processing day ${day.day}, ${day.meals.length} meals`)
+      
       for (const meal of day.meals) {
+        console.log(`[saveMealPlan] Creating meal: ${meal.name} (${meal.meal_type})`)
+        
         // Create meal
         const mealInsert: MealInsert = {
           user_id: user.id,
@@ -202,8 +260,13 @@ export async function saveMealPlan(mealPlanData: string) {
           .single()
 
         if (mealError || !createdMeal) {
+          console.error(`[saveMealPlan] Failed to create meal "${meal.name}":`, mealError)
+          mealsFailed++
           continue // Skip this meal if error
         }
+
+        console.log(`[saveMealPlan] Meal created: ${createdMeal.id}`)
+        mealsCreated++
 
         // Create meal plan item
         const itemInsert: MealPlanItemInsert = {
@@ -215,14 +278,26 @@ export async function saveMealPlan(mealPlanData: string) {
           is_completed: false,
         }
 
-        await supabase.from('meal_plan_items').insert(itemInsert)
+        const { error: itemError } = await supabase.from('meal_plan_items').insert(itemInsert)
+        
+        if (itemError) {
+          console.error(`[saveMealPlan] Failed to create meal plan item for meal "${meal.name}":`, itemError)
+        }
       }
     }
 
+    console.log(`[saveMealPlan] Summary: ${mealsCreated} meals created, ${mealsFailed} failed`)
+
     revalidatePath('/meal-plans')
+    console.log('[saveMealPlan] Successfully completed save process')
     return { data: createdPlan }
-  } catch (_error) {
-    return { error: 'Failed to parse or save meal plan' }
+  } catch (error) {
+    console.error('[saveMealPlan] Caught error:', error)
+    console.error('[saveMealPlan] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    })
+    return { error: `Failed to parse or save meal plan: ${error instanceof Error ? error.message : 'Unknown error'}` }
   }
 }
 
