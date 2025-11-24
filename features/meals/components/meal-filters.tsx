@@ -16,9 +16,15 @@ interface MealFiltersProps {
   defaultSearch?: string
   defaultCuisine?: string
   defaultMealType?: string
+  defaultTag?: string
 }
 
-export function MealFilters({ defaultSearch, defaultCuisine, defaultMealType }: MealFiltersProps) {
+export function MealFilters({
+  defaultSearch,
+  defaultCuisine,
+  defaultMealType,
+  defaultTag,
+}: MealFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
@@ -33,6 +39,14 @@ export function MealFilters({ defaultSearch, defaultCuisine, defaultMealType }: 
         params.delete(key)
       }
 
+      router.push(`/meals?${params.toString()}`)
+    })
+  }
+
+  function clearTag() {
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('tag')
       router.push(`/meals?${params.toString()}`)
     })
   }
@@ -53,56 +67,74 @@ export function MealFilters({ defaultSearch, defaultCuisine, defaultMealType }: 
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row">
-      {/* Search Input */}
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search meals..."
-          className="pl-9"
-          defaultValue={defaultSearch}
-          onChange={handleSearchChange}
+    <div className="space-y-3">
+      <div className="flex flex-col gap-4 sm:flex-row">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search meals..."
+            className="pl-9"
+            defaultValue={defaultSearch}
+            onChange={handleSearchChange}
+            disabled={isPending}
+          />
+        </div>
+
+        {/* Cuisine Type Filter */}
+        <Select
+          value={defaultCuisine || 'all'}
+          onValueChange={(value) => updateFilter('cuisine', value)}
           disabled={isPending}
-        />
+        >
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="All Cuisines" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Cuisines</SelectItem>
+            <SelectItem value="japanese">Japanese</SelectItem>
+            <SelectItem value="korean">Korean</SelectItem>
+            <SelectItem value="mediterranean">Mediterranean</SelectItem>
+            <SelectItem value="western">Western</SelectItem>
+            <SelectItem value="halal">Halal</SelectItem>
+            <SelectItem value="other">Other</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Meal Type Filter */}
+        <Select
+          value={defaultMealType || 'all'}
+          onValueChange={(value) => updateFilter('mealType', value)}
+          disabled={isPending}
+        >
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="All Meal Types" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Meal Types</SelectItem>
+            <SelectItem value="breakfast">Breakfast</SelectItem>
+            <SelectItem value="lunch">Lunch</SelectItem>
+            <SelectItem value="dinner">Dinner</SelectItem>
+            <SelectItem value="snack">Snack</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Cuisine Type Filter */}
-      <Select
-        value={defaultCuisine || 'all'}
-        onValueChange={(value) => updateFilter('cuisine', value)}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-full sm:w-[200px]">
-          <SelectValue placeholder="All Cuisines" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Cuisines</SelectItem>
-          <SelectItem value="japanese">Japanese</SelectItem>
-          <SelectItem value="korean">Korean</SelectItem>
-          <SelectItem value="mediterranean">Mediterranean</SelectItem>
-          <SelectItem value="western">Western</SelectItem>
-          <SelectItem value="halal">Halal</SelectItem>
-          <SelectItem value="other">Other</SelectItem>
-        </SelectContent>
-      </Select>
-
-      {/* Meal Type Filter */}
-      <Select
-        value={defaultMealType || 'all'}
-        onValueChange={(value) => updateFilter('mealType', value)}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="All Meal Types" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Meal Types</SelectItem>
-          <SelectItem value="breakfast">Breakfast</SelectItem>
-          <SelectItem value="lunch">Lunch</SelectItem>
-          <SelectItem value="dinner">Dinner</SelectItem>
-          <SelectItem value="snack">Snack</SelectItem>
-        </SelectContent>
-      </Select>
+      {/* Active Tag Badge */}
+      {defaultTag && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Filtered by tag:</span>
+          <button
+            type="button"
+            onClick={clearTag}
+            disabled={isPending}
+            className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm font-medium hover:bg-secondary/80 disabled:opacity-50"
+          >
+            {defaultTag}
+            <span className="ml-1 text-muted-foreground hover:text-foreground">✕</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -11,6 +11,7 @@ interface PageProps {
     search?: string
     cuisine?: string
     mealType?: string
+    tag?: string
   }>
 }
 
@@ -46,6 +47,10 @@ export default async function MealsPage({ searchParams }: PageProps) {
     query = query.eq('meal_type', params.mealType)
   }
 
+  if (params.tag) {
+    query = query.contains('tags', [params.tag])
+  }
+
   const { data: meals } = await query
 
   return (
@@ -68,6 +73,7 @@ export default async function MealsPage({ searchParams }: PageProps) {
         defaultSearch={params.search}
         defaultCuisine={params.cuisine}
         defaultMealType={params.mealType}
+        defaultTag={params.tag}
       />
 
       {/* Meals Grid */}
@@ -84,7 +90,7 @@ export default async function MealsPage({ searchParams }: PageProps) {
           </div>
           <h3 className="mb-2 text-lg font-semibold">No meals found</h3>
           <p className="mb-4 text-sm text-muted-foreground">
-            {params.search
+            {params.search || params.tag
               ? 'Try adjusting your search or filters'
               : 'Get started by creating your first meal'}
           </p>

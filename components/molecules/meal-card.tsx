@@ -87,9 +87,11 @@ export function MealCard({ meal, showActions = true }: MealCardProps) {
         {meal.tags && meal.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {meal.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
+              <Link key={tag} href={`/meals?tag=${tag}`}>
+                <Badge variant="secondary" className="cursor-pointer text-xs hover:bg-secondary/80">
+                  {tag}
+                </Badge>
+              </Link>
             ))}
             {meal.tags.length > 3 && (
               <Badge variant="secondary" className="text-xs">
