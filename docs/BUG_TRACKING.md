@@ -4,6 +4,54 @@
 
 ---
 
+### BUG-015: No Mobile Navigation Menu ⚠️ ACTIVE
+
+**Date Reported:** 2025-11-25
+**Severity:** Medium (Navigation inaccessible on mobile/tablet)
+**Status:** ⚠️ ACTIVE - Needs Implementation
+
+#### Description
+The application lacks a mobile navigation menu (hamburger menu) for screen widths below ~1024px. While the sidebar navigation is visible on desktop (1920px), it is completely hidden on mobile (375px) and tablet (768px) devices, leaving users without a way to access key navigation links.
+
+#### Impact
+- **Mobile Users (< 768px):** Cannot access navigation menu at all
+- **Tablet Users (768px - 1023px):** Cannot access navigation menu
+- **Desktop Users (≥ 1024px):** ✅ Sidebar navigation works correctly
+
+#### Current Workaround
+Users can access some key pages through Quick Actions links on the Dashboard:
+- Generate AI Meal Plan
+- Browse Meals
+- Log Today's Progress
+- Ask AI Nutrition Assistant
+
+However, the following pages are **inaccessible** without navigation:
+- Settings
+- Grocery Lists (must use direct URL)
+- Meal Plans (must use direct URL)
+
+#### Test Results
+- TC-175: App is usable on mobile (375px) - ⚠️ PARTIAL PASS
+- TC-176: Navigation menu works on mobile - ❌ FAIL
+- TC-177: Forms are usable on mobile - ✅ PASS
+- TC-178: Tables/lists are scrollable on mobile - ✅ PASS
+- TC-179: App is usable on tablet (768px) - ⚠️ PARTIAL PASS
+- TC-180: Layout adapts appropriately for tablet - ✅ PASS
+
+#### Recommended Solution
+Implement a mobile navigation menu with:
+1. Hamburger menu button in header (visible on mobile/tablet)
+2. Slide-out drawer with navigation links
+3. Close button/overlay to dismiss menu
+4. Responsive breakpoint at ~1024px
+
+#### Files to Modify
+- `app/(app)/layout.tsx` or layout component
+- Add mobile menu component with shadcn Sheet or Dialog
+- Update Tailwind breakpoints for sidebar visibility
+
+---
+
 ### BUG-010: JavaScript Stack Overflow During Meal Plan Generation ⚠️ KNOWN ISSUE
 
 **Date Reported:** 2025-11-24
