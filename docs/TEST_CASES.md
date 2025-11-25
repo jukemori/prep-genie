@@ -99,8 +99,8 @@
 - [x] TC-042: Generated meals include name, description, ingredients - PASSED
 - [x] TC-043: Generated meals include instructions - PASSED (4 steps for Natto meal)
 - [x] TC-044: Generated meals include nutrition data (calories, protein, carbs, fats) - PASSED
-- [ ] TC-045: Generated meals respect user's dietary preferences
-- [ ] TC-046: Generated meals respect user's allergies
+- [x] TC-045: Generated meals respect user's dietary preferences - PASSED (omnivore variety confirmed: beef, chicken, salmon, turkey, eggs, tofu, bacon across 21 meals)
+- [x] TC-046: Generated meals respect user's allergies - PASSED (verified no peanuts or shellfish in sampled meals; almonds present are acceptable as tree nuts ≠ peanuts)
 - [x] TC-047: User can save generated meal plan - PASSED (saved and redirected to meal plan details)
 
 ### 3.2 Meal Plan Details
@@ -133,10 +133,10 @@
 
 ### 5.2 Grocery List Management
 - [x] TC-062: User can view all grocery lists - PASSED (2 lists displayed)
-- [ ] TC-063: User can edit ingredient quantities
+- [ ] TC-063: User can edit ingredient quantities - NOT IMPLEMENTED (quantities displayed as static text, no edit controls)
 - [x] TC-064: User can mark items as purchased (checkbox) - PASSED
 - [x] TC-065: User can unmark purchased items - PASSED (progress updates correctly)
-- [ ] TC-066: Estimated cost is displayed
+- [ ] TC-066: Estimated cost is displayed - NOT IMPLEMENTED (no cost information shown)
 - [x] TC-067: Shopping progress is tracked (e.g., "5/20 items purchased") - PASSED (0/19, 1/19 tracking)
 
 ---
@@ -173,10 +173,10 @@
 - [x] TC-086: AI uses user profile data - PASSED (Response mentioned user's "omnivore" diet and "peanut and shellfish allergies" from profile, and referenced muscle gain goal)
 
 ### 7.2 Meal Modifications
-- [ ] TC-087: User can request ingredient substitution
-- [ ] TC-088: AI suggests appropriate substitutions
-- [ ] TC-089: User can request meal modifications
-- [ ] TC-090: AI provides modified recipe
+- [x] TC-087: User can request ingredient substitution - PASSED (Asked for chicken substitute in stir-fry, AI responded in 37.6s)
+- [x] TC-088: AI suggests appropriate substitutions - PASSED (6 appropriate substitutes: lean beef, turkey, pork, tofu, tempeh, salmon with macros, cook times, and allergy considerations)
+- [x] TC-089: User can request meal modifications - PASSED (Asked to modify stir-fry to be higher protein under 600 cal)
+- [x] TC-090: AI provides modified recipe - PASSED (Complete recipe: 180g chicken, 120g rice, 200g veggies, 590 kcal, 64g protein, step-by-step instructions)
 
 ---
 
@@ -377,9 +377,9 @@
 ### 17.1 Database Operations
 - [x] TC-194: Created meals persist after page refresh ✅ PASSED (2025-11-25) - "Chicken Teriyaki" meal persisted after page reload
 - [x] TC-195: Saved meal plans persist after page refresh ✅ PASSED (2025-11-25) - Confirmed 2 meal plans in database, RLS working correctly
-- [ ] TC-196: Grocery lists persist after page refresh
+- [x] TC-196: Grocery lists persist after page refresh ✅ PASSED (2025-11-25) - All 67 items, quantities, and 6 categories persisted correctly after page refresh
 - [ ] TC-197: Settings changes persist after logout/login
-- [ ] TC-198: Chat history persists after page refresh
+- [x] TC-198: Chat history persists after page refresh ✅ PASSED (2025-11-25) - Fixed BUG-017: Chat history now loads from database on mount and persists across navigation and page refresh
 
 ---
 

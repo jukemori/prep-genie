@@ -68,6 +68,161 @@ React Compiler's `flushComponentPerformance` function accumulates a recursive ca
 
 ## Resolved Bugs
 
+### BUG-017: Chat History Not Persisting ✅ RESOLVED
+
+**Date Reported:** 2025-11-25 (TC-198 failure)
+**Date Resolved:** 2025-11-25
+**Severity:** High (Data loss - user conversation history lost after navigation)
+**Status:** ✅ RESOLVED
+**Test Case:** TC-198
+
+#### Description
+Chat history was not persisting after page navigation or refresh. When users navigated away from the `/chat` page and returned, all previous conversation history disappeared and the page showed the empty welcome state with suggested questions.
+
+#### Root Cause
+No save/load functionality was implemented for chat history:
+- Messages only stored in React component state (`useState`)
+- No database persistence despite `ai_chat_history` table existing
+- No `loadChatHistory()` or `saveChatHistory()` server actions
+- Component did not load history on mount
+
+#### Solution
+Implemented complete chat history persistence system:
+
+1. **Created `loadChatHistory()` server action** (`features/ai-chat/actions.ts`, lines 79-108)
+   - Queries `ai_chat_history` table for most recent chat
+   - Filters by authenticated user ID
+   - Orders by `updated_at DESC` to get latest conversation
+   - Returns messages array and chatId for subsequent updates
+   - Handles "no chat history found" gracefully (returns null, not error)
+
+2. **Created `saveChatHistory()` server action** (`features/ai-chat/actions.ts`, lines 110-164)
+   - Accepts messages array and optional chatId
+   - Adds timestamps to all messages
+   - Updates existing chat if chatId provided
+   - Creates new chat record if no chatId
+   - Sets `context_type` to 'nutrition_question'
+   - Returns chatId for future updates
+
+3. **Updated chat page component** (`app/(app)/chat/page.tsx`)
+   - Added `chatId` state variable (line 34) to track active conversation
+   - Added `useEffect` hook on mount (lines 38-52):
+     - Calls `loadChatHistory()` when component mounts
+     - Filters timestamp fields from loaded messages
+     - Sets messages state with loaded conversation
+     - Sets chatId for future saves
+   - Updated chat submission flow (lines 92-100):
+     - Saves chat history after each AI response completes
+     - Creates new chat on first message
+     - Updates existing chat on subsequent messages
+     - Tracks chatId across conversation
+
+#### Implementation Details
+```typescript
+// Server Actions (features/ai-chat/actions.ts)
+export async function loadChatHistory() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { data, error } = await supabase
+    .from('ai_chat_history')
+    .select('id, messages')
+    .eq('user_id', user.id)
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error && error.code === 'PGRST116') {
+    return { data: null, error: null } // No history found
+  }
+
+  return { data: data.messages || [], chatId: data.id, error: null }
+}
+
+export async function saveChatHistory(messages, chatId?) {
+  const messagesWithTimestamps = messages.map((msg) => ({
+    ...msg,
+    timestamp: new Date().toISOString(),
+  }))
+
+  if (chatId) {
+    // Update existing chat
+    await supabase
+      .from('ai_chat_history')
+      .update({ messages: messagesWithTimestamps, updated_at: new Date().toISOString() })
+      .eq('id', chatId)
+      .eq('user_id', user.id)
+  } else {
+    // Create new chat
+    const { data } = await supabase
+      .from('ai_chat_history')
+      .insert({
+        user_id: user.id,
+        messages: messagesWithTimestamps,
+        context_type: 'nutrition_question',
+      })
+      .select('id')
+      .single()
+    return { chatId: data.id }
+  }
+}
+
+// Client Component (app/(app)/chat/page.tsx)
+useEffect(() => {
+  async function loadHistory() {
+    const result = await loadChatHistory()
+    if (result.data && Array.isArray(result.data)) {
+      const cleanMessages = result.data.map((msg) => ({
+        role: msg.role as 'user' | 'assistant',
+        content: msg.content,
+      }))
+      setMessages(cleanMessages)
+      setChatId(result.chatId)
+    }
+  }
+  loadHistory()
+}, [])
+
+// After AI response completes
+const result = await saveChatHistory(updatedMessages, chatId)
+if (result.chatId && !chatId) {
+  setChatId(result.chatId)
+}
+```
+
+#### Verification
+**Test Message:** "What are good protein sources?"
+
+✅ **Database Verification:**
+- Chat saved with ID: `66d06b9a-bb17-42c3-8d58-683b369293cd`
+- 2 messages stored (1 user, 1 assistant)
+- Timestamps added to all messages
+- context_type: `nutrition_question`
+
+✅ **Navigation Test:**
+- Navigated from `/chat` → `/dashboard` → `/chat`
+- Chat history loaded successfully on return
+- Both messages displayed correctly
+
+✅ **Page Refresh Test:**
+- Hard refresh (F5) on `/chat` page
+- Messages persist and reload correctly
+- Conversation continues from saved state
+
+#### Files Modified
+- `features/ai-chat/actions.ts` - Added loadChatHistory, saveChatHistory functions
+- `app/(app)/chat/page.tsx` - Added load on mount, save after responses
+
+#### Benefits
+- ✅ Chat conversations persist across sessions
+- ✅ Users can resume conversations after navigating away
+- ✅ No data loss on page refresh
+- ✅ Proper database persistence with RLS
+- ✅ Timestamps tracked for all messages
+- ✅ Efficient: loads most recent chat only
+
+---
+
 ### BUG-015: No Mobile Navigation Menu ✅ RESOLVED
 
 **Date Reported:** 2025-11-25
