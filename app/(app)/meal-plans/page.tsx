@@ -1,5 +1,6 @@
 import { CalendarDays, Plus, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import {
@@ -13,6 +14,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function MealPlansPage() {
   const supabase = await createClient()
+  const t = await getTranslations('meal_plans_page')
 
   const {
     data: { user },
@@ -32,20 +34,20 @@ export default async function MealPlansPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Meal Plans</h1>
-          <p className="text-muted-foreground">Manage your weekly meal planning</p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">
             <Link href="/meal-plans/generate">
               <Sparkles className="mr-2 h-4 w-4" />
-              AI Generate
+              {t('generate_new')}
             </Link>
           </Button>
           <Button asChild>
             <Link href="/meal-plans/new">
               <Plus className="mr-2 h-4 w-4" />
-              Create Manual
+              {t('create_manual')}
             </Link>
           </Button>
         </div>
@@ -75,23 +77,23 @@ export default async function MealPlansPage() {
                 <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/50 p-3 text-sm">
                   <div>
                     <p className="font-medium">{plan.total_calories || 0}</p>
-                    <p className="text-xs text-muted-foreground">Calories</p>
+                    <p className="text-xs text-muted-foreground">{t('calories')}</p>
                   </div>
                   <div>
                     <p className="font-medium">{plan.total_protein || 0}g</p>
-                    <p className="text-xs text-muted-foreground">Protein</p>
+                    <p className="text-xs text-muted-foreground">{t('protein')}</p>
                   </div>
                   <div>
                     <p className="font-medium">{plan.total_carbs || 0}g</p>
-                    <p className="text-xs text-muted-foreground">Carbs</p>
+                    <p className="text-xs text-muted-foreground">{t('carbs')}</p>
                   </div>
                   <div>
                     <p className="font-medium">{plan.total_fats || 0}g</p>
-                    <p className="text-xs text-muted-foreground">Fats</p>
+                    <p className="text-xs text-muted-foreground">{t('fats')}</p>
                   </div>
                 </div>
                 <Button asChild className="w-full">
-                  <Link href={`/meal-plans/${plan.id}`}>View Plan</Link>
+                  <Link href={`/meal-plans/${plan.id}`}>{t('view_plan')}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -103,21 +105,21 @@ export default async function MealPlansPage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
               <CalendarDays className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold">No meal plans yet</h3>
+            <h3 className="mb-2 text-lg font-semibold">{t('no_plans_found')}</h3>
             <p className="mb-4 text-sm text-muted-foreground">
-              Create your first meal plan with AI or manually
+              {t('create_first_plan')}
             </p>
             <div className="flex gap-2">
               <Button asChild variant="outline">
                 <Link href="/meal-plans/generate">
                   <Sparkles className="mr-2 h-4 w-4" />
-                  AI Generate
+                  {t('generate_new')}
                 </Link>
               </Button>
               <Button asChild>
                 <Link href="/meal-plans/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Manual
+                  {t('create_manual')}
                 </Link>
               </Button>
             </div>

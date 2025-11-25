@@ -1,6 +1,7 @@
 'use client'
 
 import { Calendar, Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
@@ -14,6 +15,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { ProgressLog, UserProfile } from '@/types'
 
 export default function ProgressPage() {
+  const t = useTranslations('progress_page')
+  const tCommon = useTranslations('common')
   const [logs, setLogs] = useState<ProgressLog[]>([])
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -86,24 +89,24 @@ export default function ProgressPage() {
   const weightChange = latestWeight && startWeight ? latestWeight - startWeight : null
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>{tCommon('loading')}</div>
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Progress Tracking</h1>
-        <p className="text-muted-foreground">Log and monitor your nutrition and fitness progress</p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Weight</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('current_weight')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {latestWeight ? `${latestWeight} kg` : 'Not logged'}
+              {latestWeight ? `${latestWeight} kg` : t('not_logged')}
             </div>
             {weightChange !== null && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -125,37 +128,37 @@ export default function ProgressPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Calories</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('todays_calories')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {todayLog?.calories_consumed || 0}/{profile?.daily_calorie_target || 0}
             </div>
-            <p className="text-xs text-muted-foreground">kcal consumed</p>
+            <p className="text-xs text-muted-foreground">{t('kcal_consumed')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Logs This Month</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('logs_this_month')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{logs.length}</div>
-            <p className="text-xs text-muted-foreground">entries recorded</p>
+            <p className="text-xs text-muted-foreground">{t('entries_recorded')}</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="log" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="log">Log Today</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="log">{t('log_today')}</TabsTrigger>
+          <TabsTrigger value="history">{t('view_history')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="log" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Log Progress</CardTitle>
+              <CardTitle>{t('log_progress_title')}</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -163,7 +166,7 @@ export default function ProgressPage() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Label htmlFor="weight">{t('weight')}</Label>
                     <Input
                       id="weight"
                       name="weight"
@@ -175,7 +178,7 @@ export default function ProgressPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="caloriesConsumed">Calories Consumed</Label>
+                    <Label htmlFor="caloriesConsumed">{t('calories')}</Label>
                     <Input
                       id="caloriesConsumed"
                       name="caloriesConsumed"
@@ -186,7 +189,7 @@ export default function ProgressPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="proteinConsumed">Protein (g)</Label>
+                    <Label htmlFor="proteinConsumed">{t('protein')}</Label>
                     <Input
                       id="proteinConsumed"
                       name="proteinConsumed"
@@ -197,7 +200,7 @@ export default function ProgressPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="carbsConsumed">Carbs (g)</Label>
+                    <Label htmlFor="carbsConsumed">{t('carbs')}</Label>
                     <Input
                       id="carbsConsumed"
                       name="carbsConsumed"
@@ -208,7 +211,7 @@ export default function ProgressPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fatsConsumed">Fats (g)</Label>
+                    <Label htmlFor="fatsConsumed">{t('fats')}</Label>
                     <Input
                       id="fatsConsumed"
                       name="fatsConsumed"
@@ -220,11 +223,11 @@ export default function ProgressPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (optional)</Label>
+                  <Label htmlFor="notes">{t('notes')}</Label>
                   <Textarea
                     id="notes"
                     name="notes"
-                    placeholder="How are you feeling? Any observations?"
+                    placeholder={t('notes_placeholder')}
                     rows={3}
                     disabled={submitting}
                   />
@@ -237,7 +240,7 @@ export default function ProgressPage() {
                 )}
 
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Saving...' : 'Log Progress'}
+                  {submitting ? tCommon('saving') : t('save_log')}
                 </Button>
               </form>
             </CardContent>
@@ -255,37 +258,37 @@ export default function ProgressPage() {
                       {new Date(log.log_date).toLocaleDateString()}
                     </CardTitle>
                   </div>
-                  {log.log_date === today && <Badge variant="default">Today</Badge>}
+                  {log.log_date === today && <Badge variant="default">{t('today')}</Badge>}
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-5">
                     {log.weight && (
                       <div>
-                        <p className="text-muted-foreground">Weight</p>
+                        <p className="text-muted-foreground">{t('weight')}</p>
                         <p className="font-medium">{log.weight} kg</p>
                       </div>
                     )}
                     {log.calories_consumed && (
                       <div>
-                        <p className="text-muted-foreground">Calories</p>
+                        <p className="text-muted-foreground">{t('calories')}</p>
                         <p className="font-medium">{log.calories_consumed}</p>
                       </div>
                     )}
                     {log.protein_consumed && (
                       <div>
-                        <p className="text-muted-foreground">Protein</p>
+                        <p className="text-muted-foreground">{t('protein')}</p>
                         <p className="font-medium">{log.protein_consumed}g</p>
                       </div>
                     )}
                     {log.carbs_consumed && (
                       <div>
-                        <p className="text-muted-foreground">Carbs</p>
+                        <p className="text-muted-foreground">{t('carbs')}</p>
                         <p className="font-medium">{log.carbs_consumed}g</p>
                       </div>
                     )}
                     {log.fats_consumed && (
                       <div>
-                        <p className="text-muted-foreground">Fats</p>
+                        <p className="text-muted-foreground">{t('fats')}</p>
                         <p className="font-medium">{log.fats_consumed}g</p>
                       </div>
                     )}
@@ -298,9 +301,9 @@ export default function ProgressPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold">No progress logs yet</h3>
+                <h3 className="mb-2 text-lg font-semibold">{t('no_logs_found')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Start logging your daily progress to track your journey
+                  {t('start_tracking')}
                 </p>
               </CardContent>
             </Card>

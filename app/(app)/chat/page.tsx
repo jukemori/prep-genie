@@ -2,6 +2,7 @@
 
 import { readStreamableValue } from '@ai-sdk/rsc'
 import { Bot, Send, Sparkles, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent } from '@/components/atoms/ui/card'
@@ -13,15 +14,16 @@ interface Message {
   content: string
 }
 
-const SUGGESTED_QUESTIONS = [
-  'What are good protein sources for muscle gain?',
-  'How can I meal prep for the week?',
-  'What are healthy snack alternatives?',
-  'How do I calculate my macros?',
-  'Best foods for post-workout recovery?',
-]
-
 export default function ChatPage() {
+  const t = useTranslations('chat_page')
+
+  const SUGGESTED_QUESTIONS = [
+    t('suggested_q1'),
+    t('suggested_q2'),
+    t('suggested_q3'),
+    t('suggested_q4'),
+    t('suggested_q5'),
+  ]
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -68,7 +70,7 @@ export default function ChatPage() {
       setMessages((prev) =>
         prev.slice(0, -1).concat({
           role: 'assistant',
-          content: 'Sorry, I encountered an error. Please try again.',
+          content: t('error_message'),
         })
       )
     } finally {
@@ -83,9 +85,9 @@ export default function ChatPage() {
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col space-y-4">
       <div>
-        <h1 className="text-3xl font-bold">AI Nutrition Assistant</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Ask me anything about nutrition, meal planning, and fitness
+          {t('description')}
         </p>
       </div>
 
@@ -99,15 +101,14 @@ export default function ChatPage() {
                   <Sparkles className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">
-                  Welcome to Your AI Nutrition Assistant
+                  {t('welcome')}
                 </h3>
                 <p className="mb-6 max-w-md text-sm text-muted-foreground">
-                  I'm here to help with nutrition advice, meal planning tips, ingredient
-                  substitutions, and more. Ask me anything!
+                  {t('welcome_description')}
                 </p>
 
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Try asking:</p>
+                  <p className="text-sm font-medium">{t('try_asking')}</p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {SUGGESTED_QUESTIONS.map((question) => (
                       <Button
@@ -174,7 +175,7 @@ export default function ChatPage() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a nutrition question..."
+                placeholder={t('placeholder')}
                 disabled={loading}
                 className="flex-1"
               />
@@ -183,8 +184,7 @@ export default function ChatPage() {
               </Button>
             </form>
             <p className="mt-2 text-xs text-muted-foreground">
-              This AI assistant provides general nutrition information. Always consult healthcare
-              providers for medical advice.
+              {t('disclaimer')}
             </p>
           </div>
         </CardContent>

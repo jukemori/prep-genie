@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function AnalyzePage() {
   const supabase = await createClient()
+  const t = await getTranslations('analyze_page')
 
   const {
     data: { user },
@@ -32,18 +34,17 @@ export default async function AnalyzePage() {
   return (
     <div className="container max-w-4xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Recipe Nutrition Analyzer</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Analyze any recipe to get complete nutrition information and AI-powered improvement
-          suggestions
+          {t('description')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Analyze Recipe</CardTitle>
+          <CardTitle>{t('analyze')}</CardTitle>
           <CardDescription>
-            Paste a recipe URL or enter the recipe text to get detailed nutrition analysis
+            {t('analyze_description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
