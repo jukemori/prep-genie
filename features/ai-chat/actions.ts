@@ -48,9 +48,12 @@ export async function chatWithNutritionAssistant(
       { role: 'system', content: NUTRITION_ASSISTANT_SYSTEM_PROMPT },
     ]
 
+    // Truncate conversation history to last 10 messages for performance
+    // This keeps context manageable and reduces token usage significantly
     if (conversationHistory && conversationHistory.length > 0) {
+      const recentHistory = conversationHistory.slice(-10)
       messages.push(
-        ...conversationHistory.map((msg) => ({
+        ...recentHistory.map((msg) => ({
           role: msg.role as 'user' | 'assistant' | 'system',
           content: msg.content,
         }))
@@ -59,17 +62,23 @@ export async function chatWithNutritionAssistant(
 
     messages.push({ role: 'user', content: userPrompt })
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-5-nano',
-      messages,
-      stream: true,
-    })
+    // Use OpenAI runner for better performance
+    const runner = openai.chat.completions
+      .stream({
+        model: 'gpt-5-nano',
+        messages,
+        max_completion_tokens: 1000, // Limit response length for faster generation (GPT-5 parameter)
+        // Note: GPT-5-nano only supports temperature=1 (default), so we omit it
+      })
+      .on('content', (delta) => {
+        stream.update(delta)
+      })
+      .on('error', (error) => {
+        console.error('[chatWithNutritionAssistant] Stream error:', error)
+        stream.error(error)
+      })
 
-    for await (const chunk of completion) {
-      const content = chunk.choices[0]?.delta?.content || ''
-      stream.update(content)
-    }
-
+    await runner.finalChatCompletion()
     stream.done()
   })()
 
