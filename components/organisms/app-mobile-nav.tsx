@@ -22,7 +22,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
+} from '@/components/atoms/ui/sheet'
 import { cn } from '@/lib/utils'
 
 const navigationConfig = [
