@@ -11,21 +11,23 @@ import {
   UtensilsCrossed,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Meals', href: '/meals', icon: UtensilsCrossed },
-  { name: 'Meal Plans', href: '/meal-plans', icon: CalendarDays },
-  { name: 'Grocery Lists', href: '/grocery-lists', icon: ShoppingCart },
-  { name: 'Progress', href: '/progress', icon: TrendingUp },
-  { name: 'AI Assistant', href: '/chat', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
+const navigationConfig = [
+  { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { key: 'meals', href: '/meals', icon: UtensilsCrossed },
+  { key: 'meal_plans', href: '/meal-plans', icon: CalendarDays },
+  { key: 'grocery_lists', href: '/grocery-lists', icon: ShoppingCart },
+  { key: 'progress', href: '/progress', icon: TrendingUp },
+  { key: 'chat', href: '/chat', icon: MessageSquare },
+  { key: 'settings', href: '/settings', icon: Settings },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const t = useTranslations('navigation')
 
   return (
     <aside className="hidden w-64 border-r bg-card lg:block">
@@ -35,11 +37,11 @@ export function AppSidebar() {
           <span className="text-xl font-bold">PrepGenie</span>
         </div>
         <nav className="flex-1 space-y-1 p-4">
-          {navigation.map((item) => {
+          {navigationConfig.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
             return (
               <Link
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
@@ -49,7 +51,7 @@ export function AppSidebar() {
                 )}
               >
                 <item.icon className="h-5 w-5" />
-                {item.name}
+                {t(item.key)}
               </Link>
             )
           })}
