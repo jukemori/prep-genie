@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-  calculateMacros,
   calculateMacroPercentages,
-  validateMacros,
+  calculateMacros,
   type Goal,
   type MacroTargets,
+  validateMacros,
 } from '@/features/nutrition/utils/macros'
 
 describe('Macro Calculations', () => {

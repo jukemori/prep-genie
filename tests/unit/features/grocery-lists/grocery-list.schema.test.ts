@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
+  editGroceryItemSchema,
   groceryItemSchema,
   groceryListSchema,
-  editGroceryItemSchema,
 } from '@/features/grocery-lists/schemas/grocery-list.schema'
 
 describe('Grocery List Schema Validation', () => {

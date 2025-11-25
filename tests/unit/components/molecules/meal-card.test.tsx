@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/tests/helpers/test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import { MealCard } from '@/components/molecules/meal-card'
+import { render, screen } from '@/tests/helpers/test-utils'
 import type { Meal } from '@/types'
 
 // Mock next-intl

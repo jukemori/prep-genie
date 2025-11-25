@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/tests/helpers/test-utils'
-import { IngredientItem } from '@/components/molecules/ingredient-item'
 import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import { IngredientItem } from '@/components/molecules/ingredient-item'
+import { render, screen } from '@/tests/helpers/test-utils'
 
 describe('IngredientItem Component', () => {
   const mockIngredient = {

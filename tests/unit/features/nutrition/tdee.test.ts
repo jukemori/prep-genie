@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import type { ActivityLevel, Gender } from '@/features/nutrition/utils/tdee'
 import {
   calculateTDEE,
-  lbsToKg,
-  kgToLbs,
-  inchesToCm,
   cmToInches,
+  inchesToCm,
+  kgToLbs,
+  lbsToKg,
 } from '@/features/nutrition/utils/tdee'
-import type { Gender, ActivityLevel } from '@/features/nutrition/utils/tdee'
 
 describe('TDEE Calculations', () => {
   describe('calculateTDEE', () => {

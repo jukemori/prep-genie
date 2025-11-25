@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-  userProfileSchema,
   onboardingStep1Schema,
   onboardingStep2Schema,
   onboardingStep3Schema,
   onboardingStep4Schema,
+  userProfileSchema,
 } from '@/features/user-profile/schemas/user-profile.schema'
 
 describe('User Profile Schema Validation', () => {

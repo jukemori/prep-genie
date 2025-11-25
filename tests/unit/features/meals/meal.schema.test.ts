@@ -1,9 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import {
-  mealSchema,
-  ingredientSchema,
-  macroEditSchema,
-} from '@/features/meals/schemas/meal.schema'
+import { describe, expect, it } from 'vitest'
+import { ingredientSchema, macroEditSchema, mealSchema } from '@/features/meals/schemas/meal.schema'
 
 describe('Meal Schema Validation', () => {
   describe('ingredientSchema', () => {

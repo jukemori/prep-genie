@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/tests/helpers/test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import { MacroDisplay } from '@/components/molecules/macro-display'
+import { render, screen } from '@/tests/helpers/test-utils'
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
@@ -48,17 +48,13 @@ describe('MacroDisplay Component', () => {
 
   describe('Target Values', () => {
     it('displays target protein when provided', () => {
-      render(
-        <MacroDisplay protein={150} carbs={200} fats={60} targetProtein={180} />
-      )
+      render(<MacroDisplay protein={150} carbs={200} fats={60} targetProtein={180} />)
 
       expect(screen.getByText(/150g \/ 180g/)).toBeInTheDocument()
     })
 
     it('displays target carbs when provided', () => {
-      render(
-        <MacroDisplay protein={150} carbs={200} fats={60} targetCarbs={250} />
-      )
+      render(<MacroDisplay protein={150} carbs={200} fats={60} targetCarbs={250} />)
 
       expect(screen.getByText(/200g \/ 250g/)).toBeInTheDocument()
     })
@@ -134,13 +130,7 @@ describe('MacroDisplay Component', () => {
 
     it('calculates protein percentage correctly', () => {
       const { container } = render(
-        <MacroDisplay
-          protein={90}
-          carbs={200}
-          fats={60}
-          targetProtein={180}
-          showProgress
-        />
+        <MacroDisplay protein={90} carbs={200} fats={60} targetProtein={180} showProgress />
       )
 
       // 90/180 = 50%
@@ -160,13 +150,7 @@ describe('MacroDisplay Component', () => {
 
     it('shows only progress bars for macros with targets', () => {
       const { container } = render(
-        <MacroDisplay
-          protein={150}
-          carbs={200}
-          fats={60}
-          targetProtein={180}
-          showProgress
-        />
+        <MacroDisplay protein={150} carbs={200} fats={60} targetProtein={180} showProgress />
       )
 
       // Only protein has a target, so only 1 progress bar

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { useMealStore } from '@/stores/meal-store'
 import type { Meal } from '@/types'
 

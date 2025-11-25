@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/tests/helpers/test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import { LanguageSwitcher } from '@/components/molecules/language-switcher'
+import { render, screen } from '@/tests/helpers/test-utils'
 
 // Create mock for useLocale that can be controlled
 const mockUseLocale = vi.fn(() => 'en')

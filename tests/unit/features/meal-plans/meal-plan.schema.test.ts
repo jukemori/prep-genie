@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-  mealPlanSchema,
-  mealPlanItemSchema,
   aiMealPlanRequestSchema,
+  mealPlanItemSchema,
+  mealPlanSchema,
 } from '@/features/meal-plans/schemas/meal-plan.schema'
 
 describe('Meal Plan Schema Validation', () => {
