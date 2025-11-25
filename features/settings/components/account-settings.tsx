@@ -1,6 +1,7 @@
 'use client'
 
 import type { User } from '@supabase/supabase-js'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -23,6 +24,7 @@ interface AccountSettingsProps {
 }
 
 export function AccountSettings({ user }: AccountSettingsProps) {
+  const t = useTranslations('settings')
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function handleDeleteAccount() {
@@ -34,11 +36,11 @@ export function AccountSettings({ user }: AccountSettingsProps) {
         toast.error(result.error)
         setIsDeleting(false)
       } else {
-        toast.success('Account deleted successfully')
+        toast.success(t('account_deleted_success'))
         // Redirect will happen via server action
       }
     } catch (_error) {
-      toast.error('Failed to delete account')
+      toast.error(t('account_delete_failed'))
       setIsDeleting(false)
     }
   }
@@ -46,44 +48,43 @@ export function AccountSettings({ user }: AccountSettingsProps) {
   return (
     <div className="space-y-6">
       <div>
-        <Label className="text-base">Email</Label>
-        <p className="text-sm text-muted-foreground mb-2">Your registered email address</p>
+        <Label className="text-base">{t('email')}</Label>
+        <p className="text-sm text-muted-foreground mb-2">{t('email_description')}</p>
         <p className="font-medium">{user.email}</p>
       </div>
 
       <div className="border-t pt-6">
-        <h3 className="text-base font-medium text-destructive mb-2">Danger Zone</h3>
+        <h3 className="text-base font-medium text-destructive mb-2">{t('danger_zone')}</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Irreversible actions that affect your account
+          {t('danger_zone_description')}
         </p>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" disabled={isDeleting}>
-              Delete Account
+              {t('delete_account')}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t('delete_account_confirm_title')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your account and remove
-                all your data from our servers, including:
+                {t('delete_account_confirm_description')}
                 <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>Your profile and personal information</li>
-                  <li>All meal plans and saved meals</li>
-                  <li>Grocery lists and progress logs</li>
-                  <li>AI chat history</li>
+                  <li>{t('delete_account_item_1')}</li>
+                  <li>{t('delete_account_item_2')}</li>
+                  <li>{t('delete_account_item_3')}</li>
+                  <li>{t('delete_account_item_4')}</li>
                 </ul>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteAccount}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {isDeleting ? 'Deleting...' : 'Yes, delete my account'}
+                {isDeleting ? t('deleting') : t('delete_account_confirm')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
