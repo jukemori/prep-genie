@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { connection } from 'next/server'
 import { getTranslations } from 'next-intl/server'
 import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
-import { openai } from '@/lib/ai/openai'
+import { openai, MODELS } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal, MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
 
@@ -107,7 +107,7 @@ export async function generateAIMealPlan(
     console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: MODELS.GPT5_NANO,
       messages: [{ role: 'user', content: prompt }],
       stream: true,
       response_format: { type: 'json_object' },
@@ -482,7 +482,7 @@ export async function swapMeal(input: SwapMealInput) {
 
     // Call AI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: MODELS.GPT5_NANO,
       messages: [
         { role: 'system', content: MEAL_SWAP_SYSTEM_PROMPT },
         { role: 'user', content: prompt },

@@ -5,7 +5,7 @@ import {
   generateRecipeAnalysisPrompt,
   RECIPE_ANALYZER_SYSTEM_PROMPT,
 } from '@/features/recipes/prompts/recipe-analyzer'
-import { openai } from '@/lib/ai/openai'
+import { openai, MODELS } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
 
 interface AnalyzeRecipeInput {
@@ -33,7 +33,7 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
     const prompt = generateRecipeAnalysisPrompt(recipeText, data.locale)
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: MODELS.GPT5_NANO,
       messages: [
         { role: 'system', content: RECIPE_ANALYZER_SYSTEM_PROMPT },
         { role: 'user', content: prompt },
