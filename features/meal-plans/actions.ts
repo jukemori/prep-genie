@@ -1,6 +1,5 @@
 'use server'
 
-import { createStreamableValue } from '@ai-sdk/rsc'
 import { revalidatePath } from 'next/cache'
 import { connection } from 'next/server'
 import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
@@ -86,7 +85,7 @@ export async function generateAIMealPlan(
   }
 
   // Get user profile
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError} = await supabase
     .from('user_profiles')
     .select('*')
     .eq('id', user.id)
@@ -96,75 +95,71 @@ export async function generateAIMealPlan(
     throw new Error('User profile not found')
   }
 
-  const stream = createStreamableValue('')
+  try {
+    console.log(
+      `[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`
+    )
 
-  ;(async () => {
-    try {
-      console.log(
-        `[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`
-      )
+    const locale = (profile.locale || 'en') as 'en' | 'ja'
+    const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
 
-      const locale = (profile.locale || 'en') as 'en' | 'ja'
-      const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
+    console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
 
-      console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: prompt }],
+      stream: true,
+      response_format: { type: 'json_object' },
+    })
 
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
-        stream: true,
-        response_format: { type: 'json_object' },
-      })
+    console.log(`[generateAIMealPlan] OpenAI stream started for ${cuisineType || 'default'}`)
 
-      console.log(`[generateAIMealPlan] OpenAI stream started for ${cuisineType || 'default'}`)
+    let chunkCount = 0
+    let totalContent = ''
 
-      let chunkCount = 0
-      let totalContent = ''
-
-      for await (const chunk of completion) {
-        const content = chunk.choices[0]?.delta?.content || ''
-        if (content) {
-          chunkCount++
-          totalContent += content
-          stream.update(content)
-        }
+    for await (const chunk of completion) {
+      const content = chunk.choices[0]?.delta?.content || ''
+      if (content) {
+        chunkCount++
+        totalContent += content
       }
-
-      console.log(
-        `[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`
-      )
-
-      // Validate JSON before marking stream as done
-      try {
-        JSON.parse(totalContent)
-        console.log(`[generateAIMealPlan] JSON validation passed for ${cuisineType || 'default'}`)
-      } catch (jsonError) {
-        console.error(
-          `[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`,
-          jsonError
-        )
-        console.error(
-          `[generateAIMealPlan] First 500 chars of response:`,
-          totalContent.substring(0, 500)
-        )
-        console.error(
-          `[generateAIMealPlan] Last 500 chars of response:`,
-          totalContent.substring(totalContent.length - 500)
-        )
-        throw new Error(
-          `Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`
-        )
-      }
-
-      stream.done()
-      console.log(`[generateAIMealPlan] Stream marked as done for ${cuisineType || 'default'}`)
-    } catch (error) {
-      console.error(`[generateAIMealPlan] ERROR for ${cuisineType || 'default'}:`, error)
-      stream.error(error)
     }
-  })()
 
-  return { stream: stream.value }
+    console.log(
+      `[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`
+    )
+
+    // Validate JSON
+    try {
+      JSON.parse(totalContent)
+      console.log(`[generateAIMealPlan] JSON validation passed for ${cuisineType || 'default'}`)
+    } catch (jsonError) {
+      console.error(
+        `[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`,
+        jsonError
+      )
+      throw new Error(
+        `Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`
+      )
+    }
+
+    // Save directly to database instead of streaming to client
+    console.log('[generateAIMealPlan] Saving meal plan to database')
+    const result = await saveMealPlan(totalContent)
+
+    if (result.error) {
+      throw new Error(result.error)
+    }
+
+    console.log(`[generateAIMealPlan] Meal plan saved with ID: ${result.data?.id}`)
+    return { data: result.data, error: null }
+  } catch (error) {
+    console.error(`[generateAIMealPlan] ERROR for ${cuisineType || 'default'}:`, error)
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Failed to generate meal plan'
+    }
+  }
 }
 
 export async function saveMealPlan(mealPlanData: string) {
