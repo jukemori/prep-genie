@@ -22,6 +22,7 @@ const navigationConfig = [
   { key: 'grocery_lists', href: '/grocery-lists', icon: ShoppingCart },
   { key: 'progress', href: '/progress', icon: TrendingUp },
   { key: 'chat', href: '/chat', icon: MessageSquare },
+  { key: 'analyze', href: '/analyze', icon: ChefHat },
   { key: 'settings', href: '/settings', icon: Settings },
 ]
 

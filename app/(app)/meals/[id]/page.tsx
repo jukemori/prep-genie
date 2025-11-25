@@ -2,6 +2,7 @@ import { ArrowLeft, Clock, Edit, Users } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
@@ -22,6 +23,7 @@ interface PageProps {
 export default async function MealDetailPage({ params }: PageProps) {
   const { id } = await params
   const supabase = await createClient()
+  const t = await getTranslations('meal_detail_page')
 
   const {
     data: { user },
@@ -52,7 +54,7 @@ export default async function MealDetailPage({ params }: PageProps) {
         <Button variant="ghost" asChild>
           <Link href="/meals">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Meals
+            {t('back_to_meals')}
           </Link>
         </Button>
         <div className="flex gap-2">
@@ -62,7 +64,7 @@ export default async function MealDetailPage({ params }: PageProps) {
               <Button variant="outline" asChild>
                 <Link href={`/meals/${id}/edit`}>
                   <Edit className="mr-2 h-4 w-4" />
-                  Edit
+                  {t('edit')}
                 </Link>
               </Button>
               <DeleteMealButton mealId={id} mealName={meal.name} />
@@ -93,13 +95,17 @@ export default async function MealDetailPage({ params }: PageProps) {
               {totalTime > 0 && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>{totalTime} min total</span>
+                  <span>
+                    {totalTime} {t('min_total')}
+                  </span>
                 </div>
               )}
               {meal.servings && (
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
-                  <span>{meal.servings} servings</span>
+                  <span>
+                    {meal.servings} {t('servings')}
+                  </span>
                 </div>
               )}
             </div>
@@ -110,7 +116,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Ingredients */}
           <Card>
             <CardHeader>
-              <CardTitle>Ingredients</CardTitle>
+              <CardTitle>{t('ingredients')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {Array.isArray(meal.ingredients) && meal.ingredients.length > 0 ? (
@@ -127,7 +133,7 @@ export default async function MealDetailPage({ params }: PageProps) {
                   )
                 )
               ) : (
-                <p className="text-sm text-muted-foreground">No ingredients listed</p>
+                <p className="text-sm text-muted-foreground">{t('no_ingredients')}</p>
               )}
             </CardContent>
           </Card>
@@ -135,7 +141,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Instructions */}
           <Card>
             <CardHeader>
-              <CardTitle>Instructions</CardTitle>
+              <CardTitle>{t('instructions')}</CardTitle>
             </CardHeader>
             <CardContent>
               {meal.instructions && meal.instructions.length > 0 ? (
@@ -150,7 +156,7 @@ export default async function MealDetailPage({ params }: PageProps) {
                   ))}
                 </ol>
               ) : (
-                <p className="text-sm text-muted-foreground">No instructions provided</p>
+                <p className="text-sm text-muted-foreground">{t('no_instructions')}</p>
               )}
             </CardContent>
           </Card>
@@ -158,7 +164,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Tags */}
           {meal.tags && meal.tags.length > 0 && (
             <div>
-              <h3 className="mb-2 text-sm font-medium">Tags</h3>
+              <h3 className="mb-2 text-sm font-medium">{t('tags')}</h3>
               <div className="flex flex-wrap gap-2">
                 {meal.tags.map((tag: string) => (
                   <Badge key={tag} variant="secondary">
@@ -175,12 +181,12 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Nutrition */}
           <Card>
             <CardHeader>
-              <CardTitle>Nutrition per Serving</CardTitle>
+              <CardTitle>{t('nutrition_per_serving')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="rounded-lg bg-muted/50 p-4 text-center">
                 <p className="text-3xl font-bold">{meal.calories_per_serving || 0}</p>
-                <p className="text-sm text-muted-foreground">calories</p>
+                <p className="text-sm text-muted-foreground">{t('calories')}</p>
               </div>
               <MacroDisplay
                 protein={meal.protein_per_serving || 0}
@@ -193,31 +199,35 @@ export default async function MealDetailPage({ params }: PageProps) {
           {/* Meal Info */}
           <Card>
             <CardHeader>
-              <CardTitle>Meal Info</CardTitle>
+              <CardTitle>{t('meal_info')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               {meal.cuisine_type && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cuisine</span>
+                  <span className="text-muted-foreground">{t('cuisine')}</span>
                   <span className="capitalize font-medium">{meal.cuisine_type}</span>
                 </div>
               )}
               {meal.meal_type && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Type</span>
+                  <span className="text-muted-foreground">{t('type')}</span>
                   <span className="capitalize font-medium">{meal.meal_type}</span>
                 </div>
               )}
               {meal.prep_time && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Prep Time</span>
-                  <span className="font-medium">{meal.prep_time} min</span>
+                  <span className="text-muted-foreground">{t('prep_time')}</span>
+                  <span className="font-medium">
+                    {meal.prep_time} {t('min')}
+                  </span>
                 </div>
               )}
               {meal.cook_time && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cook Time</span>
-                  <span className="font-medium">{meal.cook_time} min</span>
+                  <span className="text-muted-foreground">{t('cook_time')}</span>
+                  <span className="font-medium">
+                    {meal.cook_time} {t('min')}
+                  </span>
                 </div>
               )}
             </CardContent>
@@ -232,44 +242,48 @@ export default async function MealDetailPage({ params }: PageProps) {
             meal.batch_cooking_multiplier) && (
             <Card>
               <CardHeader>
-                <CardTitle>Meal Prep Info</CardTitle>
+                <CardTitle>{t('meal_prep_info')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 {meal.meal_prep_friendly && (
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="bg-green-100 text-green-800">
-                      Meal Prep Friendly
+                      {t('meal_prep_friendly')}
                     </Badge>
                   </div>
                 )}
                 {meal.batch_cooking_multiplier && meal.batch_cooking_multiplier > 1 && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Batch Multiplier</span>
+                    <span className="text-muted-foreground">{t('batch_multiplier')}</span>
                     <span className="font-medium">{meal.batch_cooking_multiplier}x</span>
                   </div>
                 )}
                 {meal.storage_duration_days && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Storage Duration</span>
-                    <span className="font-medium">{meal.storage_duration_days} days</span>
+                    <span className="text-muted-foreground">{t('storage_duration')}</span>
+                    <span className="font-medium">
+                      {meal.storage_duration_days} {t('days')}
+                    </span>
                   </div>
                 )}
                 {meal.container_type && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Container Type</span>
+                    <span className="text-muted-foreground">{t('container_type')}</span>
                     <span className="capitalize font-medium">{meal.container_type}</span>
                   </div>
                 )}
                 {meal.storage_instructions && (
                   <div className="space-y-1">
-                    <span className="font-medium text-muted-foreground">Storage Instructions</span>
+                    <span className="font-medium text-muted-foreground">
+                      {t('storage_instructions')}
+                    </span>
                     <p className="text-foreground">{meal.storage_instructions}</p>
                   </div>
                 )}
                 {meal.reheating_instructions && (
                   <div className="space-y-1">
                     <span className="font-medium text-muted-foreground">
-                      Reheating Instructions
+                      {t('reheating_instructions')}
                     </span>
                     <p className="text-foreground">{meal.reheating_instructions}</p>
                   </div>
