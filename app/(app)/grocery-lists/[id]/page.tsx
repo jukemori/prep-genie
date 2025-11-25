@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { use, useEffect, useState } from 'react'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
@@ -25,6 +26,7 @@ interface GroceryItem {
 }
 
 export default function GroceryListDetailPage({ params }: PageProps) {
+  const t = useTranslations('grocery_list_detail_page')
   const { id } = use(params)
   const [list, setList] = useState<GroceryList | null>(null)
   const [items, setItems] = useState<GroceryItem[]>([])
@@ -59,11 +61,11 @@ export default function GroceryListDetailPage({ params }: PageProps) {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>{t('loading')}</div>
   }
 
   if (!list) {
-    return <div>Grocery list not found</div>
+    return <div>{t('list_not_found')}</div>
   }
 
   const purchasedCount = items.filter((item) => item.is_purchased).length
@@ -85,13 +87,13 @@ export default function GroceryListDetailPage({ params }: PageProps) {
         <Button variant="ghost" asChild>
           <Link href="/grocery-lists">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Lists
+            {t('back_to_lists')}
           </Link>
         </Button>
         <div className="flex gap-2">
           <Button onClick={handleSave} disabled={saving}>
             <Save className="mr-2 h-4 w-4" />
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('saving') : t('save')}
           </Button>
           <Button variant="destructive" size="icon">
             <Trash2 className="h-4 w-4" />
@@ -102,16 +104,18 @@ export default function GroceryListDetailPage({ params }: PageProps) {
       <div>
         <h1 className="text-3xl font-bold">{list.name}</h1>
         <p className="text-muted-foreground">
-          Created on {list.created_at ? new Date(list.created_at).toLocaleDateString() : 'Unknown'}
+          {t('created_on', {
+            date: list.created_at ? new Date(list.created_at).toLocaleDateString() : t('unknown')
+          })}
         </p>
       </div>
 
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Shopping Progress</span>
+            <span className="text-sm font-medium">{t('shopping_progress')}</span>
             <Badge variant={purchasedCount === totalItems ? 'default' : 'secondary'}>
-              {purchasedCount}/{totalItems} items purchased
+              {t('items_purchased', { purchased: purchasedCount, total: totalItems })}
             </Badge>
           </div>
         </CardContent>
@@ -124,7 +128,7 @@ export default function GroceryListDetailPage({ params }: PageProps) {
         return (
           <Card key={category}>
             <CardHeader>
-              <CardTitle className="capitalize">{category}</CardTitle>
+              <CardTitle className="capitalize">{t(`category_${category}`)}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {categoryItems.map((item) => {
