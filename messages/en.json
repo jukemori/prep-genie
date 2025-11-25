@@ -404,7 +404,9 @@
     "thursday": "Thursday",
     "friday": "Friday",
     "saturday": "Saturday",
-    "sunday": "Sunday"
+    "sunday": "Sunday",
+    "error_occurred": "An error occurred",
+    "retry": "Try Again"
   },
   "grocery_list_detail_page": {
     "loading": "Loading...",
