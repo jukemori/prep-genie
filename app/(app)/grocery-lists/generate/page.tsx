@@ -69,9 +69,7 @@ export default function GenerateGroceryListPage() {
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
           <h3 className="mb-2 text-lg font-semibold">{t('generating_title')}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t('generating_description')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('generating_description')}</p>
         </CardContent>
       </Card>
     </div>

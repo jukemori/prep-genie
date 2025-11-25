@@ -1,7 +1,7 @@
 import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
 import { MealPlanItemCard } from '@/features/meal-plans/components/meal-plan-item-card'
@@ -49,7 +49,15 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
     .order('day_of_week', { ascending: true })
 
   // Group by day
-  const dayNames = [t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday'), t('sunday')]
+  const dayNames = [
+    t('monday'),
+    t('tuesday'),
+    t('wednesday'),
+    t('thursday'),
+    t('friday'),
+    t('saturday'),
+    t('sunday'),
+  ]
   const groupedByDay = items?.reduce(
     (acc: Record<number, MealPlanItemWithMeal[]>, item: MealPlanItemWithMeal) => {
       const day = item.day_of_week

@@ -105,7 +105,7 @@ export default function GroceryListDetailPage({ params }: PageProps) {
         <h1 className="text-3xl font-bold">{list.name}</h1>
         <p className="text-muted-foreground">
           {t('created_on', {
-            date: list.created_at ? new Date(list.created_at).toLocaleDateString() : t('unknown')
+            date: list.created_at ? new Date(list.created_at).toLocaleDateString() : t('unknown'),
           })}
         </p>
       </div>

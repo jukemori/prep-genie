@@ -5,7 +5,7 @@ import {
   generateRecipeAnalysisPrompt,
   RECIPE_ANALYZER_SYSTEM_PROMPT,
 } from '@/features/recipes/prompts/recipe-analyzer'
-import { openai, MODELS } from '@/lib/ai/openai'
+import { MODELS, openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
 
 interface AnalyzeRecipeInput {
