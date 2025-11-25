@@ -10,11 +10,11 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Test Files** | 11 |
-| **Total Tests** | 278 |
-| **Passed** | ✅ 278 (100%) |
+| **Total Test Files** | 13 |
+| **Total Tests** | 305 |
+| **Passed** | ✅ 305 (100%) |
 | **Failed** | ❌ 0 |
-| **Duration** | 2.04s |
+| **Duration** | 1.89s |
 | **Coverage** | See coverage report below |
 
 ---
@@ -389,6 +389,57 @@
 
 **Note:** Complex interaction tests (dropdown selection, API calls) are better suited for E2E testing with Playwright.
 
+### 5. Zustand Store Tests (27 tests)
+
+#### ✅ `tests/unit/stores/ui-store.test.ts` (10 tests)
+
+**Initial State (1 test):**
+- ✅ Initializes with default state (sidebarOpen: true)
+
+**toggleSidebar (3 tests):**
+- ✅ Changes sidebarOpen from true to false
+- ✅ Changes sidebarOpen from false to true
+- ✅ Works multiple times consecutively
+
+**setSidebarOpen (3 tests):**
+- ✅ Sets sidebar to open (true)
+- ✅ Sets sidebar to closed (false)
+- ✅ Can set to same value without issues
+
+**Persistence (3 tests):**
+- ✅ Verifies store has persist middleware configured
+- ✅ Restores state from localStorage on initialization
+- ✅ Handles missing localStorage data gracefully
+
+#### ✅ `tests/unit/stores/meal-store.test.ts` (17 tests)
+
+**Initial State (2 tests):**
+- ✅ Initializes with null selectedMeal
+- ✅ Initializes with empty filters
+
+**setSelectedMeal (3 tests):**
+- ✅ Sets selected meal
+- ✅ Clears selected meal when set to null
+- ✅ Replaces previously selected meal
+
+**setMealFilters (7 tests):**
+- ✅ Updates mealType filter
+- ✅ Updates cuisineType filter
+- ✅ Updates dietaryPreference filter
+- ✅ Updates maxPrepTime filter
+- ✅ Updates multiple filters at once
+- ✅ Merges with existing filters (partial update)
+- ✅ Does not affect other filters when updating one
+
+**resetFilters (2 tests):**
+- ✅ Clears all filters to initial state
+- ✅ Does not affect selectedMeal when resetting filters
+
+**Complex Scenarios (3 tests):**
+- ✅ Handles multiple filter operations correctly
+- ✅ Can set and clear selectedMeal multiple times
+- ✅ Maintains independent state for selectedMeal and filters
+
 ---
 
 ## Test Infrastructure Created
@@ -449,6 +500,8 @@
 - ✅ `components/molecules/macro-display.tsx` - Comprehensive component tests
 - ✅ `components/molecules/ingredient-item.tsx` - Comprehensive component tests
 - ✅ `components/molecules/language-switcher.tsx` - Basic rendering tests
+- ✅ `stores/ui-store.ts` - Complete store tests with persistence
+- ✅ `stores/meal-store.ts` - Complete store tests with filters
 
 ---
 
@@ -477,20 +530,20 @@
    - IngredientItem Component (18 tests)
    - LanguageSwitcher Component (6 tests)
 
+5. ✅ **Zustand Store Tests** (27 tests) - COMPLETE
+   - UI Store (10 tests)
+   - Meal Store (17 tests)
+
 ### Remaining Unit Tests (To Do)
 
-1. **Zustand Store Tests** (16 tests)
-   - UI Store (7 tests)
-   - Meal Store (9 tests)
-
-2. **Integration Tests - Server Actions** (49 tests)
+1. **Integration Tests - Server Actions** (49 tests)
    - Auth Actions (9 tests)
    - Meal Actions (18 tests)
    - Meal Plan Actions (11 tests)
    - Recipe Analyzer Actions (7 tests)
    - Settings Actions (6 tests)
 
-**Total Remaining:** 65 tests
+**Total Remaining:** 49 tests
 
 ---
 
@@ -526,16 +579,14 @@ npx vite preview --outDir test-results
 
 ---
 
-**Status:** ✅ React component tests complete
-**Progress:** 278/343 tests (81.0% of planned unit tests)
+**Status:** ✅ Zustand store tests complete
+**Progress:** 305/354 tests (86.2% of planned unit tests)
 **All Tests Passing:** ✅ Yes (100% pass rate)
 
 **Latest Changes:**
-- Added React component tests (83 tests)
-  - MealCard: comprehensive rendering, interaction, and edge case tests
-  - MacroDisplay: nutrition display with progress bars and targets
-  - IngredientItem: checkbox interactions and rendering
-  - LanguageSwitcher: basic rendering tests (complex interactions deferred to E2E)
-- Installed @testing-library/user-event for user interaction testing
-- All component tests passing with 100% success rate
-- Next: Zustand store tests and Server Actions integration tests
+- Added Zustand store tests (27 tests)
+  - UI Store: toggleSidebar, setSidebarOpen, persistence with localStorage
+  - Meal Store: selectedMeal management, filter operations, resetFilters
+- All store tests passing with 100% success rate
+- Verified state immutability and proper store behavior
+- Next: Server Actions integration tests (49 tests remaining)
