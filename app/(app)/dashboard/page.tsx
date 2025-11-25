@@ -1,5 +1,6 @@
 import { Apple, CalendarDays, Flame, Target, TrendingUp, UtensilsCrossed } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/atoms/ui/button'
 import {
   Card,
@@ -13,6 +14,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
+  const t = await getTranslations('dashboard')
 
   const {
     data: { user },
@@ -61,15 +63,15 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Welcome back!</h1>
-        <p className="text-muted-foreground">Here's an overview of your nutrition journey</p>
+        <h1 className="text-3xl font-bold">{t('welcome_back')}</h1>
+        <p className="text-muted-foreground">{t('overview')}</p>
       </div>
 
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Daily Calories</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('daily_calories')}</CardTitle>
             <Flame className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -82,7 +84,7 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Protein Target</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('protein_target')}</CardTitle>
             <Apple className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -95,23 +97,23 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Saved Meals</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('saved_meals')}</CardTitle>
             <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mealsCount || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">recipes in your library</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('recipes_in_library')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Plans</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('active_plans')}</CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mealPlansCount || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">meal plans created</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('meal_plans_created')}</p>
           </CardContent>
         </Card>
       </div>
@@ -120,31 +122,31 @@ export default async function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Your Nutrition Goals</CardTitle>
-            <CardDescription>Based on your profile and activity level</CardDescription>
+            <CardTitle>{t('nutrition_goals')}</CardTitle>
+            <CardDescription>{t('based_on_profile')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Goal</span>
+              <span className="text-sm font-medium">{t('goal')}</span>
               <span className="text-sm text-muted-foreground capitalize">
                 {profile?.goal?.replace('_', ' ')}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">TDEE</span>
+              <span className="text-sm font-medium">{t('tdee')}</span>
               <span className="text-sm text-muted-foreground">{profile?.tdee} kcal</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Daily Target</span>
+              <span className="text-sm font-medium">{t('daily_target')}</span>
               <span className="text-sm text-muted-foreground">
                 {profile?.daily_calorie_target} kcal
               </span>
             </div>
             <div className="pt-2 border-t">
               <div className="flex justify-between text-sm">
-                <span>Protein: {profile?.target_protein}g</span>
-                <span>Carbs: {profile?.target_carbs}g</span>
-                <span>Fats: {profile?.target_fats}g</span>
+                <span>{t('protein')}: {profile?.target_protein}g</span>
+                <span>{t('carbs')}: {profile?.target_carbs}g</span>
+                <span>{t('fats')}: {profile?.target_fats}g</span>
               </div>
             </div>
           </CardContent>
@@ -152,32 +154,32 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>What would you like to do today?</CardDescription>
+            <CardTitle>{t('quick_actions')}</CardTitle>
+            <CardDescription>{t('what_today')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/meal-plans/generate">
                 <Target className="mr-2 h-4 w-4" />
-                Generate AI Meal Plan
+                {t('generate_meal_plan')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/meals">
                 <UtensilsCrossed className="mr-2 h-4 w-4" />
-                Browse Meals
+                {t('browse_meals')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/progress">
                 <TrendingUp className="mr-2 h-4 w-4" />
-                Log Today's Progress
+                {t('log_progress')}
               </Link>
             </Button>
             <Button asChild className="w-full justify-start" variant="outline">
               <Link href="/chat">
                 <Target className="mr-2 h-4 w-4" />
-                Ask AI Nutrition Assistant
+                {t('ask_ai')}
               </Link>
             </Button>
           </CardContent>
