@@ -268,7 +268,9 @@ export default async function MealDetailPage({ params }: PageProps) {
                 )}
                 {meal.reheating_instructions && (
                   <div className="space-y-1">
-                    <span className="font-medium text-muted-foreground">Reheating Instructions</span>
+                    <span className="font-medium text-muted-foreground">
+                      Reheating Instructions
+                    </span>
                     <p className="text-foreground">{meal.reheating_instructions}</p>
                   </div>
                 )}

@@ -106,9 +106,7 @@ export default async function MealPlansPage() {
               <CalendarDays className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="mb-2 text-lg font-semibold">{t('no_plans_found')}</h3>
-            <p className="mb-4 text-sm text-muted-foreground">
-              {t('create_first_plan')}
-            </p>
+            <p className="mb-4 text-sm text-muted-foreground">{t('create_first_plan')}</p>
             <div className="flex gap-2">
               <Button asChild variant="outline">
                 <Link href="/meal-plans/generate">

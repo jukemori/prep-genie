@@ -3,7 +3,7 @@
 import { ArrowLeft, Loader2, Save, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition, useDeferredValue } from 'react'
+import { useDeferredValue, useState, useTransition } from 'react'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
@@ -28,7 +28,7 @@ import { readStreamableValue } from '@ai-sdk/rsc'
 
 export default function GenerateMealPlanPage() {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const [_isPending, startTransition] = useTransition()
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [saving, setSaving] = useState(false)

@@ -2,9 +2,9 @@
 
 import { Heart } from 'lucide-react'
 import { useState, useTransition } from 'react'
-import { Button } from '@/components/atoms/ui/button'
-import { saveMealToFavorites, removeMealFromFavorites } from '@/features/meals/actions'
 import { toast } from 'sonner'
+import { Button } from '@/components/atoms/ui/button'
+import { removeMealFromFavorites, saveMealToFavorites } from '@/features/meals/actions'
 
 interface FavoriteButtonProps {
   mealId: string

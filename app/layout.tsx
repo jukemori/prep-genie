@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { connection } from 'next/server'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
-import { connection } from 'next/server'
 import { QueryProvider } from '@/components/providers/query-provider'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'

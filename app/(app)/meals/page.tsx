@@ -92,9 +92,7 @@ export default async function MealsPage({ searchParams }: PageProps) {
           </div>
           <h3 className="mb-2 text-lg font-semibold">{t('no_meals_found')}</h3>
           <p className="mb-4 text-sm text-muted-foreground">
-            {params.search || params.tag
-              ? t('adjust_filters')
-              : t('get_started')}
+            {params.search || params.tag ? t('adjust_filters') : t('get_started')}
           </p>
           <Button asChild>
             <Link href="/meals/new">

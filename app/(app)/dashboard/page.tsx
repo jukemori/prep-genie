@@ -144,9 +144,15 @@ export default async function DashboardPage() {
             </div>
             <div className="pt-2 border-t">
               <div className="flex justify-between text-sm">
-                <span>{t('protein')}: {profile?.target_protein}g</span>
-                <span>{t('carbs')}: {profile?.target_carbs}g</span>
-                <span>{t('fats')}: {profile?.target_fats}g</span>
+                <span>
+                  {t('protein')}: {profile?.target_protein}g
+                </span>
+                <span>
+                  {t('carbs')}: {profile?.target_carbs}g
+                </span>
+                <span>
+                  {t('fats')}: {profile?.target_fats}g
+                </span>
               </div>
             </div>
           </CardContent>

@@ -86,9 +86,7 @@ export default function ChatPage() {
     <div className="flex h-[calc(100vh-8rem)] flex-col space-y-4">
       <div>
         <h1 className="text-3xl font-bold">{t('title')}</h1>
-        <p className="text-muted-foreground">
-          {t('description')}
-        </p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <Card className="flex-1 overflow-hidden">
@@ -100,9 +98,7 @@ export default function ChatPage() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                   <Sparkles className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">
-                  {t('welcome')}
-                </h3>
+                <h3 className="mb-2 text-lg font-semibold">{t('welcome')}</h3>
                 <p className="mb-6 max-w-md text-sm text-muted-foreground">
                   {t('welcome_description')}
                 </p>
@@ -183,9 +179,7 @@ export default function ChatPage() {
                 <Send className="h-4 w-4" />
               </Button>
             </form>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t('disclaimer')}
-            </p>
+            <p className="mt-2 text-xs text-muted-foreground">{t('disclaimer')}</p>
           </div>
         </CardContent>
       </Card>

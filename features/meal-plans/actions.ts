@@ -100,11 +100,13 @@ export async function generateAIMealPlan(
 
   ;(async () => {
     try {
-      console.log(`[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`)
-      
+      console.log(
+        `[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`
+      )
+
       const locale = (profile.locale || 'en') as 'en' | 'ja'
       const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
-      
+
       console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
 
       const completion = await openai.chat.completions.create({
@@ -115,7 +117,7 @@ export async function generateAIMealPlan(
       })
 
       console.log(`[generateAIMealPlan] OpenAI stream started for ${cuisineType || 'default'}`)
-      
+
       let chunkCount = 0
       let totalContent = ''
 
@@ -128,17 +130,30 @@ export async function generateAIMealPlan(
         }
       }
 
-      console.log(`[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`)
-      
+      console.log(
+        `[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`
+      )
+
       // Validate JSON before marking stream as done
       try {
         JSON.parse(totalContent)
         console.log(`[generateAIMealPlan] JSON validation passed for ${cuisineType || 'default'}`)
       } catch (jsonError) {
-        console.error(`[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`, jsonError)
-        console.error(`[generateAIMealPlan] First 500 chars of response:`, totalContent.substring(0, 500))
-        console.error(`[generateAIMealPlan] Last 500 chars of response:`, totalContent.substring(totalContent.length - 500))
-        throw new Error(`Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`)
+        console.error(
+          `[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`,
+          jsonError
+        )
+        console.error(
+          `[generateAIMealPlan] First 500 chars of response:`,
+          totalContent.substring(0, 500)
+        )
+        console.error(
+          `[generateAIMealPlan] Last 500 chars of response:`,
+          totalContent.substring(totalContent.length - 500)
+        )
+        throw new Error(
+          `Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`
+        )
       }
 
       stream.done()
@@ -155,7 +170,7 @@ export async function generateAIMealPlan(
 export async function saveMealPlan(mealPlanData: string) {
   console.log('[saveMealPlan] Starting save process')
   console.log('[saveMealPlan] Received data length:', mealPlanData.length)
-  
+
   const supabase = await createClient()
 
   const {
@@ -173,13 +188,13 @@ export async function saveMealPlan(mealPlanData: string) {
     console.log('[saveMealPlan] Parsing JSON data...')
     const parsedData = JSON.parse(mealPlanData)
     console.log('[saveMealPlan] JSON parsed successfully')
-    
+
     const { week_summary, meal_plan } = parsedData
 
     if (!week_summary || !meal_plan) {
-      console.error('[saveMealPlan] Missing required fields:', { 
-        hasWeekSummary: !!week_summary, 
-        hasMealPlan: !!meal_plan 
+      console.error('[saveMealPlan] Missing required fields:', {
+        hasWeekSummary: !!week_summary,
+        hasMealPlan: !!meal_plan,
       })
       return { error: 'Invalid meal plan data structure' }
     }
@@ -220,10 +235,10 @@ export async function saveMealPlan(mealPlanData: string) {
 
     for (const day of meal_plan) {
       console.log(`[saveMealPlan] Processing day ${day.day}, ${day.meals.length} meals`)
-      
+
       for (const meal of day.meals) {
         console.log(`[saveMealPlan] Creating meal: ${meal.name} (${meal.meal_type})`)
-        
+
         // Create meal
         const mealInsert: MealInsert = {
           user_id: user.id,
@@ -279,9 +294,12 @@ export async function saveMealPlan(mealPlanData: string) {
         }
 
         const { error: itemError } = await supabase.from('meal_plan_items').insert(itemInsert)
-        
+
         if (itemError) {
-          console.error(`[saveMealPlan] Failed to create meal plan item for meal "${meal.name}":`, itemError)
+          console.error(
+            `[saveMealPlan] Failed to create meal plan item for meal "${meal.name}":`,
+            itemError
+          )
         }
       }
     }
@@ -297,7 +315,9 @@ export async function saveMealPlan(mealPlanData: string) {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
     })
-    return { error: `Failed to parse or save meal plan: ${error instanceof Error ? error.message : 'Unknown error'}` }
+    return {
+      error: `Failed to parse or save meal plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    }
   }
 }
 

@@ -3,6 +3,7 @@
 import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button } from '@/components/atoms/ui/button'
 import {
   Dialog,
@@ -13,7 +14,6 @@ import {
   DialogTitle,
 } from '@/components/atoms/ui/dialog'
 import { deleteMeal } from '@/features/meals/actions'
-import { toast } from 'sonner'
 
 interface DeleteMealButtonProps {
   mealId: string

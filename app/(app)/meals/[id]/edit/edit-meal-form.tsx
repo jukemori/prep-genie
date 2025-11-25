@@ -44,7 +44,14 @@ export function EditMealForm({ meal }: EditMealFormProps) {
 
   // Convert meal ingredients to form format
   const initialIngredients: Ingredient[] = Array.isArray(meal.ingredients)
-    ? meal.ingredients.map((ing: { name: string; quantity: number; unit: string; category?: string }) => ({
+    ? (
+        meal.ingredients as Array<{
+          name: string
+          quantity: number
+          unit: string
+          category?: string
+        }>
+      ).map((ing) => ({
         id: crypto.randomUUID(),
         name: ing.name,
         quantity: ing.quantity,
@@ -168,7 +175,11 @@ export function EditMealForm({ meal }: EditMealFormProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="mealType">Meal Type</Label>
-                <Select name="mealType" defaultValue={meal.meal_type || undefined} disabled={loading}>
+                <Select
+                  name="mealType"
+                  defaultValue={meal.meal_type || undefined}
+                  disabled={loading}
+                >
                   <SelectTrigger id="mealType">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -252,7 +263,7 @@ export function EditMealForm({ meal }: EditMealFormProps) {
               <Checkbox
                 id="isPublic"
                 name="isPublic"
-                defaultChecked={meal.is_public}
+                defaultChecked={meal.is_public ?? false}
                 disabled={loading}
               />
               <Label htmlFor="isPublic" className="cursor-pointer font-normal">

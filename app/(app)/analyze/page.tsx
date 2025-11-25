@@ -35,17 +35,13 @@ export default async function AnalyzePage() {
     <div className="container max-w-4xl py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{t('title')}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t('description')}
-        </p>
+        <p className="text-muted-foreground mt-2">{t('description')}</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>{t('analyze')}</CardTitle>
-          <CardDescription>
-            {t('analyze_description')}
-          </CardDescription>
+          <CardDescription>{t('analyze_description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <RecipeAnalyzer locale={locale} />

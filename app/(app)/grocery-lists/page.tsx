@@ -90,9 +90,7 @@ export default async function GroceryListsPage() {
               <ShoppingCart className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="mb-2 text-lg font-semibold">{t('no_lists_found')}</h3>
-            <p className="mb-4 text-sm text-muted-foreground">
-              {t('create_first_list')}
-            </p>
+            <p className="mb-4 text-sm text-muted-foreground">{t('create_first_list')}</p>
             <Button asChild>
               <Link href="/grocery-lists/new">
                 <Plus className="mr-2 h-4 w-4" />
