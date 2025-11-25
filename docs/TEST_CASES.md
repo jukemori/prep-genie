@@ -9,10 +9,10 @@
 ## Test Coverage Summary
 
 - **Total Features:** 11
-- **Total Test Cases:** 136/206
-- **Pass Rate:** 66.0%
+- **Total Test Cases:** 141/211
+- **Pass Rate:** 66.8%
 - **Bugs Found:** 12 (11 Fixed, 1 Active) ⚠️
-- **Last Test Run:** 2025-11-25 (Session 8) - Network Error Handling Implementation (TC-183, TC-184). 2 tests passed.
+- **Last Test Run:** 2025-11-25 (Session 9) - Japanese Locale AI Generation Testing (TC-207 to TC-211). 5 tests passed.
   - ✅ Feature 1 - Authentication & User Profile (TC-007-011, TC-141 to TC-153) - 18 Passed
   - ✅ Feature 2 - AI Meal Generator (TC-036, TC-038, TC-041-043, TC-044, TC-047-051) - 8 Passed
   - ✅ Feature 3 - Meal Prep Mode (TC-052-057) - 6 Passed
@@ -21,6 +21,7 @@
   - ✅ Feature 6 - AI Nutrition Assistant (TC-081-086) - 6 Passed
   - ✅ Feature 7 - Recipe Nutrition Analyzer (TC-091, TC-093-100) - 9 Passed ✅ BUG-007 FIXED
   - ✅ Feature 8 - Meal Swap System (TC-101-108, TC-111-118) - 19 Passed ✅ BUG-008 FIXED
+  - ✅ Feature 10 - Internationalization (TC-129-140, TC-207-211) - 17 Passed (Language switching, Unit system, Currency, AI Content Localization)
   - ✅ Feature 11 - Settings Page (TC-141-153, TC-154-166) - 31 Passed (Profile + Language & Units + Nutrition Targets + Danger Zone partial)
   - ✅ Feature 13 - Dashboard (TC-170-174) - 5 Passed
   - ✅ Feature 14 - Responsive Design (TC-175-182) - 8 Passed (BUG-015 FIXED: Mobile navigation menu implemented)
@@ -262,6 +263,13 @@
 - [x] TC-138: User can select USD currency ✅ PASSED (2025-11-24)
 - [x] TC-139: User can select JPY currency ✅ PASSED (2025-11-24)
 - [x] TC-140: Prices display in selected currency ⚠️ PASSED (Partial - preference saved, no pricing UI to verify)
+
+### 11.4 AI Content Localization
+- [x] TC-207: AI-generated meal plans return content in Japanese when locale is set to Japanese ✅ PASSED (2025-11-25) - Meal names, descriptions, and instructions all generated in Japanese
+- [x] TC-208: AI-generated content uses Japanese units (kg, g, mL, kcal) ✅ PASSED (2025-11-25) - Verified metric units (200mL cups, kg for weight, ℃ for temperature) and ¥ for currency
+- [x] TC-209: AI meal names are culturally appropriate for selected locale ✅ PASSED (2025-11-25) - Verified Japanese meal names like "オムライス風トースト", "肉野菜炒め"
+- [x] TC-210: AI recipe descriptions are in selected language ✅ PASSED (2025-11-25) - All descriptions generated in natural Japanese
+- [x] TC-211: AI cooking instructions are in selected language ✅ PASSED (2025-11-25) - Instructions generated in Japanese with proper terminology
 
 ---
 
