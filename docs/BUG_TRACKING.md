@@ -473,6 +473,129 @@ After applying both fixes:
 
 ---
 
+### BUG-016: Stack Overflow in AI Meal Plan Generation ✅ RESOLVED
+
+**Date Reported:** 2025-11-25
+**Date Resolved:** 2025-11-25
+**Severity:** Critical (Feature completely broken)
+**Status:** ✅ RESOLVED
+
+#### Description
+When generating AI meal plans with Japanese locale, the application crashed with `RangeError: Maximum call stack size exceeded` error. The server successfully generated the meal plan (8000+ chunks, 28KB JSON), but the application crashed during response serialization, leaving users stuck on a loading screen.
+
+#### Root Cause
+The issue was NOT related to Next.js/React versions (occurred with both canary and stable versions). The real problem was in the streaming architecture:
+
+**Original Implementation:**
+1. Server Action used `createStreamableValue` to stream 28KB of JSON data
+2. Client consumed stream with `readStreamableValue` + frequent state updates
+3. Next.js serialized the entire streaming response through the Server Action
+4. Large payload (28KB) caused stack overflow in Next.js serialization (`at Map.set`)
+5. Server Action took 4.7 minutes to complete vs 60 seconds for actual generation
+
+**Key Finding:** The stack overflow occurred in `Map.set (<anonymous>)` during Next.js serialization of the large streamable value return type, not in our application code.
+
+#### Investigation Steps
+1. **Initial hypothesis:** React Compiler or Turbopack cache issue
+   - Upgraded from Next.js 16.0.2-canary.30 to 16.0.4 stable
+   - Upgraded from React 19.0.0-rc.1 to React 19.2.0 stable
+   - Result: Stack overflow still occurred ❌
+
+2. **Second attempt:** Optimize client-side streaming
+   - Removed `useTransition` and `useDeferredValue`
+   - Eliminated all intermediate state updates during streaming
+   - Consumed entire stream, then updated state once
+   - Result: Stack overflow still occurred ❌
+
+3. **Root cause discovered:** Large payload serialization through Server Action
+   - Server completed in 60s, but POST took 4.7 minutes
+   - Error in `Map.set` indicates Next.js serialization issue
+   - 28KB JSON was too large to serialize through `createStreamableValue`
+
+#### Solution
+Completely refactored the architecture to eliminate streaming through Server Actions:
+
+**New Implementation:**
+1. `generateAIMealPlan()` generates meal plan on server (no streaming to client)
+2. Validates JSON on server
+3. Calls `saveMealPlan()` directly on server to save to database
+4. Returns only the meal plan ID (tiny payload ~36 bytes)
+5. Client receives ID and redirects to meal plan detail page
+6. Meal plan detail page fetches data from database
+
+**Key Changes:**
+```typescript
+// Before (❌ Stack Overflow):
+export async function generateAIMealPlan(cuisine) {
+  const stream = createStreamableValue('')
+  // ... OpenAI streaming
+  for await (const chunk of completion) {
+    stream.update(chunk) // Serialized through Server Action
+  }
+  return { stream: stream.value } // 28KB payload
+}
+
+// After (✅ Works):
+export async function generateAIMealPlan(cuisine) {
+  let totalContent = ''
+  // ... OpenAI streaming (server-side only)
+  for await (const chunk of completion) {
+    totalContent += chunk // No client updates
+  }
+  const result = await saveMealPlan(totalContent) // Save to DB
+  return { data: result.data, error: null } // ~36 bytes (just ID)
+}
+```
+
+#### Files Modified
+1. `features/meal-plans/actions.ts` (lines 72-165)
+   - Removed `createStreamableValue` import and usage
+   - Added direct `saveMealPlan` call in `generateAIMealPlan`
+   - Changed return type from streaming value to result object
+   - Reduced Server Action response from 28KB to 36 bytes
+
+2. `app/(app)/meal-plans/generate/page.tsx` (complete refactor)
+   - Removed `readStreamableValue` import
+   - Removed `useTransition`, `useDeferredValue`, streaming state
+   - Simplified to: call action → get ID → redirect
+   - Removed all meal plan rendering (now on detail page)
+   - Reduced from 324 lines to ~160 lines
+
+#### Verification
+After implementing the solution:
+- ✅ Meal plan generation completes in **37.6 seconds** (vs 4.7 minutes before)
+- ✅ Server generates 3347 chunks, 12KB JSON successfully
+- ✅ JSON validates correctly
+- ✅ Saves 6 meals to database
+- ✅ Returns meal plan ID: `35839a75-20cd-4efb-b3d0-6913960e4c08`
+- ✅ Successfully redirects to `/meal-plans/[id]`
+- ✅ Displays complete Japanese meal plan with authentic dishes
+- ✅ Shows nutrition summary (17549 cal, 882g protein, 2191g carbs, 588g fats)
+- ✅ **NO stack overflow errors**
+- ✅ TC-045, TC-046 can now proceed
+
+#### Performance Improvements
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Server Action Duration | 4.7 min (282s) | 37.6s | **87% faster** |
+| Response Payload Size | ~28KB | ~36 bytes | **99.9% smaller** |
+| State Updates | ~60 updates | 1 update | **98% fewer** |
+| Stack Overflow Errors | Yes | No | **100% resolved** |
+
+#### Impact
+- **Blocked Tests:** TC-045 (Dietary preferences), TC-046 (Allergies) - now unblocked
+- **Users Affected:** ALL users attempting to generate AI meal plans
+- **Feature Impact:** AI meal plan generation was completely broken - the core feature of the application
+
+#### Prevention
+1. **Avoid streaming large payloads through Server Actions** - Server Actions serialize responses, which has overhead
+2. **Use database as intermediary for large data** - Generate on server, save to DB, return ID
+3. **Monitor Server Action response times** - If POST takes much longer than actual work, suspect serialization issues
+4. **Watch for `Map.set` stack overflows** - Indicates Next.js/React serialization problems, not application code
+5. **Consider payload size limits** - Keep Server Action returns under 1KB when possible
+
+---
+
 ### Previous Bugs
 
 #### BUG-001 through BUG-008
