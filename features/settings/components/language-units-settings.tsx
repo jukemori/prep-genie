@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/atoms/ui/button'
 import { Label } from '@/components/atoms/ui/label'
@@ -56,9 +56,7 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
         <Label htmlFor="language" className="text-base">
           {t('language')}
         </Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          {t('language_preference')}
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">{t('language_preference')}</p>
         <LanguageSwitcher />
       </div>
 
@@ -66,9 +64,7 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
         <Label htmlFor="unit-system" className="text-base">
           {t('unit_system')}
         </Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          {t('unit_system_preference')}
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">{t('unit_system_preference')}</p>
         <Select
           value={unitSystem}
           onValueChange={(value) => setUnitSystem(value as 'metric' | 'imperial')}
@@ -87,9 +83,7 @@ export function LanguageUnitsSettings({ profile }: LanguageUnitsSettingsProps) {
         <Label htmlFor="currency" className="text-base">
           {t('currency')}
         </Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          {t('currency_preference')}
-        </p>
+        <p className="text-sm text-muted-foreground mb-3">{t('currency_preference')}</p>
         <Select value={currency} onValueChange={(value) => setCurrency(value as 'USD' | 'JPY')}>
           <SelectTrigger id="currency" className="w-full">
             <SelectValue placeholder={t('select_currency')} />

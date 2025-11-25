@@ -55,9 +55,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
 
       <div className="border-t pt-6">
         <h3 className="text-base font-medium text-destructive mb-2">{t('danger_zone')}</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          {t('danger_zone_description')}
-        </p>
+        <p className="text-sm text-muted-foreground mb-4">{t('danger_zone_description')}</p>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>

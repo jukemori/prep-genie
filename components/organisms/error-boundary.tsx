@@ -4,7 +4,13 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary'
 import { Button } from '@/components/atoms/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/ui/card'
 
 interface ErrorFallbackProps {
   error: Error
@@ -20,7 +26,8 @@ function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
           <CardTitle className="text-destructive">Something went wrong</CardTitle>
         </div>
         <CardDescription>
-          An error occurred while loading this section. You can try again or contact support if the problem persists.
+          An error occurred while loading this section. You can try again or contact support if the
+          problem persists.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

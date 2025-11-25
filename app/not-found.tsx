@@ -1,5 +1,5 @@
-import type { Metadata } from 'next'
 import { ChefHat, Home } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/atoms/ui/button'
 

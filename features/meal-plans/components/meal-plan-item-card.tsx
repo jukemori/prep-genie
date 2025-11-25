@@ -63,7 +63,9 @@ export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanI
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Badge className="capitalize">{tMeals(item.meal_time as 'breakfast' | 'lunch' | 'dinner' | 'snack')}</Badge>
+            <Badge className="capitalize">
+              {tMeals(item.meal_time as 'breakfast' | 'lunch' | 'dinner' | 'snack')}
+            </Badge>
             {isCompleted && (
               <Badge variant="secondary" className="gap-1">
                 <Check className="h-3 w-3" />
