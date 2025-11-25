@@ -21,6 +21,7 @@
     "supabase:migration": "supabase migration new"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.72",
     "@ai-sdk/rsc": "^1.0.100",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
