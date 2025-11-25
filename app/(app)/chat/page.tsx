@@ -7,7 +7,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent } from '@/components/atoms/ui/card'
 import { Input } from '@/components/atoms/ui/input'
-import { chatWithNutritionAssistant } from '@/features/ai-chat/actions'
+import {
+  chatWithNutritionAssistant,
+  loadChatHistory,
+  saveChatHistory,
+} from '@/features/ai-chat/actions'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -27,11 +31,29 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [chatId, setChatId] = useState<string | undefined>(undefined)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Load chat history on mount
+  useEffect(() => {
+    async function loadHistory() {
+      const result = await loadChatHistory()
+      if (result.data && Array.isArray(result.data)) {
+        // Filter out timestamp field from loaded messages
+        const cleanMessages = result.data.map((msg: { role: string; content: string }) => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        }))
+        setMessages(cleanMessages)
+        setChatId(result.chatId)
+      }
+    }
+    loadHistory()
+  }, [])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+  }, [messages])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -64,6 +86,17 @@ export default function ChatPage() {
             return updated
           })
         }
+      }
+
+      // Save chat history after successful response
+      const updatedMessages = [
+        ...messages,
+        userMessage,
+        { role: 'assistant', content: fullContent },
+      ]
+      const result = await saveChatHistory(updatedMessages, chatId)
+      if (result.chatId && !chatId) {
+        setChatId(result.chatId)
       }
     } catch (error) {
       console.error('Chat error:', error)
