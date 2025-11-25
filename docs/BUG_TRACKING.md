@@ -4,54 +4,6 @@
 
 ---
 
-### BUG-015: No Mobile Navigation Menu ⚠️ ACTIVE
-
-**Date Reported:** 2025-11-25
-**Severity:** Medium (Navigation inaccessible on mobile/tablet)
-**Status:** ⚠️ ACTIVE - Needs Implementation
-
-#### Description
-The application lacks a mobile navigation menu (hamburger menu) for screen widths below ~1024px. While the sidebar navigation is visible on desktop (1920px), it is completely hidden on mobile (375px) and tablet (768px) devices, leaving users without a way to access key navigation links.
-
-#### Impact
-- **Mobile Users (< 768px):** Cannot access navigation menu at all
-- **Tablet Users (768px - 1023px):** Cannot access navigation menu
-- **Desktop Users (≥ 1024px):** ✅ Sidebar navigation works correctly
-
-#### Current Workaround
-Users can access some key pages through Quick Actions links on the Dashboard:
-- Generate AI Meal Plan
-- Browse Meals
-- Log Today's Progress
-- Ask AI Nutrition Assistant
-
-However, the following pages are **inaccessible** without navigation:
-- Settings
-- Grocery Lists (must use direct URL)
-- Meal Plans (must use direct URL)
-
-#### Test Results
-- TC-175: App is usable on mobile (375px) - ⚠️ PARTIAL PASS
-- TC-176: Navigation menu works on mobile - ❌ FAIL
-- TC-177: Forms are usable on mobile - ✅ PASS
-- TC-178: Tables/lists are scrollable on mobile - ✅ PASS
-- TC-179: App is usable on tablet (768px) - ⚠️ PARTIAL PASS
-- TC-180: Layout adapts appropriately for tablet - ✅ PASS
-
-#### Recommended Solution
-Implement a mobile navigation menu with:
-1. Hamburger menu button in header (visible on mobile/tablet)
-2. Slide-out drawer with navigation links
-3. Close button/overlay to dismiss menu
-4. Responsive breakpoint at ~1024px
-
-#### Files to Modify
-- `app/(app)/layout.tsx` or layout component
-- Add mobile menu component with shadcn Sheet or Dialog
-- Update Tailwind breakpoints for sidebar visibility
-
----
-
 ### BUG-010: JavaScript Stack Overflow During Meal Plan Generation ⚠️ KNOWN ISSUE
 
 **Date Reported:** 2025-11-24
@@ -115,6 +67,63 @@ React Compiler's `flushComponentPerformance` function accumulates a recursive ca
 ---
 
 ## Resolved Bugs
+
+### BUG-015: No Mobile Navigation Menu ✅ RESOLVED
+
+**Date Reported:** 2025-11-25
+**Date Resolved:** 2025-11-25
+**Severity:** Medium (Navigation inaccessible on mobile/tablet)
+**Status:** ✅ RESOLVED
+
+#### Description
+The application lacked a mobile navigation menu (hamburger menu) for screen widths below ~1024px. While the sidebar navigation was visible on desktop (1920px), it was completely hidden on mobile (375px) and tablet (768px) devices, leaving users without a way to access key navigation links.
+
+#### Root Cause
+No mobile navigation component was implemented. The sidebar used `lg:block` to show only on desktop (≥1024px), but there was no alternative navigation for smaller screens.
+
+#### Solution
+Implemented mobile navigation menu with:
+1. **Created AppMobileNav component** (`components/organisms/app-mobile-nav.tsx`)
+   - Used shadcn Sheet component for slide-out drawer
+   - Reused same navigation config as desktop sidebar
+   - Added state management for open/close drawer
+   - Implemented internationalization with next-intl
+
+2. **Updated AppHeader component** (`components/organisms/app-header.tsx`)
+   - Added hamburger menu button visible only on mobile/tablet (`lg:hidden`)
+   - Positioned in header for easy thumb access
+
+3. **Features implemented:**
+   - Hamburger menu button (≡) in header
+   - Slide-out drawer from left side
+   - All 8 navigation links with icons
+   - Active link highlighting
+   - Closes automatically when link is clicked
+   - Escape key support to close drawer
+   - PrepGenie branding in drawer header
+
+#### Files Modified
+- `components/organisms/app-mobile-nav.tsx` - NEW FILE created
+- `components/organisms/app-header.tsx` - Added mobile nav component
+- `components/ui/sheet.tsx` - Installed shadcn Sheet component
+
+#### Verification
+After implementing the solution:
+- ✅ Mobile (375px): Hamburger menu visible and functional
+- ✅ Tablet (768px): Hamburger menu visible and functional
+- ✅ Desktop (≥1024px): Sidebar visible, hamburger hidden
+- ✅ Drawer opens with all 8 navigation links
+- ✅ Navigation links work correctly and close drawer
+- ✅ Active link highlighting works
+- ✅ TC-176 (Navigation menu works on mobile) - PASSED
+- ✅ TC-175 and TC-179 updated to full PASS
+
+#### Impact
+- **Unblocked Tests:** TC-176 (now PASSED), TC-175 and TC-179 upgraded to full PASS
+- **Users Affected:** All mobile and tablet users
+- **Feature Impact:** Navigation was completely inaccessible on mobile/tablet - now fully functional
+
+---
 
 ### BUG-009: Supabase Authentication API Failure ✅ RESOLVED
 
