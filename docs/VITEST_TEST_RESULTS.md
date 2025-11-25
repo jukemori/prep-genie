@@ -10,11 +10,11 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Test Files** | 16 |
-| **Total Tests** | 370 |
-| **Passed** | ✅ 370 (100%) |
+| **Total Test Files** | 18 |
+| **Total Tests** | 413 |
+| **Passed** | ✅ 413 (100%) |
 | **Failed** | ❌ 0 |
-| **Duration** | 2.31s |
+| **Duration** | 2.17s |
 | **Coverage** | See coverage report below |
 
 ---
@@ -549,6 +549,69 @@
 - ✅ Returns error when auth deletion fails
 - ✅ Returns error when not authenticated
 
+#### ✅ `tests/integration/features/meal-plans/actions.test.ts` (28 tests)
+
+**getMealPlans (3 tests):**
+- ✅ Returns all meal plans for authenticated user
+- ✅ Returns error when not authenticated
+- ✅ Handles database errors
+
+**getMealPlan (4 tests):**
+- ✅ Returns meal plan with items for authenticated user
+- ✅ Returns error when not authenticated
+- ✅ Returns error when meal plan not found
+- ✅ Returns error when items fetch fails
+
+**saveMealPlan (6 tests):**
+- ✅ Saves valid meal plan with meals and items
+- ✅ Returns error when not authenticated
+- ✅ Returns error with invalid JSON
+- ✅ Returns error with missing required fields
+- ✅ Handles meal plan creation error
+- ✅ Continues creating items even if some meals fail
+
+**deleteMealPlan (5 tests):**
+- ✅ Deletes meal plan when user is owner
+- ✅ Returns error when not authenticated
+- ✅ Returns error when user not authorized
+- ✅ Returns error when meal plan not found
+- ✅ Handles database deletion errors
+
+**toggleMealCompleted (4 tests):**
+- ✅ Updates meal completion status to true
+- ✅ Updates meal completion status to false
+- ✅ Returns error when not authenticated
+- ✅ Handles database update errors
+
+**swapMeal (6 tests):**
+- ✅ Swaps meal with budget swap type
+- ✅ Returns error when not authenticated
+- ✅ Returns error when profile not found
+- ✅ Returns error when meal plan item not found
+- ✅ Returns error when dietary restriction missing for dietary swap
+- ✅ Returns error when macro goal missing for macro swap
+
+#### ✅ `tests/integration/features/recipes/actions.test.ts` (15 tests)
+
+**analyzeRecipe (7 tests):**
+- ✅ Analyzes recipe from text input
+- ✅ Analyzes recipe from URL input
+- ✅ Handles Japanese locale
+- ✅ Returns error when not authenticated
+- ✅ Returns error when AI response is empty
+- ✅ Handles invalid JSON response from AI
+- ✅ Handles OpenAI API errors
+
+**saveAnalyzedRecipe (8 tests):**
+- ✅ Saves original recipe version
+- ✅ Saves budget version with tag
+- ✅ Saves high_protein version with tag
+- ✅ Saves lower_calorie version with tag
+- ✅ Defaults to original version when not specified
+- ✅ Returns error when not authenticated
+- ✅ Handles database insert errors
+- ✅ Handles unexpected errors during save
+
 ---
 
 ## Test Infrastructure Created
@@ -614,6 +677,8 @@
 - ✅ `features/auth/actions.ts` - Complete integration tests for authentication flows
 - ✅ `features/meals/actions.ts` - Complete integration tests for CRUD and favorites
 - ✅ `features/settings/actions.ts` - Complete integration tests for profile and settings management
+- ✅ `features/meal-plans/actions.ts` - Complete integration tests for meal plan management and AI generation
+- ✅ `features/recipes/actions.ts` - Complete integration tests for recipe analysis and saving
 
 ---
 
@@ -646,26 +711,12 @@
    - UI Store (10 tests)
    - Meal Store (17 tests)
 
-6. ✅ **Integration Tests - Server Actions** (65 tests) - COMPLETE
+6. ✅ **Integration Tests - Server Actions** (108 tests) - COMPLETE
    - Auth Actions (22 tests)
    - Meal Actions (26 tests)
    - Settings Actions (17 tests)
-
-### Optional Additional Tests
-
-1. **Meal Plan Actions Integration Tests** (11 tests planned)
-   - Generate AI meal plan
-   - Save/update/delete meal plans
-   - Swap meals in plan
-   - Mark meals as completed
-
-2. **Recipe Analyzer Actions Integration Tests** (7 tests planned)
-   - Analyze recipe from URL
-   - Analyze recipe from text
-   - Save analyzed recipe
-   - Generate improvement suggestions
-
-**Note:** These additional tests can be added if needed, but core functionality is fully tested.
+   - Meal Plan Actions (28 tests)
+   - Recipe Analyzer Actions (15 tests)
 
 ---
 
@@ -701,21 +752,23 @@ npx vite preview --outDir test-results
 
 ---
 
-**Status:** ✅ All core tests complete - 370 tests passing!
-**Progress:** 370/370 tests (100% of current test suite)
+**Status:** ✅ All tests complete - 413 tests passing!
+**Progress:** 413/413 tests (100% of test suite)
 **All Tests Passing:** ✅ Yes (100% pass rate)
 
 **Latest Changes:**
-- ✅ Added Integration Tests - Server Actions (65 tests)
+- ✅ Added Integration Tests - Server Actions (108 tests total)
   - Auth Actions: login, register, logout, password reset/update (22 tests)
   - Meal Actions: CRUD operations, favorites, authorization (26 tests)
   - Settings Actions: profile updates, nutrition targets, account deletion (17 tests)
+  - Meal Plan Actions: meal plan management, AI generation, swapping (28 tests)
+  - Recipe Analyzer Actions: recipe analysis, saving with versions (15 tests)
 - ✅ All integration tests passing with 100% success rate
-- ✅ Comprehensive mocking of Supabase client and Next.js modules
-- ✅ Tested authentication, authorization, validation, and database error scenarios
+- ✅ Comprehensive mocking of Supabase client, Next.js modules, and OpenAI API
+- ✅ Tested authentication, authorization, validation, database errors, and AI integration
 
 **Test Coverage Summary:**
 - 278 unit tests (nutrition utils, i18n, schemas, components)
 - 27 store tests (UI store, Meal store)
-- 65 integration tests (Auth, Meals, Settings actions)
-- **Total: 370 tests - all passing**
+- 108 integration tests (Auth, Meals, Settings, Meal Plans, Recipes actions)
+- **Total: 413 tests - all passing**
