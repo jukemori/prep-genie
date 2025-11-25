@@ -1,10 +1,15 @@
 'use server'
 
+import { openai } from '@ai-sdk/openai'
+import { createStreamableValue } from '@ai-sdk/rsc'
+import { streamText } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { connection } from 'next/server'
 import { getTranslations } from 'next-intl/server'
-import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
-import { openai, MODELS } from '@/lib/ai/openai'
+import {
+  generateSingleDayPrompt,
+  MEAL_PLAN_GENERATOR_SYSTEM_PROMPT,
+} from '@/features/meal-plans/prompts/meal-plan-generator'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal, MealInsert, MealPlanInsert, MealPlanItemInsert } from '@/types'
 
@@ -69,6 +74,10 @@ export async function getMealPlan(id: string) {
   return { data: { ...mealPlan, items } }
 }
 
+/**
+ * Generate AI meal plan using chunked generation (one day at a time)
+ * This works better with GPT-5-nano and prevents incomplete JSON responses
+ */
 export async function generateAIMealPlan(
   cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
 ) {
@@ -86,7 +95,7 @@ export async function generateAIMealPlan(
   }
 
   // Get user profile
-  const { data: profile, error: profileError} = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('user_profiles')
     .select('*')
     .eq('id', user.id)
@@ -96,71 +105,135 @@ export async function generateAIMealPlan(
     throw new Error('User profile not found')
   }
 
-  try {
-    console.log(
-      `[generateAIMealPlan] Starting generation for cuisine: ${cuisineType || 'default'}`
-    )
+  const locale = (profile.locale || 'en') as 'en' | 'ja'
 
-    const locale = (profile.locale || 'en') as 'en' | 'ja'
-    const prompt = generateMealPlanPrompt(profile, locale, cuisineType)
+  console.log(
+    `[generateAIMealPlan] Starting ${cuisineType || 'default'} cuisine, locale: ${locale}`
+  )
 
-    console.log(`[generateAIMealPlan] Prompt length: ${prompt.length} characters`)
+  // Create streamable value for real-time progress updates
+  const stream = createStreamableValue('')
 
-    const completion = await openai.chat.completions.create({
-      model: MODELS.GPT5_NANO,
-      messages: [{ role: 'user', content: prompt }],
-      stream: true,
-      response_format: { type: 'json_object' },
-    })
-
-    console.log(`[generateAIMealPlan] OpenAI stream started for ${cuisineType || 'default'}`)
-
-    let chunkCount = 0
-    let totalContent = ''
-
-    for await (const chunk of completion) {
-      const content = chunk.choices[0]?.delta?.content || ''
-      if (content) {
-        chunkCount++
-        totalContent += content
-      }
-    }
-
-    console.log(
-      `[generateAIMealPlan] Stream complete for ${cuisineType || 'default'}: ${chunkCount} chunks, ${totalContent.length} total characters`
-    )
-
-    // Validate JSON
+  ;(async () => {
     try {
-      JSON.parse(totalContent)
-      console.log(`[generateAIMealPlan] JSON validation passed for ${cuisineType || 'default'}`)
-    } catch (jsonError) {
-      console.error(
-        `[generateAIMealPlan] JSON validation FAILED for ${cuisineType || 'default'}:`,
-        jsonError
-      )
-      throw new Error(
-        `Invalid JSON response: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`
-      )
-    }
+      const allDays: Array<{
+        day: number
+        meals: Array<{
+          meal_type: string
+          name: string
+          description: string
+          ingredients: unknown
+          instructions: string[]
+          prep_time: number
+          cook_time: number
+          servings: number
+          nutrition_per_serving: {
+            calories: number
+            protein: number
+            carbs: number
+            fats: number
+          }
+          tags: string[]
+          cuisine_type: string
+          difficulty_level: string
+          meal_prep_friendly: boolean
+          storage_instructions: string
+          reheating_instructions: string
+          storage_duration_days: number
+          container_type: string
+          batch_cooking_multiplier: number
+        }>
+      }> = []
 
-    // Save directly to database instead of streaming to client
-    console.log('[generateAIMealPlan] Saving meal plan to database')
-    const result = await saveMealPlan(totalContent, locale)
+      // Generate one day at a time (7 iterations)
+      for (let day = 1; day <= 7; day++) {
+        stream.update(JSON.stringify({ type: 'progress', day, total: 7 }))
 
-    if (result.error) {
-      throw new Error(result.error)
-    }
+        const prompt = generateSingleDayPrompt(profile, day, locale, cuisineType)
 
-    console.log(`[generateAIMealPlan] Meal plan saved with ID: ${result.data?.id}`)
-    return { data: result.data, error: null }
-  } catch (error) {
-    console.error(`[generateAIMealPlan] ERROR for ${cuisineType || 'default'}:`, error)
-    return {
-      data: null,
-      error: error instanceof Error ? error.message : 'Failed to generate meal plan'
+        console.log(`[generateAIMealPlan] Day ${day}: Generating (prompt: ${prompt.length} chars)`)
+
+        // Use Vercel AI SDK's streamText for better reliability
+        const result = streamText({
+          model: openai('gpt-5-nano'),
+          system: MEAL_PLAN_GENERATOR_SYSTEM_PROMPT,
+          prompt,
+          experimental_toolCallStreaming: false,
+        })
+
+        // Accumulate the full response for this day
+        let dayContent = ''
+        for await (const textPart of result.textStream) {
+          dayContent += textPart
+        }
+
+        console.log(`[generateAIMealPlan] Day ${day}: Complete (${dayContent.length} chars)`)
+
+        // Parse and validate JSON for this day
+        try {
+          const dayData = JSON.parse(dayContent)
+          allDays.push(dayData)
+        } catch (jsonError) {
+          console.error(`[generateAIMealPlan] Day ${day} JSON parse FAILED:`, jsonError)
+          throw new Error(
+            `Day ${day} - Invalid JSON: ${jsonError instanceof Error ? jsonError.message : 'Unknown'}`
+          )
+        }
+      }
+
+      // Calculate week summary from all days
+      let totalCalories = 0
+      let totalProtein = 0
+      let totalCarbs = 0
+      let totalFats = 0
+
+      for (const day of allDays) {
+        for (const meal of day.meals) {
+          const nutrition = meal.nutrition_per_serving
+          totalCalories += nutrition.calories || 0
+          totalProtein += nutrition.protein || 0
+          totalCarbs += nutrition.carbs || 0
+          totalFats += nutrition.fats || 0
+        }
+      }
+
+      const weekSummary = {
+        total_calories: Math.round(totalCalories),
+        avg_calories_per_day: Math.round(totalCalories / 7),
+        total_protein: Math.round(totalProtein),
+        total_carbs: Math.round(totalCarbs),
+        total_fats: Math.round(totalFats),
+      }
+
+      // Combine into final structure
+      const completeMealPlan = {
+        week_summary: weekSummary,
+        meal_plan: allDays,
+      }
+
+      console.log('[generateAIMealPlan] All days generated, saving to database...')
+
+      // Save to database
+      const result = await saveMealPlan(JSON.stringify(completeMealPlan), locale)
+
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      console.log(`[generateAIMealPlan] Saved with ID: ${result.data?.id}`)
+
+      // Revalidate after streaming completes
+      revalidatePath('/meal-plans')
+
+      // Signal completion with meal plan ID
+      stream.done(JSON.stringify({ type: 'complete', id: result.data?.id, success: true }))
+    } catch (error) {
+      console.error('[generateAIMealPlan] ERROR:', error)
+      stream.error(error instanceof Error ? error : new Error('Failed to generate meal plan'))
     }
-  }
+  })()
+
+  return { stream: stream.value }
 }
 
 export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = 'en') {
@@ -306,7 +379,7 @@ export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = '
 
     console.log(`[saveMealPlan] Summary: ${mealsCreated} meals created, ${mealsFailed} failed`)
 
-    revalidatePath('/meal-plans')
+    // Note: revalidatePath is called after streaming completes in generateAIMealPlan
     console.log('[saveMealPlan] Successfully completed save process')
     return { data: createdPlan }
   } catch (error) {
@@ -480,17 +553,19 @@ export async function swapMeal(input: SwapMealInput) {
         return { error: 'Invalid swap type' }
     }
 
-    // Call AI
-    const completion = await openai.chat.completions.create({
-      model: MODELS.GPT5_NANO,
-      messages: [
-        { role: 'system', content: MEAL_SWAP_SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
-      ],
-      response_format: { type: 'json_object' },
+    // Call AI using Vercel AI SDK
+    const result = await streamText({
+      model: openai('gpt-5-nano'),
+      system: MEAL_SWAP_SYSTEM_PROMPT,
+      prompt,
+      experimental_toolCallStreaming: false,
     })
 
-    const content = completion.choices[0]?.message?.content
+    // Collect full response
+    let content = ''
+    for await (const textPart of result.textStream) {
+      content += textPart
+    }
 
     if (!content) {
       return { error: 'Failed to generate swap' }

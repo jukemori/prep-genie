@@ -19,122 +19,94 @@ export function generateMealPlanPrompt(
   cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
 ) {
   const isJapanese = locale === 'ja'
-
-  const localeInstructions = isJapanese
-    ? `**日本語対応:**
-- すべての応答を日本語で生成してください
-- カップ: 200mL（米国の240mLではありません）
-- 重量: kg、g
-- 温度: 摂氏（℃）
-- 通貨: ¥（円）
-`
-    : `**English Language:**
-- Generate all responses in English
-- Cups: 240mL (US standard)
-- Weight: kg, g (metric standard)
-- Temperature: Celsius (°C)
-- Currency: $ (USD)
-`
+  const units = isJapanese ? 'Cup: 200mL, kg/g, °C, ¥' : 'Cup: 240mL, kg/g, °C, $'
 
   // Add cuisine-specific guidance if cuisineType is specified
   const cuisineGuidance = cuisineType
-    ? `\n${getCuisineGuidance(cuisineType)}\n\n**IMPORTANT:** All meals MUST follow the ${cuisineType} cuisine guidelines above. Use authentic ingredients, cooking methods, and meal structures specific to this cuisine.\n`
+    ? `\n${getCuisineGuidance(cuisineType)}\n\n**Follow ${cuisineType} cuisine guidelines with authentic ingredients and methods.**\n`
     : ''
 
-  return `Generate a personalized meal plan based on the following user profile:
+  return `Generate 7-day meal plan (3 meals/day) in ${isJapanese ? '日本語' : 'English'}. Units: ${units}
 
-**User Profile:**
-- Age: ${profile.age}
-- Weight: ${profile.weight}kg
-- Height: ${profile.height}cm
-- Gender: ${profile.gender}
-- Activity Level: ${profile.activity_level}
-- Goal: ${profile.goal}
-- Dietary Preference: ${profile.dietary_preference}
-- Allergies: ${profile.allergies?.join(', ') || 'None'}
-- Cooking Skill: ${profile.cooking_skill_level || 'intermediate'}
-- Time Available: ${profile.time_available || 60} minutes per day
-- Budget: ${profile.budget_level || 'medium'}
+**Profile:** Age ${profile.age}, ${profile.weight}kg, ${profile.height}cm, ${profile.gender}, ${profile.activity_level}, ${profile.goal}, ${profile.dietary_preference}${profile.allergies?.length ? `, NO ${profile.allergies.join('/')}` : ''}, ${profile.cooking_skill_level || 'intermediate'} skill, ${profile.time_available || 60}min/day, ${profile.budget_level || 'medium'} budget
 
-**Nutrition Targets:**
-- Daily Calories: ${profile.daily_calorie_target} kcal
-- Protein: ${profile.target_protein}g
-- Carbs: ${profile.target_carbs}g
-- Fats: ${profile.target_fats}g
-
-${localeInstructions}
+**Targets:** ${profile.daily_calorie_target}kcal, ${profile.target_protein}g protein, ${profile.target_carbs}g carbs, ${profile.target_fats}g fat
 ${cuisineGuidance}
-**Requirements:**
-1. Generate a complete weekly meal plan (7 days)
-2. Include 3 main meals per day (breakfast, lunch, dinner)
-3. Each meal should include:
-   - Name
-   - Description
-   - Detailed ingredients with quantities
-   - Step-by-step instructions
-   - Prep time and cook time
-   - Nutrition per serving (calories, protein, carbs, fats)
-   - Servings
-   - Meal prep information (storage, reheating, batch cooking recommendations)
-4. Ensure meals align with dietary preferences and avoid allergens
-5. Consider cooking skill level and time constraints
-6. ${cuisineType ? `Focus exclusively on ${cuisineType} cuisine with authentic recipes` : 'Vary cuisine types for diversity'}
-7. Optimize for batch cooking where possible (mark meal_prep_friendly: true for suitable meals)
-8. For meal prep friendly meals, provide:
-   - Clear storage instructions
-   - Reheating instructions
-   - Storage duration (how many days it stays fresh)
-   - Recommended container type
-   - Suggested batch cooking multiplier (e.g., 4x for meal prepping 4 portions)
-
-**Output Format (JSON):**
+**JSON Output:**
 {
-  "week_summary": {
-    "total_calories": number,
-    "avg_calories_per_day": number,
-    "total_protein": number,
-    "total_carbs": number,
-    "total_fats": number
-  },
-  "meal_plan": [
-    {
-      "day": 1-7,
-      "meals": [
-        {
-          "meal_type": "breakfast" | "lunch" | "dinner",
-          "name": "string",
-          "description": "string",
-          "ingredients": [
-            {
-              "name": "string",
-              "quantity": number,
-              "unit": "string",
-              "category": "produce" | "protein" | "dairy" | "grains" | "pantry" | "spices" | "other"
-            }
-          ],
-          "instructions": ["step1", "step2", ...],
-          "prep_time": number (minutes),
-          "cook_time": number (minutes),
-          "servings": number,
-          "nutrition_per_serving": {
-            "calories": number,
-            "protein": number,
-            "carbs": number,
-            "fats": number
-          },
-          "tags": ["tag1", "tag2", ...],
-          "cuisine_type": "string",
-          "difficulty_level": "easy" | "medium" | "hard",
-          "meal_prep_friendly": boolean,
-          "storage_instructions": "string (how to store)",
-          "reheating_instructions": "string (how to reheat)",
-          "storage_duration_days": number (how many days it keeps),
-          "container_type": "glass" | "plastic" | "freezer-safe" | null,
-          "batch_cooking_multiplier": number (recommended batch size, e.g. 4 for 4x recipe)
-        }
-      ]
-    }
-  ]
+  "week_summary": {"total_calories": num, "avg_calories_per_day": num, "total_protein": num, "total_carbs": num, "total_fats": num},
+  "meal_plan": [{
+    "day": 1-7,
+    "meals": [{
+      "meal_type": "breakfast|lunch|dinner",
+      "name": "str",
+      "description": "str",
+      "ingredients": [{"name": "str", "quantity": num, "unit": "str", "category": "produce|protein|dairy|grains|pantry|spices|other"}],
+      "instructions": ["str"],
+      "prep_time": num,
+      "cook_time": num,
+      "servings": num,
+      "nutrition_per_serving": {"calories": num, "protein": num, "carbs": num, "fats": num},
+      "tags": ["str"],
+      "cuisine_type": "str",
+      "difficulty_level": "easy|medium|hard",
+      "meal_prep_friendly": bool,
+      "storage_instructions": "str",
+      "reheating_instructions": "str",
+      "storage_duration_days": num,
+      "container_type": "glass|plastic|freezer-safe|null",
+      "batch_cooking_multiplier": num
+    }]
+  }]
+}`
+}
+
+/**
+ * Generate prompt for a single day (3 meals) - used for chunked generation
+ * This reduces token usage and works better with GPT-5-nano
+ */
+export function generateSingleDayPrompt(
+  profile: UserProfile,
+  dayNumber: number,
+  locale: 'en' | 'ja' = 'en',
+  cuisineType?: 'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal'
+) {
+  const isJapanese = locale === 'ja'
+  const units = isJapanese ? 'Cup: 200mL, kg/g, °C, ¥' : 'Cup: 240mL, kg/g, °C, $'
+
+  const cuisineGuidance = cuisineType
+    ? `\n${getCuisineGuidance(cuisineType)}\n\n**Follow ${cuisineType} cuisine guidelines.**\n`
+    : ''
+
+  return `Generate Day ${dayNumber} meals (breakfast, lunch, dinner) in ${isJapanese ? '日本語' : 'English'}. Units: ${units}
+
+**Profile:** ${profile.age}y, ${profile.weight}kg, ${profile.height}cm, ${profile.gender}, ${profile.activity_level}, ${profile.goal}, ${profile.dietary_preference}${profile.allergies?.length ? `, NO ${profile.allergies.join('/')}` : ''}, ${profile.cooking_skill_level || 'intermediate'} skill, ${profile.time_available || 60}min/day, ${profile.budget_level || 'medium'} budget
+
+**Daily Targets:** ${profile.daily_calorie_target}kcal, ${profile.target_protein}g protein, ${profile.target_carbs}g carbs, ${profile.target_fats}g fat
+${cuisineGuidance}
+**JSON Output:**
+{
+  "day": ${dayNumber},
+  "meals": [{
+    "meal_type": "breakfast|lunch|dinner",
+    "name": "str",
+    "description": "str",
+    "ingredients": [{"name": "str", "quantity": num, "unit": "str", "category": "produce|protein|dairy|grains|pantry|spices|other"}],
+    "instructions": ["str"],
+    "prep_time": num,
+    "cook_time": num,
+    "servings": num,
+    "nutrition_per_serving": {"calories": num, "protein": num, "carbs": num, "fats": num},
+    "tags": ["str"],
+    "cuisine_type": "str",
+    "difficulty_level": "easy|medium|hard",
+    "meal_prep_friendly": bool,
+    "storage_instructions": "str",
+    "reheating_instructions": "str",
+    "storage_duration_days": num,
+    "container_type": "glass|plastic|freezer-safe|null",
+    "batch_cooking_multiplier": num
+  }]
 }`
 }
 

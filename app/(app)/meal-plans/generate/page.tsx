@@ -1,5 +1,6 @@
 'use client'
 
+import { readStreamableValue } from '@ai-sdk/rsc'
 import { ArrowLeft, Loader2, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,8 @@ export default function GenerateMealPlanPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress] = useState(0)
+  const [currentDay, setCurrentDay] = useState(0)
   const [selectedCuisine, setSelectedCuisine] = useState<
     'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal' | undefined
   >(undefined)
@@ -24,21 +27,41 @@ export default function GenerateMealPlanPage() {
   async function handleGenerate() {
     setLoading(true)
     setError(null)
+    setProgress(0)
+    setCurrentDay(0)
 
     try {
-      // Generate and save in one action - returns meal plan ID
-      const result = await generateAIMealPlan(selectedCuisine)
+      // Generate with streaming - get real-time progress
+      const { stream } = await generateAIMealPlan(selectedCuisine)
 
-      if (result.error) {
-        setError(result.error)
-      } else if (result.data) {
-        // Redirect to the newly created meal plan
-        router.push(`/meal-plans/${result.data.id}`)
+      for await (const chunk of readStreamableValue(stream)) {
+        if (chunk) {
+          try {
+            const message = JSON.parse(chunk)
+
+            if (message.type === 'progress') {
+              // Update progress: day N of 7 total
+              const progressPercent = (message.day / message.total) * 100
+              setProgress(progressPercent)
+              setCurrentDay(message.day)
+            } else if (message.type === 'complete') {
+              // Generation complete - redirect to meal plan
+              if (message.success && message.id) {
+                router.push(`/meal-plans/${message.id}`)
+                return
+              }
+            }
+          } catch {
+            // Ignore non-JSON chunks
+          }
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate meal plan')
     } finally {
       setLoading(false)
+      setProgress(0)
+      setCurrentDay(0)
     }
   }
 
@@ -55,9 +78,7 @@ export default function GenerateMealPlanPage() {
 
       <div>
         <h1 className="text-3xl font-bold">{t('title')}</h1>
-        <p className="text-muted-foreground">
-          {t('description')}
-        </p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       {!loading && (
@@ -66,9 +87,7 @@ export default function GenerateMealPlanPage() {
             <CardTitle>{t('ready_to_generate')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              {t('ai_will_create')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('ai_will_create')}</p>
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <div className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -93,9 +112,7 @@ export default function GenerateMealPlanPage() {
               <label htmlFor="cuisine" className="text-sm font-medium">
                 {t('cuisine_type_optional')}
               </label>
-              <p className="text-xs text-muted-foreground">
-                {t('cuisine_type_description')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('cuisine_type_description')}</p>
               <CuisineSelector value={selectedCuisine} onValueChange={setSelectedCuisine} />
             </div>
 
@@ -117,8 +134,13 @@ export default function GenerateMealPlanPage() {
                 ? t('creating_cuisine_meals', { cuisine: selectedCuisine })
                 : t('generating_wait')}
             </p>
-            <div className="mt-4 w-full max-w-md">
-              <Progress value={undefined} className="h-2" />
+            <div className="mt-4 w-full max-w-md space-y-2">
+              <Progress value={progress} className="h-2" />
+              {currentDay > 0 && (
+                <p className="text-xs text-center text-muted-foreground">
+                  Generating Day {currentDay} of 7 ({Math.round(progress)}%)
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -149,7 +171,12 @@ export default function GenerateMealPlanPage() {
                 <p className="text-sm text-muted-foreground">{error}</p>
               </div>
             </div>
-            <Button onClick={handleGenerate} variant="outline" className="w-full" disabled={loading}>
+            <Button
+              onClick={handleGenerate}
+              variant="outline"
+              className="w-full"
+              disabled={loading}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
