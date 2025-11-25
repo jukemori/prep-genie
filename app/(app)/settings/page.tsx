@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import {
   Card,
   CardContent,
@@ -16,6 +17,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
+  const t = await getTranslations('settings')
 
   const {
     data: { user },
@@ -39,24 +41,24 @@ export default async function SettingsPage() {
   return (
     <div className="container max-w-4xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
+        <h1 className="text-3xl font-bold">{t('settings')}</h1>
+        <p className="text-muted-foreground mt-2">{t('manage_settings')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="language">Language</TabsTrigger>
-          <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="profile">{t('profile')}</TabsTrigger>
+          <TabsTrigger value="language">{t('language')}</TabsTrigger>
+          <TabsTrigger value="nutrition">{t('nutrition')}</TabsTrigger>
+          <TabsTrigger value="account">{t('account')}</TabsTrigger>
+          <TabsTrigger value="preferences">{t('preferences')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Settings</CardTitle>
-              <CardDescription>Update your personal information and fitness goals</CardDescription>
+              <CardTitle>{t('profile_settings')}</CardTitle>
+              <CardDescription>{t('profile_description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ProfileSettings profile={profile} />
@@ -67,8 +69,8 @@ export default async function SettingsPage() {
         <TabsContent value="language">
           <Card>
             <CardHeader>
-              <CardTitle>Language & Units</CardTitle>
-              <CardDescription>Change your language and measurement preferences</CardDescription>
+              <CardTitle>{t('language_units')}</CardTitle>
+              <CardDescription>{t('language_units_description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <LanguageUnitsSettings profile={profile} />
@@ -79,10 +81,8 @@ export default async function SettingsPage() {
         <TabsContent value="nutrition">
           <Card>
             <CardHeader>
-              <CardTitle>Nutrition Targets</CardTitle>
-              <CardDescription>
-                View and customize your daily calorie and macro targets
-              </CardDescription>
+              <CardTitle>{t('nutrition_targets')}</CardTitle>
+              <CardDescription>{t('nutrition_targets_description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <NutritionTargetsSettings profile={profile} />
@@ -93,8 +93,8 @@ export default async function SettingsPage() {
         <TabsContent value="account">
           <Card>
             <CardHeader>
-              <CardTitle>Account Management</CardTitle>
-              <CardDescription>Manage your account security and data</CardDescription>
+              <CardTitle>{t('account_management')}</CardTitle>
+              <CardDescription>{t('account_description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <AccountSettings user={user} />
@@ -105,8 +105,8 @@ export default async function SettingsPage() {
         <TabsContent value="preferences">
           <Card>
             <CardHeader>
-              <CardTitle>App Preferences</CardTitle>
-              <CardDescription>Customize your PrepGenie experience</CardDescription>
+              <CardTitle>{t('app_preferences')}</CardTitle>
+              <CardDescription>{t('app_preferences_description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <AppPreferencesSettings profile={profile} />

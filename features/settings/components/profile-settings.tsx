@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -48,6 +49,15 @@ interface ProfileSettingsProps {
 
 export function ProfileSettings({ profile }: ProfileSettingsProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const t = useTranslations('settings')
+
+  // Get unit system from profile (default to 'metric' if not set)
+  const unitSystem = (profile.unit_system as 'metric' | 'imperial') || 'metric'
+  const isImperial = unitSystem === 'imperial'
+
+  // Dynamic labels based on unit system
+  const weightLabel = isImperial ? t('weight_lb') : t('weight_kg')
+  const heightLabel = isImperial ? t('height_ft_in') : t('height_cm')
 
   const form = useForm({
     resolver: zodResolver(profileSchema),
@@ -120,7 +130,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="age"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Age</FormLabel>
+                <FormLabel>{t('age')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -142,17 +152,17 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="gender"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Gender</FormLabel>
+                <FormLabel>{t('gender')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
+                      <SelectValue placeholder={t('gender')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="male">{t('male')}</SelectItem>
+                    <SelectItem value="female">{t('female')}</SelectItem>
+                    <SelectItem value="other">{t('other')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -165,7 +175,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="weight"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Weight (kg)</FormLabel>
+                <FormLabel>{weightLabel}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -188,7 +198,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="height"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Height (cm)</FormLabel>
+                <FormLabel>{heightLabel}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -211,19 +221,19 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           name="activity_level"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Activity Level</FormLabel>
+              <FormLabel>{t('activity_level')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select activity level" />
+                    <SelectValue placeholder={t('activity_level')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="sedentary">Sedentary (little/no exercise)</SelectItem>
-                  <SelectItem value="light">Light (1-3 days/week)</SelectItem>
-                  <SelectItem value="moderate">Moderate (3-5 days/week)</SelectItem>
-                  <SelectItem value="active">Active (6-7 days/week)</SelectItem>
-                  <SelectItem value="very_active">Very Active (intense daily)</SelectItem>
+                  <SelectItem value="sedentary">{t('sedentary')}</SelectItem>
+                  <SelectItem value="light">{t('light')}</SelectItem>
+                  <SelectItem value="moderate">{t('moderate')}</SelectItem>
+                  <SelectItem value="active">{t('active')}</SelectItem>
+                  <SelectItem value="very_active">{t('very_active')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -236,18 +246,18 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           name="goal"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Fitness Goal</FormLabel>
+              <FormLabel>{t('fitness_goal')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select goal" />
+                    <SelectValue placeholder={t('fitness_goal')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="weight_loss">Weight Loss</SelectItem>
-                  <SelectItem value="maintain">Maintain Weight</SelectItem>
-                  <SelectItem value="muscle_gain">Muscle Gain</SelectItem>
-                  <SelectItem value="balanced">Balanced Eating</SelectItem>
+                  <SelectItem value="weight_loss">{t('weight_loss')}</SelectItem>
+                  <SelectItem value="maintain">{t('maintain')}</SelectItem>
+                  <SelectItem value="muscle_gain">{t('muscle_gain')}</SelectItem>
+                  <SelectItem value="balanced">{t('balanced')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -260,19 +270,19 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           name="dietary_preference"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Dietary Preference</FormLabel>
+              <FormLabel>{t('dietary_preference')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select dietary preference" />
+                    <SelectValue placeholder={t('dietary_preference')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="omnivore">Omnivore</SelectItem>
-                  <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                  <SelectItem value="vegan">Vegan</SelectItem>
-                  <SelectItem value="pescatarian">Pescatarian</SelectItem>
-                  <SelectItem value="halal">Halal</SelectItem>
+                  <SelectItem value="omnivore">{t('omnivore')}</SelectItem>
+                  <SelectItem value="vegetarian">{t('vegetarian')}</SelectItem>
+                  <SelectItem value="vegan">{t('vegan')}</SelectItem>
+                  <SelectItem value="pescatarian">{t('pescatarian')}</SelectItem>
+                  <SelectItem value="halal">{t('halal')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -285,11 +295,11 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           name="allergies"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Allergies</FormLabel>
+              <FormLabel>{t('allergies')}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., peanuts, shellfish, dairy" {...field} />
+                <Input placeholder={t('allergies_placeholder')} {...field} />
               </FormControl>
-              <FormDescription>Comma-separated list of allergies</FormDescription>
+              <FormDescription>{t('allergies_description')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -301,17 +311,17 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="cooking_skill_level"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cooking Skill</FormLabel>
+                <FormLabel>{t('cooking_skill')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select skill level" />
+                      <SelectValue placeholder={t('cooking_skill')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="beginner">{t('beginner')}</SelectItem>
+                    <SelectItem value="intermediate">{t('intermediate')}</SelectItem>
+                    <SelectItem value="advanced">{t('advanced')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -324,7 +334,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             name="time_available"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Time Available (min/day)</FormLabel>
+                <FormLabel>{t('time_available')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -347,17 +357,17 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           name="budget_level"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Budget Level</FormLabel>
+              <FormLabel>{t('budget_level')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select budget level" />
+                    <SelectValue placeholder={t('budget_level')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="low">{t('low')}</SelectItem>
+                  <SelectItem value="medium">{t('medium')}</SelectItem>
+                  <SelectItem value="high">{t('high')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -366,7 +376,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
         />
 
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save Changes'}
+          {isLoading ? t('saving') : t('save_changes')}
         </Button>
       </form>
     </Form>
