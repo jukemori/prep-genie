@@ -310,6 +310,112 @@ Ensure all interactive UI elements have proper event handlers during development
 
 ---
 
+### BUG-015: Locale Not Saved to Database ✅ RESOLVED
+
+**Date Reported:** 2025-11-24
+**Date Resolved:** 2025-11-24
+**Severity:** High (Blocked language switching functionality)
+**Status:** ✅ RESOLVED
+
+#### Description
+When selecting a language from the language switcher dropdown, the locale preference was not being saved to the database. The `user_profiles.locale` field remained as "en" even after selecting "日本語" (Japanese).
+
+#### Root Cause
+**Multiple issues discovered:**
+
+1. **Missing `locale` field in TypeScript interface**
+   - Location: `features/settings/actions.ts` lines 74-77
+   - The `UpdateLocalePreferencesData` interface only included `unit_system` and `currency`
+   - TypeScript didn't recognize `locale` as a valid field
+   - Caused type errors when trying to access `data.locale`
+
+2. **API route not updating database**
+   - Location: `app/api/locale/route.ts`
+   - The `/api/locale` route only set a browser cookie (`NEXT_LOCALE`)
+   - No Supabase database update logic was present
+   - Locale preference was not persisted across sessions
+
+#### Investigation Steps
+1. Clicked "Save Preferences" button → locale still "en" in database
+2. Used Serena MCP to locate `updateLocalePreferences` server action
+3. Discovered interface missing `locale` field - added it
+4. Tested again - still didn't work
+5. Discovered separate `LanguageSwitcher` component with different flow
+6. Found LanguageSwitcher calls `/api/locale` route, not the server action
+7. Examined API route - only sets cookie, doesn't update database
+8. Identified need for both fixes
+
+#### Solution
+
+**Fix 1: Updated TypeScript interface** (`features/settings/actions.ts` line 75)
+```typescript
+// Before
+interface UpdateLocalePreferencesData {
+  unit_system: 'metric' | 'imperial'
+  currency: 'USD' | 'JPY'
+}
+
+// After
+interface UpdateLocalePreferencesData {
+  locale: 'en' | 'ja'  // ← ADDED
+  unit_system: 'metric' | 'imperial'
+  currency: 'USD' | 'JPY'
+}
+```
+
+**Fix 2: Added database update to API route** (`app/api/locale/route.ts` lines 3, 19-35)
+```typescript
+import { createClient } from '@/lib/supabase/server'  // ← ADDED IMPORT
+
+// ... existing cookie logic ...
+
+// Update database (NEW CODE)
+try {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) {
+    await supabase
+      .from('user_profiles')
+      .update({ locale, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
+  }
+} catch (error) {
+  console.error('Failed to update locale in database:', error)
+  // Don't fail the request if database update fails
+}
+```
+
+#### Files Modified
+- `features/settings/actions.ts` (line 75) - Added `locale` field to `UpdateLocalePreferencesData` interface
+- `app/api/locale/route.ts` (lines 3, 19-35) - Added Supabase client import and database update logic
+
+#### Verification
+After applying both fixes:
+- ✅ Selected "日本語" from dropdown
+- ✅ Database query shows: `locale: "ja"` ✅
+- ✅ Page reloaded automatically
+- ✅ Dropdown shows "日本語" after reload
+- ✅ Selected "English" from dropdown
+- ✅ Database query shows: `locale: "en"` ✅
+- ✅ Dropdown shows "English" after reload
+- ✅ TC-130 and TC-131 passed
+
+#### Impact
+- **Blocked Tests:** TC-130 (Switch to Japanese), TC-131 (Switch to English) - now passed
+- **Users Affected:** Any user attempting to change language preference
+- **Feature Impact:** Language switching was completely non-functional - changes were not persisted to database
+
+#### Prevention
+1. Ensure API routes that modify user preferences also update the database, not just cookies
+2. TypeScript interfaces should match all fields being updated in the database
+3. When debugging preference updates, check both cookie and database state
+4. Consider consolidating preference update logic into a single server action rather than splitting between API routes and server actions
+
+---
+
 ### Previous Bugs
 
 #### BUG-001 through BUG-008
