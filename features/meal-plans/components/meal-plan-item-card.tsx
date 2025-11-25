@@ -2,6 +2,7 @@
 
 import { Check } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/atoms/ui/badge'
@@ -21,6 +22,8 @@ interface MealPlanItemCardProps {
 }
 
 export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanItemCardProps) {
+  const t = useTranslations('meal_plan_detail_page')
+  const tMeals = useTranslations('meals')
   const [isCompleted, setIsCompleted] = useState(item.is_completed || false)
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -35,7 +38,7 @@ export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanI
         setIsCompleted(!isCompleted)
       }
     } catch (_error) {
-      toast.error('Failed to update meal status')
+      toast.error(t('meal_status_update_failed'))
     } finally {
       setIsUpdating(false)
     }
@@ -60,11 +63,11 @@ export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanI
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Badge className="capitalize">{item.meal_time}</Badge>
+            <Badge className="capitalize">{tMeals(item.meal_time as 'breakfast' | 'lunch' | 'dinner' | 'snack')}</Badge>
             {isCompleted && (
               <Badge variant="secondary" className="gap-1">
                 <Check className="h-3 w-3" />
-                Done
+                {t('done')}
               </Badge>
             )}
           </div>

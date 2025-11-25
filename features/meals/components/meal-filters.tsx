@@ -2,6 +2,7 @@
 
 import { Search } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useTransition } from 'react'
 import { Input } from '@/components/atoms/ui/input'
 import {
@@ -25,6 +26,8 @@ export function MealFilters({
   defaultMealType,
   defaultTag,
 }: MealFiltersProps) {
+  const t = useTranslations('meals_page')
+  const tMeals = useTranslations('meals')
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
@@ -73,7 +76,7 @@ export function MealFilters({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search meals..."
+            placeholder={t('search_placeholder')}
             className="pl-9"
             defaultValue={defaultSearch}
             onChange={handleSearchChange}
@@ -88,16 +91,16 @@ export function MealFilters({
           disabled={isPending}
         >
           <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="All Cuisines" />
+            <SelectValue placeholder={t('all_cuisines')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Cuisines</SelectItem>
-            <SelectItem value="japanese">Japanese</SelectItem>
-            <SelectItem value="korean">Korean</SelectItem>
-            <SelectItem value="mediterranean">Mediterranean</SelectItem>
-            <SelectItem value="western">Western</SelectItem>
-            <SelectItem value="halal">Halal</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="all">{t('all_cuisines')}</SelectItem>
+            <SelectItem value="japanese">{t('cuisine_japanese')}</SelectItem>
+            <SelectItem value="korean">{t('cuisine_korean')}</SelectItem>
+            <SelectItem value="mediterranean">{t('cuisine_mediterranean')}</SelectItem>
+            <SelectItem value="western">{t('cuisine_western')}</SelectItem>
+            <SelectItem value="halal">{t('cuisine_halal')}</SelectItem>
+            <SelectItem value="other">{t('cuisine_other')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -108,14 +111,14 @@ export function MealFilters({
           disabled={isPending}
         >
           <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="All Meal Types" />
+            <SelectValue placeholder={t('all_meal_types')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Meal Types</SelectItem>
-            <SelectItem value="breakfast">Breakfast</SelectItem>
-            <SelectItem value="lunch">Lunch</SelectItem>
-            <SelectItem value="dinner">Dinner</SelectItem>
-            <SelectItem value="snack">Snack</SelectItem>
+            <SelectItem value="all">{t('all_meal_types')}</SelectItem>
+            <SelectItem value="breakfast">{tMeals('breakfast')}</SelectItem>
+            <SelectItem value="lunch">{tMeals('lunch')}</SelectItem>
+            <SelectItem value="dinner">{tMeals('dinner')}</SelectItem>
+            <SelectItem value="snack">{tMeals('snack')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -123,7 +126,7 @@ export function MealFilters({
       {/* Active Tag Badge */}
       {defaultTag && (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Filtered by tag:</span>
+          <span className="text-sm text-muted-foreground">{t('filtered_by_tag')}</span>
           <button
             type="button"
             onClick={clearTag}

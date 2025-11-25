@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { connection } from 'next/server'
+import { getTranslations } from 'next-intl/server'
 import { generateMealPlanPrompt } from '@/features/meal-plans/prompts/meal-plan-generator'
 import { openai } from '@/lib/ai/openai'
 import { createClient } from '@/lib/supabase/server'
@@ -145,7 +146,7 @@ export async function generateAIMealPlan(
 
     // Save directly to database instead of streaming to client
     console.log('[generateAIMealPlan] Saving meal plan to database')
-    const result = await saveMealPlan(totalContent)
+    const result = await saveMealPlan(totalContent, locale)
 
     if (result.error) {
       throw new Error(result.error)
@@ -162,7 +163,7 @@ export async function generateAIMealPlan(
   }
 }
 
-export async function saveMealPlan(mealPlanData: string) {
+export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = 'en') {
   console.log('[saveMealPlan] Starting save process')
   console.log('[saveMealPlan] Received data length:', mealPlanData.length)
 
@@ -197,10 +198,14 @@ export async function saveMealPlan(mealPlanData: string) {
     console.log('[saveMealPlan] Week summary:', week_summary)
     console.log('[saveMealPlan] Number of days:', meal_plan.length)
 
+    // Get translations for meal plan name
+    const t = await getTranslations('meal_plans_page')
+    const planName = `${t('ai_generated_plan')} - ${new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US')}`
+
     // Create meal plan
     const mealPlanInsert: MealPlanInsert = {
       user_id: user.id,
-      name: `AI Generated Plan - ${new Date().toLocaleDateString()}`,
+      name: planName,
       type: 'weekly',
       start_date: new Date().toISOString().split('T')[0],
       end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],

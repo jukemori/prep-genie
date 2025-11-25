@@ -1,5 +1,6 @@
 import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
@@ -19,6 +20,7 @@ interface PageProps {
 
 export default async function MealPlanDetailPage({ params }: PageProps) {
   const { id } = await params
+  const t = await getTranslations('meal_plan_detail_page')
   const supabase = await createClient()
 
   const {
@@ -47,7 +49,7 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
     .order('day_of_week', { ascending: true })
 
   // Group by day
-  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const dayNames = [t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday'), t('sunday')]
   const groupedByDay = items?.reduce(
     (acc: Record<number, MealPlanItemWithMeal[]>, item: MealPlanItemWithMeal) => {
       const day = item.day_of_week
@@ -68,14 +70,14 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
         <Button variant="ghost" asChild>
           <Link href="/meal-plans">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Meal Plans
+            {t('back_to_meal_plans')}
           </Link>
         </Button>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href={`/grocery-lists/generate?mealPlanId=${id}`}>
               <ShoppingCart className="mr-2 h-4 w-4" />
-              Generate Grocery List
+              {t('generate_grocery_list')}
             </Link>
           </Button>
           <Button variant="destructive" size="icon">
@@ -99,25 +101,25 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
         <Card>
           <CardContent className="pt-6 text-center">
             <p className="text-2xl font-bold">{mealPlan.total_calories || 0}</p>
-            <p className="text-sm text-muted-foreground">Total Calories</p>
+            <p className="text-sm text-muted-foreground">{t('total_calories')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <p className="text-2xl font-bold">{mealPlan.total_protein || 0}g</p>
-            <p className="text-sm text-muted-foreground">Protein</p>
+            <p className="text-sm text-muted-foreground">{t('protein')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <p className="text-2xl font-bold">{mealPlan.total_carbs || 0}g</p>
-            <p className="text-sm text-muted-foreground">Carbs</p>
+            <p className="text-sm text-muted-foreground">{t('carbs')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <p className="text-2xl font-bold">{mealPlan.total_fats || 0}g</p>
-            <p className="text-sm text-muted-foreground">Fats</p>
+            <p className="text-sm text-muted-foreground">{t('fats')}</p>
           </CardContent>
         </Card>
       </div>

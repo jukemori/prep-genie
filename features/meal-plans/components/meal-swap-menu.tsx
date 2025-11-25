@@ -1,6 +1,7 @@
 'use client'
 
 import { Clock, DollarSign, Leaf, Loader2, RefreshCw, TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -40,6 +41,7 @@ export function MealSwapMenu({
   mealName,
   onSwapComplete,
 }: MealSwapMenuProps) {
+  const t = useTranslations('meal_plan_detail_page')
   const [isSwapping, setIsSwapping] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingSwap, setPendingSwap] = useState<{
@@ -70,11 +72,11 @@ export function MealSwapMenu({
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Meal swapped successfully!')
+        toast.success(t('meal_swapped_success'))
         onSwapComplete?.()
       }
     } catch (_error) {
-      toast.error('Failed to swap meal')
+      toast.error(t('meal_swap_failed'))
     } finally {
       setIsSwapping(false)
       setShowConfirmDialog(false)
@@ -103,83 +105,49 @@ export function MealSwapMenu({
             {isSwapping ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Swapping...
+                {t('swapping')}
               </>
             ) : (
               <>
                 <RefreshCw className="mr-2 h-4 w-4" />
-                Swap Meal
+                {t('swap_meal')}
               </>
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Swap Options</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('swap_options')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            onClick={() =>
-              initiateSwap('Budget Swap', 'Replace with cheaper ingredients', {
-                swapType: 'budget',
-              })
-            }
-          >
+          <DropdownMenuItem onClick={() => initiateSwap(t('budget_swap'), t('budget_swap_description'), { swapType: 'budget' })}>
             <DollarSign className="mr-2 h-4 w-4" />
-            Budget Swap
+            {t('budget_swap')}
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => initiateSwap('Speed Swap', 'Faster cooking time', { swapType: 'speed' })}
+            onClick={() => initiateSwap(t('speed_swap'), t('speed_swap_description'), { swapType: 'speed' })}
           >
             <Clock className="mr-2 h-4 w-4" />
-            Speed Swap
+            {t('speed_swap')}
           </DropdownMenuItem>
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Leaf className="mr-2 h-4 w-4" />
-              Dietary Swap
+              {t('dietary_swap')}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Dairy-Free Swap', 'Remove all dairy products', {
-                    swapType: 'dietary',
-                    dietaryRestriction: 'dairy_free',
-                  })
-                }
-              >
-                Dairy-Free
+              <DropdownMenuItem onClick={() => initiateSwap(t('dairy_free_swap'), t('dairy_free_description'), { swapType: 'dietary', dietaryRestriction: 'dairy_free' })}>
+                {t('dairy_free')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Gluten-Free Swap', 'Remove all gluten', {
-                    swapType: 'dietary',
-                    dietaryRestriction: 'gluten_free',
-                  })
-                }
-              >
-                Gluten-Free
+              <DropdownMenuItem onClick={() => initiateSwap(t('gluten_free_swap'), t('gluten_free_description'), { swapType: 'dietary', dietaryRestriction: 'gluten_free' })}>
+                {t('gluten_free')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Vegan Swap', 'Plant-based only', {
-                    swapType: 'dietary',
-                    dietaryRestriction: 'vegan',
-                  })
-                }
-              >
-                Vegan
+              <DropdownMenuItem onClick={() => initiateSwap(t('vegan_swap'), t('vegan_description'), { swapType: 'dietary', dietaryRestriction: 'vegan' })}>
+                {t('vegan')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Low-FODMAP Swap', 'Low-FODMAP ingredients', {
-                    swapType: 'dietary',
-                    dietaryRestriction: 'low_fodmap',
-                  })
-                }
-              >
-                Low-FODMAP
+              <DropdownMenuItem onClick={() => initiateSwap(t('low_fodmap_swap'), t('low_fodmap_description'), { swapType: 'dietary', dietaryRestriction: 'low_fodmap' })}>
+                {t('low_fodmap')}
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
@@ -187,38 +155,17 @@ export function MealSwapMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <TrendingUp className="mr-2 h-4 w-4" />
-              Macro Swap
+              {t('macro_swap')}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('High-Protein Swap', 'Boost protein content', {
-                    swapType: 'macro',
-                    macroGoal: 'high_protein',
-                  })
-                }
-              >
-                High-Protein
+              <DropdownMenuItem onClick={() => initiateSwap(t('high_protein_swap'), t('high_protein_description'), { swapType: 'macro', macroGoal: 'high_protein' })}>
+                {t('high_protein')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Low-Carb Swap', 'Reduce carbohydrates', {
-                    swapType: 'macro',
-                    macroGoal: 'low_carb',
-                  })
-                }
-              >
-                Low-Carb
+              <DropdownMenuItem onClick={() => initiateSwap(t('low_carb_swap'), t('low_carb_description'), { swapType: 'macro', macroGoal: 'low_carb' })}>
+                {t('low_carb')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  initiateSwap('Low-Fat Swap', 'Reduce fat content', {
-                    swapType: 'macro',
-                    macroGoal: 'low_fat',
-                  })
-                }
-              >
-                Low-Fat
+              <DropdownMenuItem onClick={() => initiateSwap(t('low_fat_swap'), t('low_fat_description'), { swapType: 'macro', macroGoal: 'low_fat' })}>
+                {t('low_fat')}
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
@@ -233,15 +180,14 @@ export function MealSwapMenu({
               {pendingSwap?.description}
               <br />
               <br />
-              Current meal: <strong>{mealName}</strong>
+              {t('current_meal')} <strong>{mealName}</strong>
               <br />
               <br />
-              This will replace the current meal with an AI-generated alternative that matches your
-              criteria while maintaining your dietary preferences and nutrition goals.
+              {t('swap_confirmation_description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (pendingSwap) {
@@ -253,7 +199,7 @@ export function MealSwapMenu({
                 }
               }}
             >
-              {isSwapping ? 'Swapping...' : 'Confirm Swap'}
+              {isSwapping ? t('swapping') : t('confirm_swap')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
