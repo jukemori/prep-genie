@@ -72,6 +72,7 @@ export async function updateProfile(data: UpdateProfileData) {
 }
 
 interface UpdateLocalePreferencesData {
+  locale: 'en' | 'ja'
   unit_system: 'metric' | 'imperial'
   currency: 'USD' | 'JPY'
 }
@@ -91,6 +92,7 @@ export async function updateLocalePreferences(data: UpdateLocalePreferencesData)
     const { error } = await supabase
       .from('user_profiles')
       .update({
+        locale: data.locale,
         unit_system: data.unit_system,
         currency: data.currency,
         updated_at: new Date().toISOString(),
