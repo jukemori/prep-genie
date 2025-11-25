@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/atoms/ui/button'
 import { MealCard } from '@/components/molecules/meal-card'
 import { MealFilters } from '@/features/meals/components/meal-filters'
@@ -18,6 +19,7 @@ interface PageProps {
 export default async function MealsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const supabase = await createClient()
+  const t = await getTranslations('meals_page')
 
   const {
     data: { user },
@@ -57,13 +59,13 @@ export default async function MealsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Meal Library</h1>
-          <p className="text-muted-foreground">Browse and manage your meal collection</p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
         </div>
         <Button asChild>
           <Link href="/meals/new">
             <Plus className="mr-2 h-4 w-4" />
-            Add Meal
+            {t('add_meal')}
           </Link>
         </Button>
       </div>
@@ -88,16 +90,16 @@ export default async function MealsPage({ searchParams }: PageProps) {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
             <Plus className="h-6 w-6 text-muted-foreground" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold">No meals found</h3>
+          <h3 className="mb-2 text-lg font-semibold">{t('no_meals_found')}</h3>
           <p className="mb-4 text-sm text-muted-foreground">
             {params.search || params.tag
-              ? 'Try adjusting your search or filters'
-              : 'Get started by creating your first meal'}
+              ? t('adjust_filters')
+              : t('get_started')}
           </p>
           <Button asChild>
             <Link href="/meals/new">
               <Plus className="mr-2 h-4 w-4" />
-              Add Your First Meal
+              {t('add_first_meal')}
             </Link>
           </Button>
         </div>
