@@ -158,6 +158,7 @@ export default function ChatPage() {
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
+                data-role={message.role}
                 className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.role === 'assistant' && (
