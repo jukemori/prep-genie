@@ -223,9 +223,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
     const recipeInput = {
       name: 'Healthy Breakfast Bowl',
       description: 'A nutritious breakfast',
-      ingredients: [
-        { name: 'Oats', quantity: 1, unit: 'cup', category: 'grains' },
-      ],
+      ingredients: [{ name: 'Oats', quantity: 1, unit: 'cup', category: 'grains' }],
       instructions: ['Cook oats', 'Serve'],
       servings: 2,
       prep_time: 5,

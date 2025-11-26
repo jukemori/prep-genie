@@ -21,9 +21,7 @@ vi.mock('next/server', () => ({
 
 // Mock next-intl
 vi.mock('next-intl/server', () => ({
-  getTranslations: vi.fn(() =>
-    Promise.resolve(() => 'AI Generated Meal Plan - 1/1/2025')
-  ),
+  getTranslations: vi.fn(() => Promise.resolve(() => 'AI Generated Meal Plan - 1/1/2025')),
 }))
 
 // Mock Vercel AI SDK
