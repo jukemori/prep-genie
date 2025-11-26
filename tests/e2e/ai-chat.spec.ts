@@ -53,14 +53,15 @@ test.describe('AI Nutrition Assistant Journey', () => {
 
     // Send follow-up question
     await chatInput.fill('How do I calculate it?')
-    await sendButton.click()
+    const sendButton2 = page.getByRole('button', { name: '' }).last()
+    await sendButton2.click()
 
-    // Wait for second response
-    await page.waitForTimeout(8000)
+    // Wait a moment for state to update
+    await page.waitForTimeout(1000)
 
-    // Verify multiple messages exist
+    // Wait for second AI response to appear (increased timeout for slow AI responses)
     const messages = page.locator('[data-role="assistant"]')
-    await expect(messages.nth(1)).toBeVisible({ timeout: 20000 })
+    await expect(messages.nth(1)).toBeVisible({ timeout: 60000 })
 
     const messageCount = await messages.count()
     expect(messageCount).toBeGreaterThanOrEqual(2)

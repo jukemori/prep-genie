@@ -75,7 +75,7 @@ export default async function GroceryListsPage() {
                       <span className="font-medium">${list.estimated_cost}</span>
                     </div>
                   )}
-                  <Button asChild className="w-full">
+                  <Button asChild className="w-full" data-testid="view-grocery-list">
                     <Link href={`/grocery-lists/${list.id}`}>{t('view_list')}</Link>
                   </Button>
                 </CardContent>
