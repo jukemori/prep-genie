@@ -5,6 +5,7 @@ This document outlines the E2E testing strategy, test cases, and implementation 
 ## 📚 Resources
 
 - [Playwright Next.js Testing Guide](https://nextjs.org/docs/pages/guides/testing/playwright)
+- [Playwright Authentication Guide](https://playwright.dev/docs/auth)
 - [Playwright Best Practices](https://ray.run/blog/testing-nextjs-apps-using-playwright)
 - [Next.js Testing Documentation](https://nextjs.org/docs/app/guides/testing)
 
@@ -14,10 +15,37 @@ This document outlines the E2E testing strategy, test cases, and implementation 
 
 1. **Page Object Model (POM)** - Abstraction layer between tests and UI elements
 2. **Auto-waiting** - Playwright waits for elements automatically
-3. **Visual Regression Testing** - Screenshot comparisons for UI changes
-4. **Parallel Execution** - Tests run in parallel for speed
-5. **Production Build Testing** - Test against production builds
-6. **Network Interception** - Mock API responses for consistent tests
+3. **Authentication Setup File** - Sign in once, reuse state across all tests
+4. **User Journey Testing** - Focus on critical user workflows
+5. **Parallel Execution** - Tests run in parallel for speed
+6. **Production Build Testing** - Test against production builds
+
+### Authentication Strategy
+
+We use Playwright's **authentication setup file** pattern to avoid repeating login in every test:
+
+1. **Setup Project** (`tests/e2e/auth.setup.ts`):
+   - Runs once before all tests
+   - Signs in using credentials from `process.env.LOGIN_EMAIL` and `process.env.LOGIN_PASSWORD`
+   - Saves authenticated state to `playwright/.auth/user.json`
+
+2. **Test Projects**:
+   - All browser projects depend on the setup project
+   - Reuse saved authentication state via `storageState`
+   - Tests assume user is already logged in
+
+3. **Environment Variables**:
+   ```bash
+   # Required for E2E tests
+   LOGIN_EMAIL=your-test-user@example.com
+   LOGIN_PASSWORD=your-test-password
+   ```
+
+**Why this approach?**
+- ✅ No email verification needed in tests
+- ✅ Faster test execution (login happens once)
+- ✅ Tests focus on user journeys, not authentication
+- ✅ Matches Playwright best practices
 
 ### Browser Coverage
 
@@ -27,242 +55,165 @@ This document outlines the E2E testing strategy, test cases, and implementation 
 - ✅ Mobile Chrome (Pixel 5)
 - ✅ Mobile Safari (iPhone 12)
 
-## 📋 Test Cases & Status
+## 📋 User Journey Tests
 
-### 1. Authentication & Onboarding Flow ✅
+These tests focus on end-to-end user workflows rather than exhaustive feature testing.
 
-**Priority:** Critical
-**Status:** ✅ Completed
+### 1. Authentication Setup ✅
 
-**Test Scenarios:**
-- [x] User can sign up with email and password
-- [x] Email validation works correctly
-- [x] User can complete onboarding questionnaire
-  - [x] Step 1: Personal info (age, weight, height, gender)
-  - [x] Step 2: Activity level and goals
-  - [x] Step 3: Dietary preferences and allergies
-  - [x] Step 4: Cooking skills and time available
-- [x] TDEE and macros are calculated correctly
-- [x] User is redirected to dashboard after completion
-- [x] User can sign in with existing credentials
-- [x] User can sign out successfully
+**File:** `tests/e2e/auth.setup.ts`
 
-**File:** `tests/e2e/01-auth-onboarding.spec.ts`
+- [x] Authenticates once before all tests
+- [x] Saves state to `playwright/.auth/user.json`
+- [x] Used by all test projects
 
----
+### 2. Meal Plan Generation ✅
 
-### 2. Meal Plan Generation Flow 🚧
+**File:** `tests/e2e/meal-plan.spec.ts`
 
-**Priority:** Critical
-**Status:** 🚧 In Progress
+**User Journey:**
+1. Navigate to meal plan generator
+2. Select cuisine type (Japanese, Korean, etc.)
+3. Generate meal plan with AI
+4. View generated meal plan
+5. Click on meal to view details
+6. Mark meal as completed
 
 **Test Scenarios:**
-- [ ] User can access meal plan generator
-- [ ] User can select cuisine type (Japanese, Korean, Mediterranean, Western, Halal)
-- [ ] Generate button triggers AI generation
-- [ ] Progress bar shows day-by-day progress (Day X of 7)
-- [ ] Complete meal plan is generated (21 meals)
-- [ ] Meal plan displays correctly with all details
-- [ ] User can view individual meal details
-- [ ] Nutrition summary matches daily targets
+- [x] Generate complete meal plan with Japanese cuisine
+- [x] Display meal details when clicking on a meal
+- [x] Mark meal as completed
 
-**File:** `tests/e2e/02-meal-plan-generation.spec.ts`
+### 3. Grocery List ✅
 
-**Page Objects:**
-- `pages/MealPlanGeneratorPage.ts`
-- `pages/MealPlanDetailPage.ts`
+**File:** `tests/e2e/grocery-list.spec.ts`
 
----
-
-### 3. Grocery List Generation 📋
-
-**Priority:** High
-**Status:** ⏳ Pending
+**User Journey:**
+1. View meal plan
+2. Generate grocery list from meal plan
+3. View categorized grocery items
+4. Check off purchased items
+5. View estimated cost
 
 **Test Scenarios:**
-- [ ] User can generate grocery list from meal plan
-- [ ] Ingredients are consolidated correctly
-- [ ] Categories are assigned properly (produce, protein, dairy, etc.)
-- [ ] User can check off purchased items
-- [ ] User can edit quantities
-- [ ] Estimated cost is displayed
-- [ ] User can delete grocery list
+- [x] Generate grocery list from meal plan
+- [x] Check off grocery items as purchased
+- [x] Display estimated cost
 
-**File:** `tests/e2e/03-grocery-list.spec.ts`
+### 4. Recipe Analyzer ✅
 
-**Page Objects:**
-- `pages/GroceryListPage.ts`
+**File:** `tests/e2e/recipe-analyzer.spec.ts`
 
----
-
-### 4. Meal Swap System 🔄
-
-**Priority:** High
-**Status:** ⏳ Pending
+**User Journey:**
+1. Navigate to recipe analyzer
+2. Input recipe text or URL
+3. Analyze recipe with AI
+4. View nutrition breakdown
+5. See improvement suggestions (budget/high-protein/lower-calorie)
+6. Save analyzed recipe
 
 **Test Scenarios:**
-- [ ] User can access meal swap menu
-- [ ] Budget swap generates cheaper alternative
-- [ ] Speed swap generates faster recipe
-- [ ] Dietary swap respects restrictions (dairy-free, gluten-free, vegan, low-FODMAP)
-- [ ] Macro swap adjusts for high-protein/low-carb/low-fat
-- [ ] Swapped meal replaces original in meal plan
-- [ ] Nutrition totals update correctly after swap
-- [ ] User can swap multiple meals
+- [x] Analyze recipe text and display nutrition breakdown
+- [x] Display AI improvement suggestions
+- [x] Save analyzed recipe to meal library
+- [x] Handle recipe URL input
 
-**File:** `tests/e2e/04-meal-swap.spec.ts`
+### 5. Meal Swap ✅
 
-**Page Objects:**
-- `pages/MealSwapPage.ts`
+**File:** `tests/e2e/meal-swap.spec.ts`
 
----
-
-### 5. AI Nutrition Chat 💬
-
-**Priority:** Medium
-**Status:** ⏳ Pending
+**User Journey:**
+1. Navigate to meal plan
+2. Open meal swap menu
+3. Select swap type (budget/speed/dietary/macro)
+4. Confirm swap
+5. Verify meal is replaced
 
 **Test Scenarios:**
-- [ ] User can access AI chat
-- [ ] User can send messages
-- [ ] AI responds with streaming text
-- [ ] Chat history is preserved
-- [ ] User can ask nutrition questions
-- [ ] User can request ingredient substitutions
-- [ ] User can clear chat history
+- [x] Open meal swap menu
+- [x] Perform budget swap
+- [x] Perform speed swap
+- [x] Perform dietary swap
+- [x] Perform macro swap (high-protein)
 
-**File:** `tests/e2e/05-ai-chat.spec.ts`
+### 6. AI Nutrition Assistant ✅
 
-**Page Objects:**
-- `pages/AIChatPage.ts`
+**File:** `tests/e2e/ai-chat.spec.ts`
 
----
-
-### 6. Recipe Analyzer 🔍
-
-**Priority:** Medium
-**Status:** ⏳ Pending
+**User Journey:**
+1. Navigate to AI chat
+2. Ask nutrition question
+3. Receive AI response
+4. Ask follow-up questions
+5. View chat history
 
 **Test Scenarios:**
-- [ ] User can input recipe URL
-- [ ] User can input recipe text
-- [ ] AI extracts ingredients and portions
-- [ ] Nutrition breakdown displays correctly
-- [ ] Budget version suggestion works
-- [ ] High-protein version suggestion works
-- [ ] Lower-calorie version suggestion works
-- [ ] User can save analyzed recipe to meal library
+- [x] Send nutrition question and receive AI response
+- [x] Handle follow-up questions
+- [x] Ask about ingredient substitutions
+- [x] Display chat history
+- [x] Clear chat history
 
-**File:** `tests/e2e/06-recipe-analyzer.spec.ts`
 
-**Page Objects:**
-- `pages/RecipeAnalyzerPage.ts`
+## 🏗️ Test File Structure
 
----
-
-### 7. Meal Library 📚
-
-**Priority:** Medium
-**Status:** ⏳ Pending
-
-**Test Scenarios:**
-- [ ] User can view saved meals
-- [ ] User can search meals
-- [ ] User can filter by tags
-- [ ] User can create custom meal
-- [ ] User can edit meal macros
-- [ ] User can delete meal
-- [ ] User can mark meal as favorite
-
-**File:** `tests/e2e/07-meal-library.spec.ts`
-
-**Page Objects:**
-- `pages/MealLibraryPage.ts`
-
----
-
-### 8. Settings & Profile Management ⚙️
-
-**Priority:** Medium
-**Status:** ⏳ Pending
-
-**Test Scenarios:**
-- [ ] User can update profile information
-- [ ] User can change activity level
-- [ ] User can update dietary preferences
-- [ ] User can switch language (English ⇄ Japanese)
-- [ ] User can change unit system (Imperial/Metric)
-- [ ] User can adjust nutrition targets
-- [ ] User can reset to AI recommendations
-- [ ] User can delete account
-
-**File:** `tests/e2e/08-settings.spec.ts`
-
-**Page Objects:**
-- `pages/SettingsPage.ts`
-
----
-
-### 9. Progress Tracking 📈
-
-**Priority:** Low
-**Status:** ⏳ Pending
-
-**Test Scenarios:**
-- [ ] User can log weight
-- [ ] User can log daily nutrition
-- [ ] Progress logs display correctly
-- [ ] User can view history
-- [ ] User can edit past logs
-- [ ] User can delete logs
-
-**File:** `tests/e2e/09-progress-tracking.spec.ts`
-
-**Page Objects:**
-- `pages/ProgressPage.ts`
-
----
-
-## 🏗️ Page Object Model Structure
+Following Playwright best practices for clean, maintainable test organization:
 
 ```
 tests/e2e/
-├── pages/                          # Page Object Models
-│   ├── AuthPage.ts                # Sign in/up/out
-│   ├── OnboardingPage.ts          # Multi-step onboarding
-│   ├── DashboardPage.ts           # Main dashboard
-│   ├── MealPlanGeneratorPage.ts   # Meal plan generation
-│   ├── MealPlanDetailPage.ts      # View meal plan
-│   ├── GroceryListPage.ts         # Grocery lists
-│   ├── MealSwapPage.ts            # Meal swap functionality
-│   ├── AIChatPage.ts              # AI chat interface
-│   ├── RecipeAnalyzerPage.ts      # Recipe analyzer
-│   ├── MealLibraryPage.ts         # Meal library
-│   ├── SettingsPage.ts            # Settings
-│   └── ProgressPage.ts            # Progress tracking
-├── fixtures/                       # Test data and helpers
-│   ├── test-users.ts              # User credentials
-│   ├── test-data.ts               # Sample meal/recipe data
-│   └── helpers.ts                 # Utility functions
-└── *.spec.ts                      # Test files
+├── auth.setup.ts                   # Authentication setup (runs once)
+├── meal-plan.spec.ts               # Meal plan generation tests
+├── grocery-list.spec.ts            # Grocery list creation tests
+├── recipe-analyzer.spec.ts         # Recipe analyzer tests
+├── meal-swap.spec.ts               # Meal swap tests
+├── ai-chat.spec.ts                 # AI chat tests
+├── models/                         # Page Object Models (POMs)
+│   └── auth-page.ts               # Auth page model
+└── fixtures/                       # Test data and custom fixtures
+    ├── test-users.ts              # User test data
+    └── test-data.ts               # Sample meal/recipe data
 ```
+
+**Key Principles:**
+- **Flat structure** - Test files at root for easy discovery
+- **Models folder** - Page Object Models following Playwright convention
+- **Fixtures folder** - Test data and custom test fixtures
+- **Kebab-case naming** - Consistent file naming convention
 
 ## 🚀 Running Tests
 
-### Install Dependencies
-```bash
-pnpm install
-pnpm exec playwright install
-```
+### Prerequisites
+
+1. **Set Environment Variables** in `.env.local`:
+   ```bash
+   # Authentication credentials for E2E tests
+   LOGIN_EMAIL=your-test-user@example.com
+   LOGIN_PASSWORD=your-test-password
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   pnpm install
+   pnpm exec playwright install
+   ```
 
 ### Run All Tests
 ```bash
 pnpm test:e2e
 ```
 
+This will:
+1. Run the auth setup file first (signs in and saves state)
+2. Run all journey tests in parallel using the saved auth state
+
 ### Run Specific Test File
 ```bash
-pnpm exec playwright test tests/e2e/01-auth-onboarding.spec.ts
+pnpm exec playwright test tests/e2e/meal-plan.spec.ts
+```
+
+### Run Only Setup (to refresh auth state)
+```bash
+pnpm exec playwright test tests/e2e/auth.setup.ts
 ```
 
 ### Run in UI Mode (Interactive)
@@ -377,20 +328,30 @@ test.beforeEach(async ({ page }) => {
 
 ## 📈 Current Status
 
-- **Total Test Cases:** 60+
-- **Completed:** 8 (Auth & Onboarding)
-- **In Progress:** 8 (Meal Plan Generation)
-- **Pending:** 44
+**Test Strategy:** User journey-focused E2E tests with authentication setup
 
-**Next Steps:**
-1. ✅ Complete meal plan generation tests
-2. Create grocery list tests
-3. Create meal swap tests
-4. Create AI chat tests
-5. Add visual regression tests
-6. Set up CI/CD pipeline
+- **Total Test Files:** 6
+  - 1 authentication setup file
+  - 5 user journey test files
+- **Total Test Cases:** ~18 focused user journey tests
+- **Status:** ✅ All core user journeys implemented
+
+**Test Coverage:**
+- ✅ Authentication setup with state reuse
+- ✅ Meal plan generation
+- ✅ Grocery list creation
+- ✅ Recipe analyzer
+- ✅ Meal swap
+- ✅ AI chat
+
+**Next Steps (Optional Enhancements):**
+1. Add visual regression testing with screenshot comparisons
+2. Set up CI/CD pipeline (GitHub Actions)
+3. Add accessibility testing with @axe-core/playwright
+4. Expand test coverage for edge cases
+5. Add performance benchmarking
 
 ---
 
-**Last Updated:** 2025-11-26
+**Last Updated:** 2025-01-26
 **Maintained By:** PrepGenie Team
