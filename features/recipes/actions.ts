@@ -51,7 +51,6 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
 
     return { data: analyzedRecipe }
   } catch (error) {
-    console.error('Recipe analysis error:', error)
     return { error: 'Failed to analyze recipe' }
   }
 }
@@ -119,7 +118,6 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
       .single()
 
     if (error) {
-      console.error('Supabase insert error:', error)
       return { error: error.message }
     }
 
@@ -127,7 +125,6 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
 
     return { data: savedMeal }
   } catch (error) {
-    console.error('Save recipe error:', error)
     return { error: 'Failed to save recipe' }
   }
 }

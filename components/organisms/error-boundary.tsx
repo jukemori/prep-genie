@@ -56,12 +56,6 @@ export function ErrorBoundary({ children, fallback, onError, onReset }: ErrorBou
     <ReactErrorBoundary
       FallbackComponent={fallback || ErrorFallback}
       onError={(error, errorInfo) => {
-        // Log error to console in development
-        if (process.env.NODE_ENV === 'development') {
-          console.error('ErrorBoundary caught an error:', error)
-          console.error('Component stack:', errorInfo.componentStack)
-        }
-
         // Call custom error handler if provided
         onError?.(error, errorInfo)
       }}

@@ -29,8 +29,8 @@ export function LanguageSwitcher() {
           // Refresh page to apply new locale
           window.location.reload()
         }
-      } catch (error) {
-        console.error('Failed to change locale:', error)
+      } catch {
+        // Silently fail
       }
     })
   }

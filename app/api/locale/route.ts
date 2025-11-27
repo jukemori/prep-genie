@@ -29,8 +29,7 @@ export async function POST(request: NextRequest) {
         .update({ locale, updated_at: new Date().toISOString() })
         .eq('id', user.id)
     }
-  } catch (error) {
-    console.error('Failed to update locale in database:', error)
+  } catch {
     // Don't fail the request if database update fails
   }
 

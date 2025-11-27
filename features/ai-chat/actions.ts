@@ -74,7 +74,6 @@ export async function chatWithNutritionAssistant(
         stream.update(delta)
       })
       .on('error', (error) => {
-        console.error('[chatWithNutritionAssistant] Stream error:', error)
         stream.error(error)
       })
 

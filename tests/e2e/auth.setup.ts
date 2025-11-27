@@ -31,6 +31,4 @@ setup('authenticate', async ({ page }) => {
 
   // Save signed-in state to reuse in all tests
   await page.context().storageState({ path: authFile })
-
-  console.log('✅ Authentication setup complete - state saved to', authFile)
 })

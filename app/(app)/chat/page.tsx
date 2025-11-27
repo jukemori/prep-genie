@@ -58,11 +58,8 @@ export default function ChatPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || loading) {
-      console.log('[DEBUG] Submit blocked:', { input: input.trim(), loading })
       return
     }
-
-    console.log('[DEBUG] Submit starting:', { messageCount: messages.length })
     const userInput = input  // Save input before clearing
     const userMessage: Message = { role: 'user', content: userInput }
     setMessages((prev) => [...prev, userMessage])
@@ -100,7 +97,6 @@ export default function ChatPage() {
       }
 
     } catch (error) {
-      console.error('[DEBUG] Chat error:', error)
       setMessages((prev) =>
         prev.slice(0, -1).concat({
           role: 'assistant',
@@ -108,7 +104,6 @@ export default function ChatPage() {
         })
       )
     } finally {
-      console.log('[DEBUG] Setting loading to false')
       setLoading(false)
     }
 
@@ -120,15 +115,11 @@ export default function ChatPage() {
         userMessage,
         { role: 'assistant', content: fullContent },
       ]
-      saveChatHistory(updatedMessages, chatId)
-        .then((result) => {
-          if (result.chatId && !chatId) {
-            setChatId(result.chatId)
-          }
-        })
-        .catch((error) => {
-          console.error('[DEBUG] Failed to save chat history:', error)
-        })
+      saveChatHistory(updatedMessages, chatId).then((result) => {
+        if (result.chatId && !chatId) {
+          setChatId(result.chatId)
+        }
+      })
     }
   }
 
