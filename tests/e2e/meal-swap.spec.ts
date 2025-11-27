@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 /**
  * E2E Test: Meal Swap
@@ -24,9 +24,9 @@ test.describe('Meal Swap', () => {
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
 
     // Look for swap menu button (usually three dots or "Swap" button)
-    const swapMenuButton = page.locator(
-      'button:has-text("Swap"), button[aria-label*="menu"], button:has-text("⋮")'
-    ).first()
+    const swapMenuButton = page
+      .locator('button:has-text("Swap"), button[aria-label*="menu"], button:has-text("⋮")')
+      .first()
 
     if (await swapMenuButton.isVisible({ timeout: 5000 })) {
       await swapMenuButton.click()
@@ -47,9 +47,9 @@ test.describe('Meal Swap', () => {
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
 
     // Open swap menu
-    const swapMenuButton = page.locator(
-      'button:has-text("Swap"), button[aria-label*="menu"]'
-    ).first()
+    const swapMenuButton = page
+      .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+      .first()
 
     if (await swapMenuButton.isVisible({ timeout: 5000 })) {
       await swapMenuButton.click()
@@ -79,9 +79,9 @@ test.describe('Meal Swap', () => {
 
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
 
-    const swapMenuButton = page.locator(
-      'button:has-text("Swap"), button[aria-label*="menu"]'
-    ).first()
+    const swapMenuButton = page
+      .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+      .first()
 
     if (await swapMenuButton.isVisible({ timeout: 5000 })) {
       await swapMenuButton.click()
@@ -109,17 +109,15 @@ test.describe('Meal Swap', () => {
 
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
 
-    const swapMenuButton = page.locator(
-      'button:has-text("Swap"), button[aria-label*="menu"]'
-    ).first()
+    const swapMenuButton = page
+      .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+      .first()
 
     if (await swapMenuButton.isVisible({ timeout: 5000 })) {
       await swapMenuButton.click()
 
       // Click dietary swap option
-      const dietarySwapOption = page.locator(
-        'text=/dietary.*swap|dairy.?free|gluten.?free|vegan/i'
-      )
+      const dietarySwapOption = page.locator('text=/dietary.*swap|dairy.?free|gluten.?free|vegan/i')
 
       if (await dietarySwapOption.isVisible({ timeout: 3000 })) {
         await dietarySwapOption.click()
@@ -141,17 +139,15 @@ test.describe('Meal Swap', () => {
 
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
 
-    const swapMenuButton = page.locator(
-      'button:has-text("Swap"), button[aria-label*="menu"]'
-    ).first()
+    const swapMenuButton = page
+      .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+      .first()
 
     if (await swapMenuButton.isVisible({ timeout: 5000 })) {
       await swapMenuButton.click()
 
       // Click macro swap option
-      const macroSwapOption = page.locator(
-        'text=/macro.*swap|high.?protein|low.?carb|low.?fat/i'
-      )
+      const macroSwapOption = page.locator('text=/macro.*swap|high.?protein|low.?carb|low.?fat/i')
 
       if (await macroSwapOption.isVisible({ timeout: 3000 })) {
         await macroSwapOption.click()

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 /**
  * E2E Test: Meal Plan Generation
@@ -20,7 +20,9 @@ test.describe('Meal Plan Generation', () => {
     await expect(page).toHaveURL(/.*meal-plans\/generate/)
 
     // Select Japanese cuisine
-    const japaneseButton = page.locator('button:has-text("Japanese"), [data-cuisine="japanese"]').first()
+    const japaneseButton = page
+      .locator('button:has-text("Japanese"), [data-cuisine="japanese"]')
+      .first()
     await japaneseButton.click()
 
     // Click the main "Generate Meal Plan" button (not the clear selection button)
@@ -31,7 +33,10 @@ test.describe('Meal Plan Generation', () => {
     await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/, { timeout: 90000 })
 
     // Verify meal plan is displayed
-    const mealPlanTitle = page.locator('h1, h2').filter({ hasText: /meal plan/i }).first()
+    const mealPlanTitle = page
+      .locator('h1, h2')
+      .filter({ hasText: /meal plan/i })
+      .first()
     await expect(mealPlanTitle).toBeVisible()
 
     // Verify meals are displayed (expect at least 7 meals for weekly plan)
@@ -63,9 +68,7 @@ test.describe('Meal Plan Generation', () => {
     await firstMeal.click()
 
     // Verify meal details modal or page opens
-    const mealDetails = page.locator(
-      '[data-testid="meal-details"], [role="dialog"], .meal-details'
-    )
+    const mealDetails = page.locator('[data-testid="meal-details"], [role="dialog"], .meal-details')
     await expect(mealDetails).toBeVisible({ timeout: 5000 })
 
     // Verify ingredients list is displayed

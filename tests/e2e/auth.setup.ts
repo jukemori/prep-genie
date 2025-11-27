@@ -1,4 +1,4 @@
-import { test as setup, expect } from '@playwright/test'
+import { expect, test as setup } from '@playwright/test'
 import { AuthPage } from './models/auth-page'
 
 const authFile = 'playwright/.auth/user.json'

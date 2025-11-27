@@ -1,16 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
-  type Currency,
   convertHeight,
   convertVolume,
   convertWeight,
   formatCurrency,
   getCupSize,
-  type HeightUnit,
   JAPANESE_CUP_ML,
   US_CUP_ML,
-  type VolumeUnit,
-  type WeightUnit,
 } from '@/lib/i18n/units'
 
 describe('i18n Unit Conversions', () => {

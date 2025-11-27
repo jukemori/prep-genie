@@ -19,9 +19,9 @@ vi.mock('next/cache', () => ({
 // Mock Supabase client
 const mockGetUser = vi.fn()
 const mockFrom = vi.fn()
-const mockInsert = vi.fn()
-const mockOr = vi.fn()
-const mockOrder = vi.fn()
+const _mockInsert = vi.fn()
+const _mockOr = vi.fn()
+const _mockOrder = vi.fn()
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(() => ({

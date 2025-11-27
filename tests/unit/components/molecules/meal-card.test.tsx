@@ -25,7 +25,7 @@ vi.mock('next-intl', () => ({
 // Mock Next.js Image and Link
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
-    // biome-ignore lint/a11y/useAltText: Mock component for testing
+    // biome-ignore lint/performance/noImgElement: Mock component for testing
     <img src={src} alt={alt} />
   ),
 }))
@@ -62,6 +62,12 @@ describe('MealCard Component', () => {
     is_ai_generated: false,
     rating: null,
     image_url: 'https://example.com/chicken-salad.jpg',
+    meal_prep_friendly: false,
+    storage_instructions: null,
+    reheating_instructions: null,
+    storage_duration_days: null,
+    container_type: null,
+    batch_cooking_multiplier: 1,
     created_at: '2025-01-01T00:00:00Z',
     updated_at: '2025-01-01T00:00:00Z',
   }
@@ -400,6 +406,12 @@ describe('MealCard Component', () => {
         is_ai_generated: false,
         rating: null,
         image_url: null,
+        meal_prep_friendly: null,
+        storage_instructions: null,
+        reheating_instructions: null,
+        storage_duration_days: null,
+        container_type: null,
+        batch_cooking_multiplier: null,
         created_at: '2025-01-01T00:00:00Z',
         updated_at: '2025-01-01T00:00:00Z',
       }

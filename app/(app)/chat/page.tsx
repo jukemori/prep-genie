@@ -53,30 +53,27 @@ export default function ChatPage() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || loading) {
       return
     }
-    const userInput = input  // Save input before clearing
+    const userInput = input // Save input before clearing
     const userMessage: Message = { role: 'user', content: userInput }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
     setLoading(true)
 
-    let fullContent = ''  // Declare outside try block for scope access
+    let fullContent = '' // Declare outside try block for scope access
 
     try {
       // Include the new user message in the conversation history
-      const conversationHistory = [
-        ...messages,
-        { role: 'user' as const, content: userInput }
-      ]
+      const conversationHistory = [...messages, { role: 'user' as const, content: userInput }]
 
       const { stream } = await chatWithNutritionAssistant(
-        userInput,  // Use saved value, not cleared input
+        userInput, // Use saved value, not cleared input
         conversationHistory.map((m) => ({ role: m.role, content: m.content }))
       )
       const assistantMessage: Message = { role: 'assistant', content: '' }
@@ -95,8 +92,7 @@ export default function ChatPage() {
           })
         }
       }
-
-    } catch (error) {
+    } catch (_error) {
       setMessages((prev) =>
         prev.slice(0, -1).concat({
           role: 'assistant',

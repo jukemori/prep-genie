@@ -152,7 +152,6 @@ export async function generateAIMealPlan(
           model: openai('gpt-5-nano'),
           system: MEAL_PLAN_GENERATOR_SYSTEM_PROMPT,
           prompt,
-          experimental_toolCallStreaming: false,
         })
 
         // Accumulate the full response for this day
@@ -270,11 +269,10 @@ export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = '
     }
 
     // Create meals and meal plan items
-    let mealsFailed = 0
+    let _mealsFailed = 0
 
     for (const day of meal_plan) {
       for (const meal of day.meals) {
-
         // Create meal
         const mealInsert: MealInsert = {
           user_id: user.id,
@@ -311,7 +309,7 @@ export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = '
           .single()
 
         if (mealError || !createdMeal) {
-          mealsFailed++
+          _mealsFailed++
           continue // Skip this meal if error
         }
 
@@ -502,7 +500,6 @@ export async function swapMeal(input: SwapMealInput) {
       model: openai('gpt-5-nano'),
       system: MEAL_SWAP_SYSTEM_PROMPT,
       prompt,
-      experimental_toolCallStreaming: false,
     })
 
     // Collect full response
@@ -556,7 +553,7 @@ export async function swapMeal(input: SwapMealInput) {
 
     revalidatePath(`/meal-plans/${input.mealPlanId}`)
     return { data: newMeal }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to swap meal' }
   }
 }

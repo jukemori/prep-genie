@@ -160,7 +160,10 @@ export default function GenerateMealPlanPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="h-5 w-5 text-destructive"
+                  role="img"
+                  aria-label="Error icon"
                 >
+                  <title>Error</title>
                   <circle cx="12" cy="12" r="10" />
                   <line x1="12" y1="8" x2="12" y2="12" />
                   <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -186,7 +189,10 @@ export default function GenerateMealPlanPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="mr-2 h-4 w-4"
+                role="img"
+                aria-label="Refresh icon"
               >
+                <title>Refresh</title>
                 <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
                 <path d="M21 3v5h-5" />
               </svg>

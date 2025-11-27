@@ -50,7 +50,7 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
     const analyzedRecipe = JSON.parse(content)
 
     return { data: analyzedRecipe }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to analyze recipe' }
   }
 }
@@ -124,7 +124,7 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
     revalidatePath('/meals')
 
     return { data: savedMeal }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to save recipe' }
   }
 }

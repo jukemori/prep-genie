@@ -35,11 +35,11 @@ vi.mock('@/features/nutrition/utils/macros', () => ({
 
 // Mock Supabase client
 const mockGetUser = vi.fn()
-const mockUpdate = vi.fn()
-const mockDelete = vi.fn()
-const mockSelect = vi.fn()
-const mockEq = vi.fn()
-const mockSingle = vi.fn()
+const _mockUpdate = vi.fn()
+const _mockDelete = vi.fn()
+const _mockSelect = vi.fn()
+const _mockEq = vi.fn()
+const _mockSingle = vi.fn()
 const mockDeleteUser = vi.fn()
 const mockSignOut = vi.fn()
 const mockFrom = vi.fn()

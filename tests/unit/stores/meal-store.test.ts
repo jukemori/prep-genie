@@ -28,6 +28,12 @@ describe('Meal Store', () => {
     is_ai_generated: false,
     rating: null,
     image_url: null,
+    meal_prep_friendly: false,
+    storage_instructions: null,
+    reheating_instructions: null,
+    storage_duration_days: null,
+    container_type: null,
+    batch_cooking_multiplier: 1,
     created_at: '2025-01-01T00:00:00Z',
     updated_at: '2025-01-01T00:00:00Z',
   }
