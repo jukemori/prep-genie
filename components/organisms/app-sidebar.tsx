@@ -4,7 +4,6 @@ import {
   CalendarDays,
   ChefHat,
   LayoutDashboard,
-  MessageSquare,
   Settings,
   ShoppingCart,
   TrendingUp,
@@ -21,7 +20,6 @@ const navigationConfig = [
   { key: 'meal_plans', href: '/meal-plans', icon: CalendarDays },
   { key: 'grocery_lists', href: '/grocery-lists', icon: ShoppingCart },
   { key: 'progress', href: '/progress', icon: TrendingUp },
-  { key: 'chat', href: '/chat', icon: MessageSquare },
   { key: 'analyze', href: '/analyze', icon: ChefHat },
   { key: 'settings', href: '/settings', icon: Settings },
 ]

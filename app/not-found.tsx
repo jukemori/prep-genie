@@ -41,14 +41,6 @@ export default function NotFound() {
             <Link href="/meals">Browse Meals</Link>
           </Button>
         </div>
-
-        {/* Help Text */}
-        <p className="text-sm text-muted-foreground">
-          Need help?{' '}
-          <Link href="/chat" className="text-primary hover:underline">
-            Ask our AI Assistant
-          </Link>
-        </p>
       </div>
     </div>
   )

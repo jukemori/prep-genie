@@ -35,11 +35,6 @@ export type ProgressLog = Tables<'progress_logs'>
 export type ProgressLogInsert = TablesInsert<'progress_logs'>
 export type ProgressLogUpdate = TablesUpdate<'progress_logs'>
 
-// AI Chat History Types
-export type AIChatHistory = Tables<'ai_chat_history'>
-export type AIChatHistoryInsert = TablesInsert<'ai_chat_history'>
-export type AIChatHistoryUpdate = TablesUpdate<'ai_chat_history'>
-
 // Extended types for application use
 export interface MealWithDetails extends Meal {
   total_calories?: number

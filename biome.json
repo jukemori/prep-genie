@@ -2,7 +2,7 @@
   "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!types/database.ts"]
+    "includes": ["**", "!types/database.ts", "!app/globals.css"]
   },
   "assist": {
     "enabled": true,

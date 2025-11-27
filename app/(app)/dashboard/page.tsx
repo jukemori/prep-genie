@@ -182,12 +182,6 @@ export default async function DashboardPage() {
                 {t('log_progress')}
               </Link>
             </Button>
-            <Button asChild className="w-full justify-start" variant="outline">
-              <Link href="/chat">
-                <Target className="mr-2 h-4 w-4" />
-                {t('ask_ai')}
-              </Link>
-            </Button>
           </CardContent>
         </Card>
       </div>

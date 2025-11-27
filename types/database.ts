@@ -14,44 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      ai_chat_history: {
-        Row: {
-          context_type: string | null
-          created_at: string | null
-          id: string
-          messages: Json
-          related_meal_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          context_type?: string | null
-          created_at?: string | null
-          id?: string
-          messages: Json
-          related_meal_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          context_type?: string | null
-          created_at?: string | null
-          id?: string
-          messages?: Json
-          related_meal_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ai_chat_history_related_meal_id_fkey"
-            columns: ["related_meal_id"]
-            isOneToOne: false
-            referencedRelation: "meals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       grocery_lists: {
         Row: {
           created_at: string | null
