@@ -57,20 +57,31 @@ export default function ChatPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading) {
+      console.log('[DEBUG] Submit blocked:', { input: input.trim(), loading })
+      return
+    }
 
-    const userMessage: Message = { role: 'user', content: input }
+    console.log('[DEBUG] Submit starting:', { messageCount: messages.length })
+    const userInput = input  // Save input before clearing
+    const userMessage: Message = { role: 'user', content: userInput }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
     setLoading(true)
 
-    try {
-      const { stream } = await chatWithNutritionAssistant(
-        input,
-        messages.map((m) => ({ role: m.role, content: m.content }))
-      )
+    let fullContent = ''  // Declare outside try block for scope access
 
-      let fullContent = ''
+    try {
+      // Include the new user message in the conversation history
+      const conversationHistory = [
+        ...messages,
+        { role: 'user' as const, content: userInput }
+      ]
+
+      const { stream } = await chatWithNutritionAssistant(
+        userInput,  // Use saved value, not cleared input
+        conversationHistory.map((m) => ({ role: m.role, content: m.content }))
+      )
       const assistantMessage: Message = { role: 'assistant', content: '' }
       setMessages((prev) => [...prev, assistantMessage])
 
@@ -88,18 +99,8 @@ export default function ChatPage() {
         }
       }
 
-      // Save chat history after successful response
-      const updatedMessages = [
-        ...messages,
-        userMessage,
-        { role: 'assistant', content: fullContent },
-      ]
-      const result = await saveChatHistory(updatedMessages, chatId)
-      if (result.chatId && !chatId) {
-        setChatId(result.chatId)
-      }
     } catch (error) {
-      console.error('Chat error:', error)
+      console.error('[DEBUG] Chat error:', error)
       setMessages((prev) =>
         prev.slice(0, -1).concat({
           role: 'assistant',
@@ -107,7 +108,27 @@ export default function ChatPage() {
         })
       )
     } finally {
+      console.log('[DEBUG] Setting loading to false')
       setLoading(false)
+    }
+
+    // Save chat history asynchronously without blocking UI
+    // Only save if we have actual content (not in error state)
+    if (fullContent) {
+      const updatedMessages = [
+        ...messages,
+        userMessage,
+        { role: 'assistant', content: fullContent },
+      ]
+      saveChatHistory(updatedMessages, chatId)
+        .then((result) => {
+          if (result.chatId && !chatId) {
+            setChatId(result.chatId)
+          }
+        })
+        .catch((error) => {
+          console.error('[DEBUG] Failed to save chat history:', error)
+        })
     }
   }
 
@@ -209,7 +230,12 @@ export default function ChatPage() {
                 disabled={loading}
                 className="flex-1"
               />
-              <Button type="submit" size="icon" disabled={loading || !input.trim()}>
+              <Button
+                type="submit"
+                size="icon"
+                disabled={loading || !input.trim()}
+                data-loading={loading}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </form>

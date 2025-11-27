@@ -93,7 +93,9 @@ export default async function MealPlansPage() {
                   </div>
                 </div>
                 <Button asChild className="w-full">
-                  <Link href={`/meal-plans/${plan.id}`}>{t('view_plan')}</Link>
+                  <Link href={`/meal-plans/${plan.id}`} data-testid="view-meal-plan">
+                    {t('view_plan')}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
