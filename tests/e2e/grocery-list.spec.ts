@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * E2E Test: Grocery List Creation User Journey
+ * E2E Test: Grocery List
  *
- * User Journey:
+ * Tests:
  * 1. Navigate to meal plan
  * 2. Generate grocery list from meal plan
  * 3. View grocery list with categorized items
@@ -11,17 +11,18 @@ import { test, expect } from '@playwright/test'
  * 5. Edit quantities
  */
 
-test.describe('Grocery List Journey', () => {
+test.describe('Grocery List', () => {
   test('should generate grocery list from meal plan', async ({ page }) => {
     // Navigate to meal plans
     await page.goto('/meal-plans')
     await expect(page).toHaveURL(/.*meal-plans/)
 
-    // Click on first "View Plan" button
-    const viewPlanButton = page.getByRole('link', { name: /view plan|表示/i }).first()
+    // Click on first "View Plan" button using test ID
+    const viewPlanButton = page.getByTestId('view-meal-plan').first()
+    await expect(viewPlanButton).toBeVisible({ timeout: 5000 })
     await viewPlanButton.click()
 
-    await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/, { timeout: 5000 })
 
     // Look for "Generate Grocery List" or "Create Shopping List" button
     const generateGroceryButton = page.locator(
@@ -61,10 +62,15 @@ test.describe('Grocery List Journey', () => {
     // Find first checkbox (Radix UI checkboxes have role="checkbox")
     const firstCheckbox = page.getByRole('checkbox').first()
     await expect(firstCheckbox).toBeVisible()
+
+    // Verify checkbox is initially unchecked
+    await expect(firstCheckbox).not.toBeChecked()
+
+    // Click checkbox and wait for state change
     await firstCheckbox.click()
 
-    // Verify checkbox is checked
-    await expect(firstCheckbox).toBeChecked()
+    // Wait for Radix UI's data-state attribute to update (more reliable than toBeChecked)
+    await expect(firstCheckbox).toHaveAttribute('data-state', 'checked', { timeout: 3000 })
   })
 
   test('should display estimated cost', async ({ page }) => {

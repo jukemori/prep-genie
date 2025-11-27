@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * E2E Test: Recipe Analyzer User Journey
+ * E2E Test: Recipe Analyzer
  *
- * User Journey:
+ * Tests:
  * 1. Navigate to recipe analyzer
  * 2. Input recipe text or URL
  * 3. Click analyze button
@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test'
  * 6. Save analyzed recipe to meal library
  */
 
-test.describe('Recipe Analyzer Journey', () => {
+test.describe('Recipe Analyzer', () => {
   const sampleRecipe = `
 Grilled Chicken Salad
 

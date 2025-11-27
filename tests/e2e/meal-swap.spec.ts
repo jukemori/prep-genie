@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * E2E Test: Meal Swap User Journey
+ * E2E Test: Meal Swap
  *
- * User Journey:
+ * Tests:
  * 1. Navigate to existing meal plan
  * 2. Open meal swap menu for a meal
  * 3. Select swap type (budget/speed/dietary/macro)
@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test'
  * 6. Verify nutrition totals update
  */
 
-test.describe('Meal Swap Journey', () => {
+test.describe('Meal Swap', () => {
   test('should open meal swap menu', async ({ page }) => {
     // Navigate to meal plans
     await page.goto('/meal-plans')

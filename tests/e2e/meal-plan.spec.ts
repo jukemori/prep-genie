@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * E2E Test: Meal Plan Generation User Journey
+ * E2E Test: Meal Plan Generation
  *
- * User Journey:
+ * Tests:
  * 1. Navigate to meal plan generator
  * 2. Select cuisine type (Japanese, Korean, Mediterranean, Western, Halal)
  * 3. Click generate button
@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test'
  * 6. Verify nutrition breakdown
  */
 
-test.describe('Meal Plan Generation Journey', () => {
+test.describe('Meal Plan Generation', () => {
   test.skip('should generate a complete meal plan with Japanese cuisine', async ({ page }) => {
     // TODO: Fix meal plan generation - timing out on redirect
     // Navigate to meal plan generator
@@ -80,11 +80,12 @@ test.describe('Meal Plan Generation Journey', () => {
   test('should mark meal as completed', async ({ page }) => {
     await page.goto('/meal-plans')
 
-    // Click on first "View Plan" button
-    const viewPlanButton = page.getByRole('link', { name: /view plan|表示/i }).first()
+    // Click on first "View Plan" button using test ID
+    const viewPlanButton = page.getByTestId('view-meal-plan').first()
+    await expect(viewPlanButton).toBeVisible({ timeout: 5000 })
     await viewPlanButton.click()
 
-    await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/, { timeout: 5000 })
 
     // Find and click checkbox to mark meal as completed
     const completionCheckbox = page
