@@ -35,9 +35,20 @@ vi.mock('@ai-sdk/openai', () => ({
 }))
 
 // Mock OpenAI client (from lib/ai/openai.ts)
+const { mockOpenAICreate } = vi.hoisted(() => ({
+  mockOpenAICreate: vi.fn(),
+}))
+
 vi.mock('@/lib/ai/openai', () => ({
-  openai: {},
+  openai: {
+    chat: {
+      completions: {
+        create: mockOpenAICreate,
+      },
+    },
+  },
   MODELS: {
+    GPT5_NANO: 'gpt-5-nano',
     chat: 'gpt-5-nano',
     embedding: 'text-embedding-3-small',
   },
@@ -271,6 +282,7 @@ describe('Meal Plan Actions Integration Tests', () => {
   })
 
   describe('saveMealPlan', () => {
+    // New format: flat array of 3 meals (breakfast, lunch, dinner) that repeat across 7 days
     const validMealPlanJson = JSON.stringify({
       week_summary: {
         total_calories: 14000,
@@ -279,36 +291,60 @@ describe('Meal Plan Actions Integration Tests', () => {
         total_carbs: 1400,
         total_fats: 455,
       },
-      meal_plan: [
+      meals: [
         {
-          day: 1,
-          meals: [
-            {
-              meal_type: 'breakfast',
-              name: 'Test Breakfast',
-              description: 'Healthy breakfast',
-              ingredients: [{ name: 'Eggs', quantity: 2, unit: 'whole' }],
-              instructions: ['Cook eggs'],
-              prep_time: 5,
-              cook_time: 10,
-              servings: 1,
-              nutrition_per_serving: {
-                calories: 300,
-                protein: 20,
-                carbs: 10,
-                fats: 15,
-              },
-              tags: ['healthy'],
-              cuisine_type: 'western',
-              difficulty_level: 'easy',
-              meal_prep_friendly: true,
-              storage_instructions: 'Refrigerate',
-              reheating_instructions: 'Microwave',
-              storage_duration_days: 3,
-              container_type: 'glass',
-              batch_cooking_multiplier: 2,
-            },
-          ],
+          meal_type: 'breakfast',
+          name: 'Test Breakfast',
+          description: 'Healthy breakfast',
+          ingredients: [{ name: 'Eggs', quantity: 2, unit: 'whole' }],
+          instructions: ['Cook eggs'],
+          prep_time: 5,
+          cook_time: 10,
+          servings: 1,
+          nutrition_per_serving: {
+            calories: 300,
+            protein: 20,
+            carbs: 10,
+            fats: 15,
+          },
+          cuisine_type: 'western',
+          difficulty_level: 'easy',
+        },
+        {
+          meal_type: 'lunch',
+          name: 'Test Lunch',
+          description: 'Healthy lunch',
+          ingredients: [{ name: 'Chicken', quantity: 200, unit: 'g' }],
+          instructions: ['Grill chicken'],
+          prep_time: 10,
+          cook_time: 20,
+          servings: 1,
+          nutrition_per_serving: {
+            calories: 500,
+            protein: 40,
+            carbs: 30,
+            fats: 20,
+          },
+          cuisine_type: 'western',
+          difficulty_level: 'easy',
+        },
+        {
+          meal_type: 'dinner',
+          name: 'Test Dinner',
+          description: 'Healthy dinner',
+          ingredients: [{ name: 'Salmon', quantity: 150, unit: 'g' }],
+          instructions: ['Bake salmon'],
+          prep_time: 10,
+          cook_time: 25,
+          servings: 1,
+          nutrition_per_serving: {
+            calories: 600,
+            protein: 35,
+            carbs: 25,
+            fats: 30,
+          },
+          cuisine_type: 'western',
+          difficulty_level: 'medium',
         },
       ],
     })
@@ -331,20 +367,21 @@ describe('Meal Plan Actions Integration Tests', () => {
               }),
             }),
           }
-        } else if (callCount === 2) {
-          // Create meal
+        } else if (callCount >= 2 && callCount <= 4) {
+          // Create 3 meals (breakfast, lunch, dinner)
+          const mealType = ['breakfast', 'lunch', 'dinner'][callCount - 2]
           return {
             insert: vi.fn().mockReturnValue({
               select: vi.fn().mockReturnValue({
                 single: vi.fn().mockResolvedValue({
-                  data: { id: 'meal-123', name: 'Test Breakfast' },
+                  data: { id: `meal-${mealType}`, name: `Test ${mealType}` },
                   error: null,
                 }),
               }),
             }),
           }
         } else {
-          // Create meal plan item
+          // Batch insert meal plan items (21 items: 3 meals x 7 days)
           return {
             insert: vi.fn().mockResolvedValue({
               error: null,
@@ -381,7 +418,7 @@ describe('Meal Plan Actions Integration Tests', () => {
     it('returns error with missing required fields', async () => {
       const invalidJson = JSON.stringify({
         week_summary: { total_calories: 2000 },
-        // Missing meal_plan field
+        // Missing meals array field
       })
 
       const result = await saveMealPlan(invalidJson)
@@ -425,7 +462,7 @@ describe('Meal Plan Actions Integration Tests', () => {
             }),
           }
         } else if (callCount === 2) {
-          // Create meal fails
+          // First meal (breakfast) fails
           return {
             insert: vi.fn().mockReturnValue({
               select: vi.fn().mockReturnValue({
@@ -436,7 +473,21 @@ describe('Meal Plan Actions Integration Tests', () => {
               }),
             }),
           }
+        } else if (callCount >= 3 && callCount <= 4) {
+          // Other meals succeed
+          const mealType = ['lunch', 'dinner'][callCount - 3]
+          return {
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: { id: `meal-${mealType}`, name: `Test ${mealType}` },
+                  error: null,
+                }),
+              }),
+            }),
+          }
         } else {
+          // Batch insert meal plan items (partial - only 2 meals x 7 days = 14 items)
           return {
             insert: vi.fn().mockResolvedValue({
               error: null,
@@ -642,27 +693,30 @@ describe('Meal Plan Actions Integration Tests', () => {
 
   describe('swapMeal', () => {
     it('swaps meal with budget swap type', async () => {
-      // Mock AI SDK
-      const { streamText } = await import('ai')
-      vi.mocked(streamText).mockResolvedValue({
-        textStream: (async function* () {
-          yield JSON.stringify({
-            name: 'Budget-Friendly Breakfast',
-            description: 'Affordable alternative',
-            ingredients: [{ name: 'Oats', quantity: 1, unit: 'cup' }],
-            instructions: ['Cook oats'],
-            prep_time: 5,
-            cook_time: 5,
-            servings: 1,
-            nutrition_per_serving: {
-              calories: 250,
-              protein: 10,
-              carbs: 40,
-              fats: 5,
+      // Mock OpenAI SDK (direct API call, not streaming)
+      mockOpenAICreate.mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                name: 'Budget-Friendly Breakfast',
+                description: 'Affordable alternative',
+                ingredients: [{ name: 'Oats', quantity: 1, unit: 'cup' }],
+                instructions: ['Cook oats'],
+                prep_time: 5,
+                cook_time: 5,
+                servings: 1,
+                nutrition_per_serving: {
+                  calories: 250,
+                  protein: 10,
+                  carbs: 40,
+                  fats: 5,
+                },
+              }),
             },
-          })
-        })(),
-      } as never)
+          },
+        ],
+      })
 
       let callCount = 0
 
