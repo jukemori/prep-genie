@@ -104,6 +104,8 @@ export class MealPlanPage {
   }
 
   async getTotalMealCount(): Promise<number> {
+    // Wait for at least one meal item to appear before counting
+    await this.mealItems.first().waitFor({ state: 'visible', timeout: 10000 })
     return await this.mealItems.count()
   }
 

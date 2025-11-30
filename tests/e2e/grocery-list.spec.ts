@@ -66,11 +66,11 @@ test.describe('Grocery List', () => {
     // Verify checkbox is initially unchecked
     await expect(firstCheckbox).not.toBeChecked()
 
-    // Click checkbox and wait for state change
+    // Click checkbox and wait for state change (includes API call)
     await firstCheckbox.click()
 
-    // Wait for Radix UI's data-state attribute to update (more reliable than toBeChecked)
-    await expect(firstCheckbox).toHaveAttribute('data-state', 'checked', { timeout: 3000 })
+    // Wait for Radix UI's data-state attribute to update (includes network round-trip)
+    await expect(firstCheckbox).toHaveAttribute('data-state', 'checked', { timeout: 10000 })
   })
 
   test('should display estimated cost', async ({ page }) => {
