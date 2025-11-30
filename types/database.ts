@@ -161,6 +161,7 @@ export type Database = {
           created_at: string | null
           cuisine_type: string | null
           description: string | null
+          dietary_tags: string[] | null
           difficulty_level: string | null
           fats_per_serving: number | null
           id: string
@@ -169,6 +170,8 @@ export type Database = {
           instructions: string[] | null
           is_ai_generated: boolean | null
           is_public: boolean | null
+          is_seed_meal: boolean | null
+          locale: string | null
           meal_prep_friendly: boolean | null
           meal_type: string | null
           name: string
@@ -192,6 +195,7 @@ export type Database = {
           created_at?: string | null
           cuisine_type?: string | null
           description?: string | null
+          dietary_tags?: string[] | null
           difficulty_level?: string | null
           fats_per_serving?: number | null
           id?: string
@@ -200,6 +204,8 @@ export type Database = {
           instructions?: string[] | null
           is_ai_generated?: boolean | null
           is_public?: boolean | null
+          is_seed_meal?: boolean | null
+          locale?: string | null
           meal_prep_friendly?: boolean | null
           meal_type?: string | null
           name: string
@@ -223,6 +229,7 @@ export type Database = {
           created_at?: string | null
           cuisine_type?: string | null
           description?: string | null
+          dietary_tags?: string[] | null
           difficulty_level?: string | null
           fats_per_serving?: number | null
           id?: string
@@ -231,6 +238,8 @@ export type Database = {
           instructions?: string[] | null
           is_ai_generated?: boolean | null
           is_public?: boolean | null
+          is_seed_meal?: boolean | null
+          locale?: string | null
           meal_prep_friendly?: boolean | null
           meal_type?: string | null
           name?: string
