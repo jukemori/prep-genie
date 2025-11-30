@@ -33,7 +33,7 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
     const prompt = generateRecipeAnalysisPrompt(recipeText, data.locale)
 
     const completion = await openai.chat.completions.create({
-      model: MODELS.GPT5_NANO,
+      model: MODELS.GPT5_NANO, // Fastest GPT-5 variant
       messages: [
         { role: 'system', content: RECIPE_ANALYZER_SYSTEM_PROMPT },
         { role: 'user', content: prompt },
