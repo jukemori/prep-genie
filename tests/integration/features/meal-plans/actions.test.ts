@@ -29,9 +29,18 @@ vi.mock('ai', () => ({
   streamText: vi.fn(),
 }))
 
-// Mock OpenAI
+// Mock OpenAI SDK
 vi.mock('@ai-sdk/openai', () => ({
   openai: vi.fn(() => 'gpt-5-nano'),
+}))
+
+// Mock OpenAI client (from lib/ai/openai.ts)
+vi.mock('@/lib/ai/openai', () => ({
+  openai: {},
+  MODELS: {
+    chat: 'gpt-5-nano',
+    embedding: 'text-embedding-3-small',
+  },
 }))
 
 // Mock Supabase client
