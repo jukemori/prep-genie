@@ -45,7 +45,7 @@ export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanI
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-lg border p-4">
+    <div className="flex items-start gap-3 rounded-lg border p-4" data-testid="meal-item">
       <Checkbox
         checked={isCompleted}
         onCheckedChange={handleToggleCompleted}

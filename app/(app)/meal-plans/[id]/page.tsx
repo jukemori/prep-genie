@@ -88,8 +88,9 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
               {t('generate_grocery_list')}
             </Link>
           </Button>
-          <Button variant="destructive" size="icon">
+          <Button variant="destructive" size="icon" aria-label={t('delete_meal_plan')}>
             <Trash2 className="h-4 w-4" />
+            <span className="sr-only">{t('delete_meal_plan')}</span>
           </Button>
         </div>
       </div>
@@ -137,7 +138,7 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
         Object.keys(groupedByDay)
           .sort()
           .map((day: string) => (
-            <Card key={day}>
+            <Card key={day} data-testid="day-card">
               <CardHeader>
                 <CardTitle>{dayNames[Number(day)]}</CardTitle>
               </CardHeader>
