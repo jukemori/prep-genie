@@ -1,6 +1,5 @@
 'use client'
 
-import { readStreamableValue } from '@ai-sdk/rsc'
 import { ArrowLeft, Loader2, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -8,8 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Progress } from '@/components/atoms/ui/progress'
-import { generateAIMealPlan } from '@/features/meal-plans/actions'
+import { generateInstantMealPlan } from '@/features/meal-plans/actions'
 
 import { CuisineSelector } from '@/features/meal-plans/components/cuisine-selector'
 
@@ -18,8 +16,6 @@ export default function GenerateMealPlanPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [progress, setProgress] = useState(0)
-  const [currentDay, setCurrentDay] = useState(0)
   const [selectedCuisine, setSelectedCuisine] = useState<
     'japanese' | 'korean' | 'mediterranean' | 'western' | 'halal' | undefined
   >(undefined)
@@ -27,41 +23,27 @@ export default function GenerateMealPlanPage() {
   async function handleGenerate() {
     setLoading(true)
     setError(null)
-    setProgress(0)
-    setCurrentDay(0)
 
     try {
-      // Generate with streaming - get real-time progress
-      const { stream } = await generateAIMealPlan(selectedCuisine)
+      // Instant database-based generation - no AI delay!
+      const result = await generateInstantMealPlan({
+        cuisineType: selectedCuisine ?? 'any',
+        mealsPerDay: 3,
+        varietyLevel: 'medium',
+      })
 
-      for await (const chunk of readStreamableValue(stream)) {
-        if (chunk) {
-          try {
-            const message = JSON.parse(chunk)
+      if (result.error) {
+        setError(result.error)
+        return
+      }
 
-            if (message.type === 'progress') {
-              // Update progress: day N of 7 total
-              const progressPercent = (message.day / message.total) * 100
-              setProgress(progressPercent)
-              setCurrentDay(message.day)
-            } else if (message.type === 'complete') {
-              // Generation complete - redirect to meal plan
-              if (message.success && message.id) {
-                router.push(`/meal-plans/${message.id}`)
-                return
-              }
-            }
-          } catch {
-            // Ignore non-JSON chunks
-          }
-        }
+      if (result.data?.id) {
+        router.push(`/meal-plans/${result.data.id}`)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate meal plan')
     } finally {
       setLoading(false)
-      setProgress(0)
-      setCurrentDay(0)
     }
   }
 
@@ -134,14 +116,6 @@ export default function GenerateMealPlanPage() {
                 ? t('creating_cuisine_meals', { cuisine: selectedCuisine })
                 : t('generating_wait')}
             </p>
-            <div className="mt-4 w-full max-w-md space-y-2">
-              <Progress value={progress} className="h-2" />
-              {currentDay > 0 && (
-                <p className="text-xs text-center text-muted-foreground">
-                  Generating Day {currentDay} of 7 ({Math.round(progress)}%)
-                </p>
-              )}
-            </div>
           </CardContent>
         </Card>
       )}
