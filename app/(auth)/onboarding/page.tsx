@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useState, useTransition } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import {
   Card,
@@ -22,12 +23,18 @@ import {
 } from '@/components/atoms/ui/select'
 import { createUserProfile } from '@/features/user-profile/actions'
 
-type Step = 1 | 2 | 3 | 4
+type Step = 0 | 1 | 2 | 3 | 4 | 5
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 5
+
+const ALLERGIES = ['dairy', 'eggs', 'nuts', 'shellfish', 'soy', 'gluten'] as const
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState<Step>(1)
+  const t = useTranslations('onboarding')
+  const locale = useLocale()
+  const [isPending, startTransition] = useTransition()
+
+  const [step, setStep] = useState<Step>(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -51,6 +58,24 @@ export default function OnboardingPage() {
   }
 
   const progress = (step / TOTAL_STEPS) * 100
+
+  function handleLanguageChange(newLocale: string) {
+    startTransition(async () => {
+      try {
+        const response = await fetch('/api/locale', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ locale: newLocale }),
+        })
+
+        if (response.ok) {
+          window.location.reload()
+        }
+      } catch {
+        // Silently fail
+      }
+    })
+  }
 
   async function handleSubmit() {
     setLoading(true)
@@ -86,13 +111,15 @@ export default function OnboardingPage() {
   }
 
   const handleBack = () => {
-    if (step > 1) {
+    if (step > 0) {
       setStep((step - 1) as Step)
     }
   }
 
   const canProceed = () => {
     switch (step) {
+      case 0:
+        return true // Language selection - always can proceed
       case 1:
         return formData.age && formData.weight && formData.height && formData.gender
       case 2:
@@ -100,6 +127,8 @@ export default function OnboardingPage() {
       case 3:
         return formData.dietaryPreference
       case 4:
+        return true // Optional step
+      case 5:
         return true
       default:
         return false
@@ -110,20 +139,48 @@ export default function OnboardingPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Welcome to PrepGenie</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('welcome')}</CardTitle>
           <CardDescription>
-            Let's personalize your experience - Step {step} of {TOTAL_STEPS}
+            {t('lets_personalize')} - {t('step_of', { step: step + 1, total: TOTAL_STEPS + 1 })}
           </CardDescription>
           <Progress value={progress} className="mt-4" />
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {/* Step 0: Language Selection */}
+            {step === 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t('select_language')}</h3>
+                <p className="text-sm text-muted-foreground">{t('select_language_description')}</p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Button
+                    variant={locale === 'en' ? 'default' : 'outline'}
+                    className="h-20 text-lg"
+                    onClick={() => locale !== 'en' && handleLanguageChange('en')}
+                    disabled={isPending}
+                  >
+                    🇺🇸 English
+                  </Button>
+                  <Button
+                    variant={locale === 'ja' ? 'default' : 'outline'}
+                    className="h-20 text-lg"
+                    onClick={() => locale !== 'ja' && handleLanguageChange('ja')}
+                    disabled={isPending}
+                  >
+                    🇯🇵 日本語
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 1: Basic Information */}
             {step === 1 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Basic Information</h3>
+                <h3 className="text-lg font-semibold">{t('basic_info')}</h3>
+                <p className="text-sm text-muted-foreground">{t('basic_info_description')}</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age</Label>
+                    <Label htmlFor="age">{t('age')}</Label>
                     <Input
                       id="age"
                       type="number"
@@ -133,23 +190,23 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="gender">Gender</Label>
+                    <Label htmlFor="gender">{t('gender')}</Label>
                     <Select
                       value={formData.gender}
                       onValueChange={(value) => updateField('gender', value)}
                     >
                       <SelectTrigger id="gender">
-                        <SelectValue placeholder="Select gender" />
+                        <SelectValue placeholder={t('select_gender')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="male">{t('male')}</SelectItem>
+                        <SelectItem value="female">{t('female')}</SelectItem>
+                        <SelectItem value="other">{t('other')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Label htmlFor="weight">{t('weight')}</Label>
                     <Input
                       id="weight"
                       type="number"
@@ -160,7 +217,7 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="height">Height (cm)</Label>
+                    <Label htmlFor="height">{t('height')}</Label>
                     <Input
                       id="height"
                       type="number"
@@ -173,42 +230,44 @@ export default function OnboardingPage() {
               </div>
             )}
 
+            {/* Step 2: Fitness & Goals */}
             {step === 2 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Fitness & Goals</h3>
+                <h3 className="text-lg font-semibold">{t('fitness_goals')}</h3>
+                <p className="text-sm text-muted-foreground">{t('fitness_goals_description')}</p>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="activityLevel">Activity Level</Label>
+                    <Label htmlFor="activityLevel">{t('activity_level')}</Label>
                     <Select
                       value={formData.activityLevel}
                       onValueChange={(value) => updateField('activityLevel', value)}
                     >
                       <SelectTrigger id="activityLevel">
-                        <SelectValue placeholder="Select activity level" />
+                        <SelectValue placeholder={t('select_activity_level')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="sedentary">Sedentary (little to no exercise)</SelectItem>
-                        <SelectItem value="light">Light (1-3 days/week)</SelectItem>
-                        <SelectItem value="moderate">Moderate (3-5 days/week)</SelectItem>
-                        <SelectItem value="active">Active (6-7 days/week)</SelectItem>
-                        <SelectItem value="very_active">Very Active (2x per day)</SelectItem>
+                        <SelectItem value="sedentary">{t('sedentary')}</SelectItem>
+                        <SelectItem value="light">{t('light')}</SelectItem>
+                        <SelectItem value="moderate">{t('moderate')}</SelectItem>
+                        <SelectItem value="active">{t('active')}</SelectItem>
+                        <SelectItem value="very_active">{t('very_active')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="goal">Primary Goal</Label>
+                    <Label htmlFor="goal">{t('primary_goal')}</Label>
                     <Select
                       value={formData.goal}
                       onValueChange={(value) => updateField('goal', value)}
                     >
                       <SelectTrigger id="goal">
-                        <SelectValue placeholder="Select your goal" />
+                        <SelectValue placeholder={t('select_goal')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="weight_loss">Weight Loss</SelectItem>
-                        <SelectItem value="maintain">Maintain Weight</SelectItem>
-                        <SelectItem value="muscle_gain">Muscle Gain</SelectItem>
-                        <SelectItem value="balanced">Balanced Health</SelectItem>
+                        <SelectItem value="weight_loss">{t('weight_loss')}</SelectItem>
+                        <SelectItem value="maintain">{t('maintain')}</SelectItem>
+                        <SelectItem value="muscle_gain">{t('muscle_gain')}</SelectItem>
+                        <SelectItem value="balanced">{t('balanced')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -216,52 +275,54 @@ export default function OnboardingPage() {
               </div>
             )}
 
+            {/* Step 3: Dietary Preferences */}
             {step === 3 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Dietary Preferences</h3>
+                <h3 className="text-lg font-semibold">{t('dietary_preferences')}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {t('dietary_preferences_description')}
+                </p>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="dietaryPreference">Diet Type</Label>
+                    <Label htmlFor="dietaryPreference">{t('diet_type')}</Label>
                     <Select
                       value={formData.dietaryPreference}
                       onValueChange={(value) => updateField('dietaryPreference', value)}
                     >
                       <SelectTrigger id="dietaryPreference">
-                        <SelectValue placeholder="Select dietary preference" />
+                        <SelectValue placeholder={t('select_diet_type')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="omnivore">Omnivore</SelectItem>
-                        <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                        <SelectItem value="vegan">Vegan</SelectItem>
-                        <SelectItem value="pescatarian">Pescatarian</SelectItem>
-                        <SelectItem value="halal">Halal</SelectItem>
+                        <SelectItem value="omnivore">{t('omnivore')}</SelectItem>
+                        <SelectItem value="vegetarian">{t('vegetarian')}</SelectItem>
+                        <SelectItem value="vegan">{t('vegan')}</SelectItem>
+                        <SelectItem value="pescatarian">{t('pescatarian')}</SelectItem>
+                        <SelectItem value="halal">{t('halal')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Common Allergies (select all that apply)</Label>
+                    <Label>{t('allergies')}</Label>
+                    <p className="text-sm text-muted-foreground">{t('allergies_description')}</p>
                     <div className="grid grid-cols-2 gap-3">
-                      {['Dairy', 'Eggs', 'Nuts', 'Shellfish', 'Soy', 'Gluten'].map((allergen) => (
+                      {ALLERGIES.map((allergen) => (
                         <div key={allergen} className="flex items-center space-x-2">
                           <Checkbox
                             id={allergen}
-                            checked={formData.allergies.includes(allergen.toLowerCase())}
+                            checked={formData.allergies.includes(allergen)}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                updateField('allergies', [
-                                  ...formData.allergies,
-                                  allergen.toLowerCase(),
-                                ])
+                                updateField('allergies', [...formData.allergies, allergen])
                               } else {
                                 updateField(
                                   'allergies',
-                                  formData.allergies.filter((a) => a !== allergen.toLowerCase())
+                                  formData.allergies.filter((a) => a !== allergen)
                                 )
                               }
                             }}
                           />
                           <Label htmlFor={allergen} className="cursor-pointer font-normal">
-                            {allergen}
+                            {t(allergen)}
                           </Label>
                         </div>
                       ))}
@@ -271,45 +332,49 @@ export default function OnboardingPage() {
               </div>
             )}
 
+            {/* Step 4: Cooking Preferences */}
             {step === 4 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Cooking Preferences (Optional)</h3>
+                <h3 className="text-lg font-semibold">{t('cooking_preferences')}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {t('cooking_preferences_description')}
+                </p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="cookingSkillLevel">Cooking Skill Level</Label>
+                    <Label htmlFor="cookingSkillLevel">{t('cooking_skill')}</Label>
                     <Select
                       value={formData.cookingSkillLevel}
                       onValueChange={(value) => updateField('cookingSkillLevel', value)}
                     >
                       <SelectTrigger id="cookingSkillLevel">
-                        <SelectValue placeholder="Select skill level" />
+                        <SelectValue placeholder={t('select_skill_level')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
+                        <SelectItem value="beginner">{t('beginner')}</SelectItem>
+                        <SelectItem value="intermediate">{t('intermediate')}</SelectItem>
+                        <SelectItem value="advanced">{t('advanced')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="budgetLevel">Budget Level</Label>
+                    <Label htmlFor="budgetLevel">{t('budget_level')}</Label>
                     <Select
                       value={formData.budgetLevel}
                       onValueChange={(value) => updateField('budgetLevel', value)}
                     >
                       <SelectTrigger id="budgetLevel">
-                        <SelectValue placeholder="Select budget" />
+                        <SelectValue placeholder={t('select_budget')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">Low Budget</SelectItem>
-                        <SelectItem value="medium">Medium Budget</SelectItem>
-                        <SelectItem value="high">High Budget</SelectItem>
+                        <SelectItem value="low">{t('low_budget')}</SelectItem>
+                        <SelectItem value="medium">{t('medium_budget')}</SelectItem>
+                        <SelectItem value="high">{t('high_budget')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="timeAvailable">
-                      Time Available for Meal Prep (minutes/day)
+                      {t('time_available')} ({t('minutes_per_day')})
                     </Label>
                     <Input
                       id="timeAvailable"
@@ -334,12 +399,20 @@ export default function OnboardingPage() {
                 type="button"
                 variant="outline"
                 onClick={handleBack}
-                disabled={step === 1 || loading}
+                disabled={step === 0 || loading || isPending}
               >
-                Back
+                {t('back')}
               </Button>
-              <Button type="button" onClick={handleNext} disabled={!canProceed() || loading}>
-                {step === TOTAL_STEPS ? (loading ? 'Creating profile...' : 'Complete') : 'Next'}
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={!canProceed() || loading || isPending}
+              >
+                {step === TOTAL_STEPS - 1
+                  ? loading
+                    ? t('creating_profile')
+                    : t('complete')
+                  : t('next')}
               </Button>
             </div>
           </div>
