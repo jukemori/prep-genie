@@ -29,7 +29,7 @@ export function AppSidebar() {
   const t = useTranslations('navigation')
 
   return (
-    <aside className="hidden w-64 border-r bg-card lg:block">
+    <aside className="hidden w-64 shrink-0 border-r bg-card lg:block">
       <div className="flex h-full flex-col">
         <div className="flex h-16 items-center gap-2 border-b px-6">
           <ChefHat className="h-6 w-6 text-primary" />
