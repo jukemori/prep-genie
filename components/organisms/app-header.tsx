@@ -22,13 +22,10 @@ export function AppHeader() {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b px-6">
-      <div className="flex items-center gap-4">
-        <AppMobileNav />
-        <h1 className="text-xl font-semibold">Dashboard</h1>
-      </div>
+    <header className="flex h-16 shrink-0 items-center border-b px-6">
+      <AppMobileNav />
 
-      <div className="flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
