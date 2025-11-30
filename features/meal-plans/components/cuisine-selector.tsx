@@ -1,6 +1,7 @@
 'use client'
 
 import { Check, Globe } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/atoms/ui/button'
 
 interface CuisineSelectorProps {
@@ -10,59 +11,39 @@ interface CuisineSelectorProps {
   ) => void
 }
 
-const cuisineOptions = [
-  {
-    value: 'japanese',
-    label: 'Japanese',
-    description: 'Umami-rich, balanced meals with rice, fish, and vegetables',
-  },
-  {
-    value: 'korean',
-    label: 'Korean',
-    description: 'Bold flavors, fermented foods, and banchan side dishes',
-  },
-  {
-    value: 'mediterranean',
-    label: 'Mediterranean',
-    description: 'Heart-healthy with olive oil, fresh produce, and seafood',
-  },
-  {
-    value: 'western',
-    label: 'Western',
-    description: 'American and European classics with modern adaptations',
-  },
-  {
-    value: 'halal',
-    label: 'Halal',
-    description: 'Islamic dietary guidelines with halal-certified ingredients',
-  },
-] as const
+const cuisineKeys = ['japanese', 'korean', 'mediterranean', 'western', 'halal'] as const
 
 export function CuisineSelector({ value, onValueChange }: CuisineSelectorProps) {
+  const t = useTranslations('generate_meal_plan_page')
+
   return (
     <div className="space-y-3">
       <div className="grid gap-3">
-        {cuisineOptions.map((cuisine) => (
+        {cuisineKeys.map((cuisineKey) => (
           <Button
-            key={cuisine.value}
-            variant={value === cuisine.value ? 'default' : 'outline'}
+            key={cuisineKey}
+            variant={value === cuisineKey ? 'default' : 'outline'}
             className="h-auto flex-col items-start justify-start p-4 text-left"
+            data-cuisine={cuisineKey}
+            data-selected={value === cuisineKey ? 'true' : 'false'}
             onClick={() => {
-              if (value === cuisine.value) {
+              if (value === cuisineKey) {
                 onValueChange(undefined) // Deselect if already selected
               } else {
-                onValueChange(cuisine.value as typeof value)
+                onValueChange(cuisineKey)
               }
             }}
           >
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
-                <span className="font-semibold">{cuisine.label}</span>
+                <span className="font-semibold">{t(`cuisine_${cuisineKey}`)}</span>
               </div>
-              {value === cuisine.value && <Check className="h-4 w-4" />}
+              {value === cuisineKey && <Check className="h-4 w-4" />}
             </div>
-            <p className="mt-1 text-xs font-normal text-muted-foreground">{cuisine.description}</p>
+            <p className="mt-1 text-xs font-normal text-muted-foreground">
+              {t(`cuisine_${cuisineKey}_desc`)}
+            </p>
           </Button>
         ))}
       </div>
@@ -74,7 +55,7 @@ export function CuisineSelector({ value, onValueChange }: CuisineSelectorProps) 
           onClick={() => onValueChange(undefined)}
           className="w-full"
         >
-          Clear Selection (Generate Mixed Cuisines)
+          {t('clear_cuisine_selection')}
         </Button>
       )}
     </div>

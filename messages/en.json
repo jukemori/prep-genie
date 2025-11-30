@@ -357,7 +357,8 @@
     "confirm_swap": "Confirm Swap",
     "meal_swapped_success": "Meal swapped successfully!",
     "meal_swap_failed": "Failed to swap meal",
-    "meal_status_update_failed": "Failed to update meal status"
+    "meal_status_update_failed": "Failed to update meal status",
+    "delete_meal_plan": "Delete meal plan"
   },
   "grocery_lists_page": {
     "title": "Grocery Lists",
@@ -447,6 +448,17 @@
     "budget_ingredients": "Budget and ingredient preferences",
     "cuisine_type_optional": "Cuisine Type (Optional)",
     "cuisine_type_description": "Select a specific cuisine for authentic cultural recipes, or leave unselected for variety",
+    "cuisine_japanese": "Japanese",
+    "cuisine_japanese_desc": "Umami-rich, balanced meals with rice, fish, and vegetables",
+    "cuisine_korean": "Korean",
+    "cuisine_korean_desc": "Bold flavors, fermented foods, and banchan side dishes",
+    "cuisine_mediterranean": "Mediterranean",
+    "cuisine_mediterranean_desc": "Heart-healthy with olive oil, fresh produce, and seafood",
+    "cuisine_western": "Western",
+    "cuisine_western_desc": "American and European classics with modern adaptations",
+    "cuisine_halal": "Halal",
+    "cuisine_halal_desc": "Islamic dietary guidelines with halal-certified ingredients",
+    "clear_cuisine_selection": "Clear Selection (Generate Mixed Cuisines)",
     "generate_button": "Generate Meal Plan",
     "generating_title": "Generating Your Meal Plan",
     "creating_cuisine_meals": "Creating {cuisine} cuisine meals...",
