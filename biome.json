@@ -4,6 +4,18 @@
     "ignoreUnknown": true,
     "includes": ["**", "!types/database.ts", "!app/globals.css"]
   },
+  "overrides": [
+    {
+      "includes": ["**/loading.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noArrayIndexKey": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {
