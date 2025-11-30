@@ -56,52 +56,57 @@ export default async function MealsPage({ searchParams }: PageProps) {
   const { data: meals } = await query
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">{t('description')}</p>
-        </div>
-        <Button asChild>
-          <Link href="/meals/new">
-            <Plus className="mr-2 h-4 w-4" />
-            {t('add_meal')}
-          </Link>
-        </Button>
-      </div>
-
-      {/* Search and Filters */}
-      <MealFilters
-        defaultSearch={params.search}
-        defaultCuisine={params.cuisine}
-        defaultMealType={params.mealType}
-        defaultTag={params.tag}
-      />
-
-      {/* Meals Grid */}
-      {meals && meals.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {meals.map((meal) => (
-            <MealCard key={meal.id} meal={meal as Meal} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-            <Plus className="h-6 w-6 text-muted-foreground" />
+    <div className="-m-6 flex h-[calc(100vh-4rem)] flex-col">
+      {/* Fixed Header Section */}
+      <div className="shrink-0 space-y-4 p-6 pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('description')}</p>
           </div>
-          <h3 className="mb-2 text-lg font-semibold">{t('no_meals_found')}</h3>
-          <p className="mb-4 text-sm text-muted-foreground">
-            {params.search || params.tag ? t('adjust_filters') : t('get_started')}
-          </p>
           <Button asChild>
             <Link href="/meals/new">
               <Plus className="mr-2 h-4 w-4" />
-              {t('add_first_meal')}
+              {t('add_meal')}
             </Link>
           </Button>
         </div>
-      )}
+
+        {/* Search and Filters */}
+        <MealFilters
+          defaultSearch={params.search}
+          defaultCuisine={params.cuisine}
+          defaultMealType={params.mealType}
+          defaultTag={params.tag}
+        />
+      </div>
+
+      {/* Scrollable Meals Grid */}
+      <div className="flex-1 overflow-y-auto px-6 pb-6">
+        {meals && meals.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {meals.map((meal) => (
+              <MealCard key={meal.id} meal={meal as Meal} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+              <Plus className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">{t('no_meals_found')}</h3>
+            <p className="mb-4 text-sm text-muted-foreground">
+              {params.search || params.tag ? t('adjust_filters') : t('get_started')}
+            </p>
+            <Button asChild>
+              <Link href="/meals/new">
+                <Plus className="mr-2 h-4 w-4" />
+                {t('add_first_meal')}
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
