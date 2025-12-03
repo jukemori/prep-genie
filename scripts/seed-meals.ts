@@ -1,4 +1,5 @@
 #!/usr/bin/env npx tsx
+
 /**
  * Seed Meals Script
  *
@@ -6,9 +7,9 @@
  * Run with: pnpm seed:meals --locale=en or pnpm seed:meals --locale=ja
  */
 
-import dotenv from 'dotenv'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import dotenv from 'dotenv'
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })
@@ -115,10 +116,10 @@ async function main() {
 
   // Count by meal type
   const counts = {
-    breakfast: meals.filter(m => m.meal_type === 'breakfast').length,
-    lunch: meals.filter(m => m.meal_type === 'lunch').length,
-    dinner: meals.filter(m => m.meal_type === 'dinner').length,
-    snack: meals.filter(m => m.meal_type === 'snack').length,
+    breakfast: meals.filter((m) => m.meal_type === 'breakfast').length,
+    lunch: meals.filter((m) => m.meal_type === 'lunch').length,
+    dinner: meals.filter((m) => m.meal_type === 'dinner').length,
+    snack: meals.filter((m) => m.meal_type === 'snack').length,
   }
 
   console.log('\nMeal distribution:')

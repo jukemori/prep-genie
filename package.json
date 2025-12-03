@@ -24,7 +24,8 @@
     "supabase:reset": "supabase db reset",
     "supabase:types": "supabase gen types typescript --project-id nwuzxcpljlvwhpitwutf > types/database.ts",
     "supabase:migration": "supabase migration new",
-    "seed:meals": "npx tsx scripts/seed-meals.ts"
+    "seed:meals": "npx tsx scripts/seed-meals.ts",
+    "validate:meals": "npx tsx scripts/validate-meals.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.72",
