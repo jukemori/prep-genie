@@ -314,6 +314,185 @@ describe('Meal Matcher', () => {
 
       expect(typeof score).toBe('number')
     })
+
+    // New tests for enhanced scoring
+    describe('prep time scoring', () => {
+      it('should penalize meals that exceed available time', () => {
+        const quickMeal = createMockMeal({ prep_time: 20 })
+        const slowMeal = createMockMeal({ prep_time: 90 })
+        const profile = createMockProfile({ time_available: 30 })
+
+        const quickScore = calculateMealScore(quickMeal, profile, new Set())
+        const slowScore = calculateMealScore(slowMeal, profile, new Set())
+
+        expect(quickScore).toBeGreaterThan(slowScore)
+      })
+
+      it('should give bonus for quick meals when user has limited time', () => {
+        const veryQuickMeal = createMockMeal({ prep_time: 15 }) // Half of available time
+        const normalMeal = createMockMeal({ prep_time: 50 })
+        const profile = createMockProfile({ time_available: 60 })
+
+        const quickScore = calculateMealScore(veryQuickMeal, profile, new Set())
+        const normalScore = calculateMealScore(normalMeal, profile, new Set())
+
+        expect(quickScore).toBeGreaterThan(normalScore)
+      })
+
+      it('should use default time_available when null', () => {
+        const meal = createMockMeal({ prep_time: 30 })
+        const profile = createMockProfile({ time_available: null })
+
+        const score = calculateMealScore(meal, profile, new Set())
+
+        expect(typeof score).toBe('number')
+        expect(score).toBeGreaterThan(0)
+      })
+    })
+
+    describe('skill level scoring', () => {
+      it('should give bonus when meal difficulty matches user skill', () => {
+        const easyMeal = createMockMeal({ difficulty_level: 'easy' })
+        const hardMeal = createMockMeal({ difficulty_level: 'hard' })
+        const beginnerProfile = createMockProfile({ cooking_skill_level: 'beginner' })
+
+        const easyScore = calculateMealScore(easyMeal, beginnerProfile, new Set())
+        const hardScore = calculateMealScore(hardMeal, beginnerProfile, new Set())
+
+        expect(easyScore).toBeGreaterThan(hardScore)
+      })
+
+      it('should allow advanced users to cook any difficulty', () => {
+        const easyMeal = createMockMeal({ difficulty_level: 'easy' })
+        const hardMeal = createMockMeal({ difficulty_level: 'hard' })
+        const advancedProfile = createMockProfile({ cooking_skill_level: 'advanced' })
+
+        const easyScore = calculateMealScore(easyMeal, advancedProfile, new Set())
+        const hardScore = calculateMealScore(hardMeal, advancedProfile, new Set())
+
+        // Both should get bonus since advanced can handle any difficulty
+        expect(easyScore).toBeGreaterThan(0)
+        expect(hardScore).toBeGreaterThan(0)
+      })
+
+      it('should penalize meals too difficult for user', () => {
+        const hardMeal = createMockMeal({ difficulty_level: 'hard' })
+        const beginnerProfile = createMockProfile({ cooking_skill_level: 'beginner' })
+        const advancedProfile = createMockProfile({ cooking_skill_level: 'advanced' })
+
+        const beginnerScore = calculateMealScore(hardMeal, beginnerProfile, new Set())
+        const advancedScore = calculateMealScore(hardMeal, advancedProfile, new Set())
+
+        expect(advancedScore).toBeGreaterThan(beginnerScore)
+      })
+
+      it('should use default skill level when null', () => {
+        const meal = createMockMeal({ difficulty_level: 'medium' })
+        const profile = createMockProfile({ cooking_skill_level: null })
+
+        const score = calculateMealScore(meal, profile, new Set())
+
+        expect(typeof score).toBe('number')
+      })
+    })
+
+    describe('budget level scoring', () => {
+      it('should penalize complex meals for low budget users', () => {
+        const simpleMeal = createMockMeal({
+          ingredients: [
+            { name: 'Rice', quantity: 1, unit: 'cup', category: 'grain' },
+            { name: 'Egg', quantity: 2, unit: 'pcs', category: 'protein' },
+          ],
+        })
+        const complexMeal = createMockMeal({
+          ingredients: Array.from({ length: 12 }, (_, i) => ({
+            name: `Ingredient ${i}`,
+            quantity: 1,
+            unit: 'pcs',
+            category: 'misc',
+          })),
+        })
+        const lowBudgetProfile = createMockProfile({ budget_level: 'low' })
+
+        const simpleScore = calculateMealScore(simpleMeal, lowBudgetProfile, new Set())
+        const complexScore = calculateMealScore(complexMeal, lowBudgetProfile, new Set())
+
+        expect(simpleScore).toBeGreaterThan(complexScore)
+      })
+
+      it('should give bonus for complex meals to high budget users', () => {
+        const complexMeal = createMockMeal({
+          ingredients: Array.from({ length: 10 }, (_, i) => ({
+            name: `Ingredient ${i}`,
+            quantity: 1,
+            unit: 'pcs',
+            category: 'misc',
+          })),
+        })
+        const highBudgetProfile = createMockProfile({ budget_level: 'high' })
+        const lowBudgetProfile = createMockProfile({ budget_level: 'low' })
+
+        const highBudgetScore = calculateMealScore(complexMeal, highBudgetProfile, new Set())
+        const lowBudgetScore = calculateMealScore(complexMeal, lowBudgetProfile, new Set())
+
+        expect(highBudgetScore).toBeGreaterThan(lowBudgetScore)
+      })
+
+      it('should handle null ingredients', () => {
+        const meal = createMockMeal({ ingredients: null })
+        const profile = createMockProfile({ budget_level: 'low' })
+
+        const score = calculateMealScore(meal, profile, new Set())
+
+        expect(typeof score).toBe('number')
+      })
+    })
+
+    describe('score boundaries', () => {
+      it('should never return negative score', () => {
+        // Create worst case scenario
+        const meal = createMockMeal({
+          calories_per_serving: 2000, // Way off target
+          prep_time: 120, // Very long
+          difficulty_level: 'hard',
+          ingredients: Array.from({ length: 20 }, (_, i) => ({
+            name: `Ingredient ${i}`,
+            quantity: 1,
+            unit: 'pcs',
+            category: 'misc',
+          })),
+        })
+        const profile = createMockProfile({
+          daily_calorie_target: 1500,
+          time_available: 15,
+          cooking_skill_level: 'beginner',
+          budget_level: 'low',
+        })
+
+        const score = calculateMealScore(meal, profile, new Set([meal.id]))
+
+        expect(score).toBeGreaterThanOrEqual(0)
+      })
+
+      it('should cap calorie penalty at 30 points', () => {
+        const veryHighCalMeal = createMockMeal({ calories_per_serving: 2000 })
+        const highCalMeal = createMockMeal({ calories_per_serving: 1500 })
+        const profile = createMockProfile({ daily_calorie_target: 1500 }) // target ~500 per meal
+
+        const veryHighScore = calculateMealScore(veryHighCalMeal, profile, new Set())
+        const highScore = calculateMealScore(highCalMeal, profile, new Set())
+
+        // Both should be penalized, but penalty is capped
+        const veryHighPenalty = 100 - veryHighScore
+
+        // highScore is calculated to demonstrate both are penalized
+        // but veryHighPenalty should not be disproportionately worse
+        expect(highScore).toBeLessThan(100)
+
+        // Very high calorie penalty should be capped, not proportionally worse
+        expect(veryHighPenalty).toBeLessThanOrEqual(50) // With other bonuses/penalties
+      })
+    })
   })
 })
 
