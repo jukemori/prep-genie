@@ -290,7 +290,7 @@
     "fats": "Fats",
     "quick_actions": "Quick Actions",
     "what_today": "What would you like to do today?",
-    "generate_meal_plan": "Generate AI Meal Plan",
+    "generate_meal_plan": "Generate Meal Plan",
     "browse_meals": "Browse Meals",
     "log_progress": "Log Today's Progress",
     "ask_ai": "Ask AI Nutrition Assistant"
@@ -348,10 +348,10 @@
   "meal_plans_page": {
     "title": "Meal Plans",
     "description": "View and manage your meal planning schedule",
-    "generate_new": "AI Generate",
+    "generate_new": "Quick Generate",
     "create_manual": "Create Manual",
     "no_plans_found": "No meal plans yet",
-    "create_first_plan": "Create your first meal plan with AI or manually",
+    "create_first_plan": "Create your first meal plan",
     "get_started": "Get Started",
     "view_plan": "View Plan",
     "edit_plan": "Edit Plan",
@@ -364,7 +364,7 @@
     "protein": "Protein",
     "carbs": "Carbs",
     "fats": "Fats",
-    "ai_generated_plan": "AI Generated Plan"
+    "generated_plan": "Generated Plan"
   },
   "meal_plan_detail_page": {
     "back_to_meal_plans": "Back to Meal Plans",
@@ -412,7 +412,7 @@
     "low_fat_swap": "Low-Fat Swap",
     "low_fat_description": "Reduce fat content",
     "current_meal": "Current meal:",
-    "swap_confirmation_description": "This will replace the current meal with an AI-generated alternative that matches your criteria while maintaining your dietary preferences and nutrition goals.",
+    "swap_confirmation_description": "This will replace the current meal with an alternative that matches your criteria while maintaining your dietary preferences and nutrition goals.",
     "cancel": "Cancel",
     "confirm_swap": "Confirm Swap",
     "meal_swapped_success": "Meal swapped successfully!",

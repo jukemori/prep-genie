@@ -117,7 +117,7 @@ export async function generateInstantMealPlan(settings: MealPlanSettings) {
     // Get translations for meal plan name
     const locale = (profile.locale || 'en') as 'en' | 'ja'
     const t = await getTranslations('meal_plans_page')
-    const planName = `${t('ai_generated_plan')} - ${new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US')}`
+    const planName = `${t('generated_plan')} - ${new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US')}`
 
     // Create meal plan record
     const mealPlanInsert: MealPlanInsert = {
@@ -199,7 +199,7 @@ export async function saveMealPlan(mealPlanData: string, locale: 'en' | 'ja' = '
 
     // Get translations for meal plan name
     const t = await getTranslations('meal_plans_page')
-    const planName = `${t('ai_generated_plan')} - ${new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US')}`
+    const planName = `${t('generated_plan')} - ${new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US')}`
 
     // Create meal plan
     const mealPlanInsert: MealPlanInsert = {

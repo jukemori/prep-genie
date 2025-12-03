@@ -287,7 +287,7 @@
     "fats": "脂質",
     "quick_actions": "クイックアクション",
     "what_today": "今日は何をしますか？",
-    "generate_meal_plan": "AI食事プランを生成",
+    "generate_meal_plan": "食事プランを生成",
     "browse_meals": "食事を閲覧",
     "log_progress": "今日の進捗を記録",
     "ask_ai": "AI栄養アシスタントに質問"
@@ -345,10 +345,10 @@
   "meal_plans_page": {
     "title": "食事プラン",
     "description": "食事計画のスケジュールを表示・管理します",
-    "generate_new": "AI生成",
+    "generate_new": "クイック生成",
     "create_manual": "手動作成",
     "no_plans_found": "食事プランはまだありません",
-    "create_first_plan": "AIまたは手動で最初の食事プランを作成しましょう",
+    "create_first_plan": "最初の食事プランを作成しましょう",
     "get_started": "始める",
     "view_plan": "プランを表示",
     "edit_plan": "プランを編集",
@@ -361,7 +361,7 @@
     "protein": "タンパク質",
     "carbs": "炭水化物",
     "fats": "脂質",
-    "ai_generated_plan": "AI生成プラン"
+    "generated_plan": "生成プラン"
   },
   "meal_plan_detail_page": {
     "back_to_meal_plans": "食事プランに戻る",
@@ -410,7 +410,7 @@
     "low_fat_swap": "低脂質に交換",
     "low_fat_description": "脂質を減量",
     "current_meal": "現在の食事:",
-    "swap_confirmation_description": "この操作により、現在の食事を、あなたの食事の好みと栄養目標を維持しながら、指定された基準に一致するAI生成の代替食事に置き換えます。",
+    "swap_confirmation_description": "この操作により、現在の食事を、あなたの食事の好みと栄養目標を維持しながら、指定された基準に一致する代替食事に置き換えます。",
     "cancel": "キャンセル",
     "confirm_swap": "交換を確認",
     "meal_swapped_success": "食事が正常に交換されました！",
