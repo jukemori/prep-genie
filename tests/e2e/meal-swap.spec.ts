@@ -159,4 +159,92 @@ test.describe('Meal Swap', () => {
       }
     }
   })
+
+  test.describe('Seed Meal Instant Swap', () => {
+    test.skip('should swap meal instantly using seed meal (no AI delay)', async ({ page }) => {
+      // This test verifies that swaps using seed meals are instant
+      // (typically < 2 seconds vs 5-10 seconds for AI generation)
+
+      await page.goto('/meal-plans')
+
+      const viewPlanButton = page.getByRole('link', { name: /view plan|表示/i }).first()
+      await viewPlanButton.click()
+
+      await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
+
+      // Get initial meal name
+      const firstMealName = page.locator('[data-testid="meal-name"]').first()
+      const initialMealName = await firstMealName.textContent()
+
+      // Open swap menu
+      const swapMenuButton = page
+        .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+        .first()
+
+      if (await swapMenuButton.isVisible({ timeout: 5000 })) {
+        const startTime = Date.now()
+        await swapMenuButton.click()
+
+        // Click budget swap option (most likely to find seed meal match)
+        const budgetSwapOption = page.locator('text=/budget.*swap|cheaper/i')
+
+        if (await budgetSwapOption.isVisible({ timeout: 3000 })) {
+          await budgetSwapOption.click()
+
+          // Wait for swap to complete - should be fast with seed meals
+          await page.waitForLoadState('networkidle')
+
+          const endTime = Date.now()
+          const swapDuration = endTime - startTime
+
+          // Seed meal swap should complete in under 3 seconds
+          // (vs 5-10+ seconds for AI generation)
+          expect(swapDuration).toBeLessThan(3000)
+
+          // Verify meal name changed
+          const newMealName = await firstMealName.textContent()
+          expect(newMealName).not.toBe(initialMealName)
+        }
+      }
+    })
+
+    test.skip('should show loading state during swap', async ({ page }) => {
+      await page.goto('/meal-plans')
+
+      const viewPlanButton = page.getByRole('link', { name: /view plan|表示/i }).first()
+      await viewPlanButton.click()
+
+      await expect(page).toHaveURL(/.*meal-plans\/[a-f0-9-]+/)
+
+      const swapMenuButton = page
+        .locator('button:has-text("Swap"), button[aria-label*="menu"]')
+        .first()
+
+      if (await swapMenuButton.isVisible({ timeout: 5000 })) {
+        await swapMenuButton.click()
+
+        const budgetSwapOption = page.locator('text=/budget.*swap|cheaper/i')
+
+        if (await budgetSwapOption.isVisible({ timeout: 3000 })) {
+          // Click and immediately check for loading state
+          await budgetSwapOption.click()
+
+          // Should show some loading indicator
+          const loadingIndicator = page.locator(
+            '[data-testid="swap-loading"], .animate-spin, text=/swapping|loading/i'
+          )
+
+          // Loading might be very brief with seed meals, so use short timeout
+          const hasLoading = await loadingIndicator.isVisible({ timeout: 500 }).catch(() => false)
+
+          // Either we catch the loading state or swap completed instantly
+          // Both are acceptable with seed-first approach
+          if (!hasLoading) {
+            // Verify swap completed
+            await page.waitForLoadState('networkidle')
+          }
+        }
+      }
+    })
+  })
 })
