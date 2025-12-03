@@ -103,7 +103,7 @@ function groupByMealType(meals: Meal[]): Record<string, Meal[]> {
 export function calculateMealScore(meal: Meal, profile: UserProfile, usedIds: Set<string>): number {
   let score = 100
 
-  // Penalize if already used this week
+  // Heavy penalty for already used meals this week (variety is key)
   if (usedIds.has(meal.id)) {
     score -= 50
   }
@@ -111,7 +111,7 @@ export function calculateMealScore(meal: Meal, profile: UserProfile, usedIds: Se
   // Score based on calorie alignment (target is daily / 3 for main meals)
   const targetCals = (profile.daily_calorie_target || 2000) / 3
   const calDiff = Math.abs((meal.calories_per_serving || 0) - targetCals)
-  score -= calDiff / 10
+  score -= Math.min(calDiff / 10, 30) // Cap penalty at 30 points
 
   // Bonus for high protein if muscle gain goal
   if (profile.goal === 'muscle_gain' && (meal.protein_per_serving || 0) > 30) {
@@ -128,7 +128,39 @@ export function calculateMealScore(meal: Meal, profile: UserProfile, usedIds: Se
     score += 10
   }
 
-  return score
+  // Prep time preference - penalize if meal takes longer than user's available time
+  const timeAvailable = profile.time_available || 60
+  const mealPrepTime = meal.prep_time ?? 30
+  if (mealPrepTime > timeAvailable) {
+    score -= 20
+  } else if (mealPrepTime <= timeAvailable / 2) {
+    // Bonus for quick meals when user has limited time
+    score += 5
+  }
+
+  // Skill level matching
+  const skillLevels: Record<string, number> = { beginner: 1, intermediate: 2, advanced: 3 }
+  const userSkill = skillLevels[profile.cooking_skill_level ?? 'intermediate'] || 2
+  const mealDifficulty: Record<string, number> = { easy: 1, medium: 2, hard: 3 }
+  const difficulty = mealDifficulty[meal.difficulty_level ?? 'medium'] || 2
+
+  if (difficulty <= userSkill) {
+    score += 10
+  } else {
+    score -= 15 // Penalize meals too difficult for user
+  }
+
+  // Budget matching - more ingredients generally means higher cost
+  const ingredients = meal.ingredients as Array<{ name: string }> | null
+  const ingredientCount = ingredients?.length ?? 5
+  if (profile.budget_level === 'low' && ingredientCount > 10) {
+    score -= 10
+  } else if (profile.budget_level === 'high' && ingredientCount > 8) {
+    // High budget users might prefer more complex meals
+    score += 5
+  }
+
+  return Math.max(score, 0) // Ensure score is never negative
 }
 
 /**
