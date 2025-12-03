@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react'
 import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
-import { Skeleton } from '@/components/atoms/ui/skeleton'
 import { Input } from '@/components/atoms/ui/input'
 import { Label } from '@/components/atoms/ui/label'
+import { Skeleton } from '@/components/atoms/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/ui/tabs'
 import { Textarea } from '@/components/atoms/ui/textarea'
 import { getProgressLogs, logProgress } from '@/features/progress/actions'
@@ -97,8 +97,8 @@ export default function ProgressPage() {
           <Skeleton className="mt-2 h-5 w-72" />
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={`stat-${i}`}>
+          {['weight', 'calories', 'streak'].map((statType) => (
+            <Card key={`stat-${statType}`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-28" />
               </CardHeader>
@@ -120,8 +120,8 @@ export default function ProgressPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={`field-${i}`} className="space-y-2">
+                {['weight', 'body-fat', 'energy', 'sleep', 'hydration'].map((fieldType) => (
+                  <div key={`field-${fieldType}`} className="space-y-2">
                     <Skeleton className="h-4 w-20" />
                     <Skeleton className="h-10 w-full" />
                   </div>
