@@ -27,6 +27,51 @@
     "settings": "Settings",
     "log_out": "Log out"
   },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "description": "Enter your email and password to sign in to your account",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "forgot_password": "Forgot password?",
+      "sign_in": "Sign in",
+      "signing_in": "Signing in...",
+      "or": "or",
+      "continue_with_google": "Continue with Google",
+      "connecting": "Connecting...",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign up"
+    },
+    "register": {
+      "title": "Create an account",
+      "description": "Enter your email and password to create your PrepGenie account",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "Minimum 8 characters",
+      "confirm_password": "Confirm Password",
+      "confirm_password_placeholder": "Re-enter your password",
+      "create_account": "Create account",
+      "creating_account": "Creating account...",
+      "or": "or",
+      "continue_with_google": "Continue with Google",
+      "connecting": "Connecting...",
+      "have_account": "Already have an account?",
+      "sign_in": "Sign in"
+    },
+    "confirmation": {
+      "title": "Check your email",
+      "description": "We sent a confirmation link to",
+      "next_steps": "Next steps:",
+      "step_1": "Open the email from PrepGenie",
+      "step_2": "Click the confirmation link",
+      "step_3": "Complete your profile setup",
+      "check_spam": "Didn't receive the email? Check your spam folder.",
+      "resend": "Resend confirmation email",
+      "back_to_sign_in": "Back to sign in"
+    }
+  },
   "time": {
     "min": "min",
     "mins": "mins",
@@ -183,15 +228,6 @@
     "account_deleted_success": "Account deleted successfully",
     "account_delete_failed": "Failed to delete account",
     "cancel": "Cancel"
-  },
-  "auth": {
-    "login": "Login",
-    "logout": "Logout",
-    "register": "Register",
-    "email": "Email",
-    "password": "Password",
-    "forgot_password": "Forgot Password?",
-    "reset_password": "Reset Password"
   },
   "onboarding": {
     "welcome": "Welcome to PrepGenie",

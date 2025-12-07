@@ -27,6 +27,51 @@
     "settings": "設定",
     "log_out": "ログアウト"
   },
+  "auth": {
+    "login": {
+      "title": "おかえりなさい",
+      "description": "メールアドレスとパスワードを入力してログインしてください",
+      "email": "メールアドレス",
+      "email_placeholder": "you@example.com",
+      "password": "パスワード",
+      "forgot_password": "パスワードをお忘れですか？",
+      "sign_in": "ログイン",
+      "signing_in": "ログイン中...",
+      "or": "または",
+      "continue_with_google": "Googleでログイン",
+      "connecting": "接続中...",
+      "no_account": "アカウントをお持ちでないですか？",
+      "sign_up": "新規登録"
+    },
+    "register": {
+      "title": "アカウント作成",
+      "description": "メールアドレスとパスワードを入力してPrepGenieアカウントを作成してください",
+      "email": "メールアドレス",
+      "email_placeholder": "you@example.com",
+      "password": "パスワード",
+      "password_placeholder": "8文字以上",
+      "confirm_password": "パスワード確認",
+      "confirm_password_placeholder": "パスワードを再入力",
+      "create_account": "アカウント作成",
+      "creating_account": "アカウント作成中...",
+      "or": "または",
+      "continue_with_google": "Googleで登録",
+      "connecting": "接続中...",
+      "have_account": "既にアカウントをお持ちですか？",
+      "sign_in": "ログイン"
+    },
+    "confirmation": {
+      "title": "メールを確認してください",
+      "description": "確認リンクを送信しました",
+      "next_steps": "次のステップ:",
+      "step_1": "PrepGenieからのメールを開く",
+      "step_2": "確認リンクをクリック",
+      "step_3": "プロフィール設定を完了",
+      "check_spam": "メールが届きませんか？迷惑メールフォルダを確認してください。",
+      "resend": "確認メールを再送信",
+      "back_to_sign_in": "ログインに戻る"
+    }
+  },
   "time": {
     "min": "分",
     "mins": "分",
@@ -180,15 +225,6 @@
     "account_deleted_success": "アカウントが正常に削除されました",
     "account_delete_failed": "アカウントの削除に失敗しました",
     "cancel": "キャンセル"
-  },
-  "auth": {
-    "login": "ログイン",
-    "logout": "ログアウト",
-    "register": "登録",
-    "email": "メールアドレス",
-    "password": "パスワード",
-    "forgot_password": "パスワードをお忘れですか？",
-    "reset_password": "パスワードをリセット"
   },
   "onboarding": {
     "welcome": "PrepGenieへようこそ",
