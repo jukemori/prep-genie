@@ -17,6 +17,39 @@ PrepGenie helps users generate personalized meal plans from a curated recipe dat
 - **Internationalization** - English and Japanese language support
 - **Settings Page** - User preferences and profile management
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <strong>Dashboard</strong><br>
+      <img src="public/screenshots/dashboard-en.png" alt="Dashboard">
+    </td>
+    <td width="50%">
+      <strong>Meal Library</strong><br>
+      <img src="public/screenshots/meals-library-en.png" alt="Meal Library">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <strong>Meal Plan Generator</strong><br>
+      <img src="public/screenshots/meal-plan-generator-en.png" alt="Meal Plan Generator">
+    </td>
+    <td width="50%">
+      <strong>Recipe Analyzer</strong><br>
+      <img src="public/screenshots/recipe-analyzer-en.png" alt="Recipe Analyzer">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <strong>Japanese Language Support</strong><br>
+      <img src="public/screenshots/settings-ja.png" alt="Settings in Japanese">
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
+</table>
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 RC with React 19 (Server Components, Server Actions)
