@@ -423,6 +423,13 @@
     "fats": "Fats",
     "generated_plan": "Generated Plan"
   },
+  "meal_plans_new": {
+    "back_to_meal_plans": "Back to Meal Plans",
+    "title": "Create Manual Meal Plan",
+    "coming_soon": "Coming Soon",
+    "coming_soon_description": "Manual meal plan creation is currently under development. In the meantime, try our Quick Generate feature to create personalized meal plans instantly!",
+    "try_quick_generate": "Try Quick Generate"
+  },
   "meal_plan_detail_page": {
     "back_to_meal_plans": "Back to Meal Plans",
     "generate_grocery_list": "Generate Grocery List",
@@ -598,10 +605,10 @@
   },
   "generate_meal_plan_page": {
     "back_to_meal_plans": "Back to Meal Plans",
-    "title": "AI Meal Plan Generator",
+    "title": "Quick Meal Plan Generator",
     "description": "Generate a personalized weekly meal plan based on your profile and nutrition goals",
     "ready_to_generate": "Ready to Generate",
-    "ai_will_create": "Our AI will create a customized 7-day meal plan tailored to your:",
+    "ai_will_create": "We'll create a customized 7-day meal plan tailored to your:",
     "calorie_macro_targets": "Calorie and macro targets",
     "dietary_preferences": "Dietary preferences and restrictions",
     "cooking_skill_time": "Cooking skill level and time availability",

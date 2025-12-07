@@ -420,6 +420,13 @@
     "fats": "脂質",
     "generated_plan": "生成プラン"
   },
+  "meal_plans_new": {
+    "back_to_meal_plans": "食事プランに戻る",
+    "title": "手動で食事プランを作成",
+    "coming_soon": "近日公開",
+    "coming_soon_description": "手動での食事プラン作成機能は現在開発中です。その間、クイック生成機能を使って、パーソナライズされた食事プランを即座に作成できます！",
+    "try_quick_generate": "クイック生成を試す"
+  },
   "meal_plan_detail_page": {
     "back_to_meal_plans": "食事プランに戻る",
     "generate_grocery_list": "買い物リストを生成",
@@ -595,10 +602,10 @@
   },
   "generate_meal_plan_page": {
     "back_to_meal_plans": "食事プランに戻る",
-    "title": "AI食事プランジェネレーター",
+    "title": "クイック食事プランジェネレーター",
     "description": "プロフィールと栄養目標に基づいてパーソナライズされた週間食事プランを生成します",
     "ready_to_generate": "生成準備完了",
-    "ai_will_create": "AIがあなたに合わせた7日間の食事プランを作成します：",
+    "ai_will_create": "あなたに合わせた7日間の食事プランを作成します：",
     "calorie_macro_targets": "カロリーとマクロ栄養素の目標",
     "dietary_preferences": "食事の好みと制限",
     "cooking_skill_time": "料理スキルレベルと利用可能時間",
