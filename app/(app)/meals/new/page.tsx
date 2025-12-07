@@ -3,6 +3,7 @@
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
@@ -34,6 +35,7 @@ interface Instruction {
 
 export default function NewMealPage() {
   const router = useRouter()
+  const t = useTranslations('meals_new')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -103,40 +105,40 @@ export default function NewMealPage() {
         <Button variant="ghost" asChild>
           <Link href="/meals">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Meals
+            {t('back_to_meals')}
           </Link>
         </Button>
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold">Create New Meal</h1>
-        <p className="text-muted-foreground">Add a new recipe to your meal library</p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>{t('basic_info')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Meal Name *</Label>
+              <Label htmlFor="name">{t('meal_name')} *</Label>
               <Input
                 id="name"
                 name="name"
-                placeholder="e.g., Grilled Chicken Salad"
+                placeholder={t('meal_name_placeholder')}
                 required
                 disabled={loading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('description')}</Label>
               <Textarea
                 id="description"
                 name="description"
-                placeholder="Brief description of the meal"
+                placeholder={t('description_placeholder')}
                 rows={3}
                 disabled={loading}
               />
@@ -144,46 +146,46 @@ export default function NewMealPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="mealType">Meal Type</Label>
+                <Label htmlFor="mealType">{t('meal_type')}</Label>
                 <Select name="mealType" disabled={loading}>
                   <SelectTrigger id="mealType">
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t('select_type')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="breakfast">Breakfast</SelectItem>
-                    <SelectItem value="lunch">Lunch</SelectItem>
-                    <SelectItem value="dinner">Dinner</SelectItem>
-                    <SelectItem value="snack">Snack</SelectItem>
+                    <SelectItem value="breakfast">{t('breakfast')}</SelectItem>
+                    <SelectItem value="lunch">{t('lunch')}</SelectItem>
+                    <SelectItem value="dinner">{t('dinner')}</SelectItem>
+                    <SelectItem value="snack">{t('snack')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cuisineType">Cuisine Type</Label>
+                <Label htmlFor="cuisineType">{t('cuisine_type')}</Label>
                 <Input
                   id="cuisineType"
                   name="cuisineType"
-                  placeholder="e.g., Italian, Asian"
+                  placeholder={t('cuisine_placeholder')}
                   disabled={loading}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="difficultyLevel">Difficulty</Label>
+                <Label htmlFor="difficultyLevel">{t('difficulty')}</Label>
                 <Select name="difficultyLevel" disabled={loading}>
                   <SelectTrigger id="difficultyLevel">
-                    <SelectValue placeholder="Select difficulty" />
+                    <SelectValue placeholder={t('select_difficulty')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
+                    <SelectItem value="easy">{t('easy')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="hard">{t('hard')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="servings">Servings *</Label>
+                <Label htmlFor="servings">{t('servings')} *</Label>
                 <Input
                   id="servings"
                   name="servings"
@@ -196,12 +198,12 @@ export default function NewMealPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="prepTime">Prep Time (min)</Label>
+                <Label htmlFor="prepTime">{t('prep_time')}</Label>
                 <Input id="prepTime" name="prepTime" type="number" min="0" disabled={loading} />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cookTime">Cook Time (min)</Label>
+                <Label htmlFor="cookTime">{t('cook_time')}</Label>
                 <Input id="cookTime" name="cookTime" type="number" min="0" disabled={loading} />
               </div>
             </div>
@@ -209,7 +211,7 @@ export default function NewMealPage() {
             <div className="flex items-center space-x-2">
               <Checkbox id="isPublic" name="isPublic" disabled={loading} />
               <Label htmlFor="isPublic" className="cursor-pointer font-normal">
-                Make this meal public (visible to all users)
+                {t('make_public')}
               </Label>
             </div>
           </CardContent>
@@ -218,11 +220,11 @@ export default function NewMealPage() {
         {/* Nutrition */}
         <Card>
           <CardHeader>
-            <CardTitle>Nutrition per Serving</CardTitle>
+            <CardTitle>{t('nutrition_title')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-4">
             <div className="space-y-2">
-              <Label htmlFor="caloriesPerServing">Calories</Label>
+              <Label htmlFor="caloriesPerServing">{t('calories')}</Label>
               <Input
                 id="caloriesPerServing"
                 name="caloriesPerServing"
@@ -232,7 +234,7 @@ export default function NewMealPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="proteinPerServing">Protein (g)</Label>
+              <Label htmlFor="proteinPerServing">{t('protein')}</Label>
               <Input
                 id="proteinPerServing"
                 name="proteinPerServing"
@@ -242,7 +244,7 @@ export default function NewMealPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="carbsPerServing">Carbs (g)</Label>
+              <Label htmlFor="carbsPerServing">{t('carbs')}</Label>
               <Input
                 id="carbsPerServing"
                 name="carbsPerServing"
@@ -252,7 +254,7 @@ export default function NewMealPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="fatsPerServing">Fats (g)</Label>
+              <Label htmlFor="fatsPerServing">{t('fats')}</Label>
               <Input
                 id="fatsPerServing"
                 name="fatsPerServing"
@@ -267,24 +269,24 @@ export default function NewMealPage() {
         {/* Ingredients */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Ingredients</CardTitle>
+            <CardTitle>{t('ingredients_title')}</CardTitle>
             <Button type="button" variant="outline" size="sm" onClick={addIngredient}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Ingredient
+              {t('add_ingredient')}
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
             {ingredients.map((ingredient) => (
               <div key={ingredient.id} className="flex gap-2">
                 <Input
-                  placeholder="Name"
+                  placeholder={t('ingredient_name')}
                   value={ingredient.name}
                   onChange={(e) => updateIngredient(ingredient.id, 'name', e.target.value)}
                   className="flex-1"
                 />
                 <Input
                   type="number"
-                  placeholder="Qty"
+                  placeholder={t('ingredient_qty')}
                   value={ingredient.quantity || ''}
                   onChange={(e) =>
                     updateIngredient(ingredient.id, 'quantity', Number(e.target.value))
@@ -292,7 +294,7 @@ export default function NewMealPage() {
                   className="w-24"
                 />
                 <Input
-                  placeholder="Unit"
+                  placeholder={t('ingredient_unit')}
                   value={ingredient.unit}
                   onChange={(e) => updateIngredient(ingredient.id, 'unit', e.target.value)}
                   className="w-24"
@@ -305,13 +307,13 @@ export default function NewMealPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="produce">Produce</SelectItem>
-                    <SelectItem value="protein">Protein</SelectItem>
-                    <SelectItem value="dairy">Dairy</SelectItem>
-                    <SelectItem value="grains">Grains</SelectItem>
-                    <SelectItem value="pantry">Pantry</SelectItem>
-                    <SelectItem value="spices">Spices</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="produce">{t('category_produce')}</SelectItem>
+                    <SelectItem value="protein">{t('category_protein')}</SelectItem>
+                    <SelectItem value="dairy">{t('category_dairy')}</SelectItem>
+                    <SelectItem value="grains">{t('category_grains')}</SelectItem>
+                    <SelectItem value="pantry">{t('category_pantry')}</SelectItem>
+                    <SelectItem value="spices">{t('category_spices')}</SelectItem>
+                    <SelectItem value="other">{t('category_other')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {ingredients.length > 1 && (
@@ -332,10 +334,10 @@ export default function NewMealPage() {
         {/* Instructions */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Instructions</CardTitle>
+            <CardTitle>{t('instructions_title')}</CardTitle>
             <Button type="button" variant="outline" size="sm" onClick={addInstruction}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Step
+              {t('add_step')}
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -345,7 +347,7 @@ export default function NewMealPage() {
                   {index + 1}
                 </span>
                 <Textarea
-                  placeholder="Describe this step..."
+                  placeholder={t('step_placeholder')}
                   value={instruction.text}
                   onChange={(e) => updateInstruction(instruction.id, e.target.value)}
                   rows={2}
@@ -372,10 +374,10 @@ export default function NewMealPage() {
 
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" asChild disabled={loading}>
-            <Link href="/meals">Cancel</Link>
+            <Link href="/meals">{t('cancel')}</Link>
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Meal'}
+            {loading ? t('creating') : t('create_meal')}
           </Button>
         </div>
       </form>
