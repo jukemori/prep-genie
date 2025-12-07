@@ -26,9 +26,43 @@ export async function analyzeRecipe(data: AnalyzeRecipeInput) {
       return { error: 'Unauthorized' }
     }
 
-    // For URL input, we'll need to fetch the content
-    // For now, we'll treat it as text (URL scraping can be added later)
-    const recipeText = data.input
+    let recipeText = data.input
+
+    // Fetch URL content if inputType is 'url'
+    if (data.inputType === 'url' && data.input.startsWith('http')) {
+      try {
+        const response = await fetch(data.input, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; PrepGenie/1.0; +https://prepgenie.app)',
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'ja,en;q=0.9',
+          },
+        })
+
+        if (!response.ok) {
+          return { error: `Failed to fetch recipe URL: ${response.status}` }
+        }
+
+        const html = await response.text()
+
+        // Extract text content from HTML (basic extraction)
+        // Remove script, style tags and HTML comments
+        const cleanedHtml = html
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+          .replace(/<!--[\s\S]*?-->/g, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+
+        // Limit content length to avoid token limits (keep first ~8000 chars)
+        recipeText = `URL: ${data.input}\n\nContent:\n${cleanedHtml.slice(0, 8000)}`
+      } catch (fetchError) {
+        return {
+          error: `Failed to fetch recipe URL: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`,
+        }
+      }
+    }
 
     const prompt = generateRecipeAnalysisPrompt(recipeText, data.locale)
 
@@ -77,6 +111,7 @@ interface SaveAnalyzedRecipeInput {
     }
   }
   version?: 'original' | 'budget' | 'high_protein' | 'lower_calorie'
+  locale: 'en' | 'ja'
 }
 
 export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
@@ -91,7 +126,7 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
       return { error: 'Unauthorized' }
     }
 
-    const { recipe, version = 'original' } = data
+    const { recipe, version = 'original', locale } = data
 
     // Add version tag if not original
     const tags = version !== 'original' ? [version] : []
@@ -113,6 +148,7 @@ export async function saveAnalyzedRecipe(data: SaveAnalyzedRecipeInput) {
         fats_per_serving: recipe.nutrition.fats,
         tags,
         is_ai_generated: true,
+        locale,
       })
       .select()
       .single()
