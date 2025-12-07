@@ -2,6 +2,8 @@
 
 **Smart Meal Prep & Nutrition Planner**
 
+[Live Demo](https://prep-genie-eight.vercel.app)
+
 PrepGenie helps users generate personalized meal plans from a curated recipe database, track macronutrients, and create automated grocery lists.
 
 ## Features
@@ -201,6 +203,4 @@ pnpm test:e2e --ui
 pnpm test tests/unit/features/nutrition/tdee.test.ts
 ```
 
-## License
 
-MIT
