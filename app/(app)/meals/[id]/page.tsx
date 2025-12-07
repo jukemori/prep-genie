@@ -7,11 +7,11 @@ import { Badge } from '@/components/atoms/ui/badge'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
 import { Separator } from '@/components/atoms/ui/separator'
-import { DeleteMealButton } from '@/components/molecules/delete-meal-button'
 import { FavoriteButton } from '@/components/molecules/favorite-button'
 import { IngredientItem } from '@/components/molecules/ingredient-item'
 import { MacroDisplay } from '@/components/molecules/macro-display'
 import { checkMealIsSaved } from '@/features/meals/actions'
+import { DeleteMealButton } from '@/features/meals/components/delete-meal-button'
 import { createClient } from '@/lib/supabase/server'
 
 interface PageProps {

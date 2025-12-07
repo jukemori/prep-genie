@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowLeft, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { use, useEffect, useState } from 'react'
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/
 import { Checkbox } from '@/components/atoms/ui/checkbox'
 import { Skeleton } from '@/components/atoms/ui/skeleton'
 import { getGroceryList, updateGroceryListItems } from '@/features/grocery-lists/actions'
+import { DeleteGroceryListButton } from '@/features/grocery-lists/components/delete-grocery-list-button'
 import type { GroceryList } from '@/types'
 
 interface PageProps {
@@ -140,9 +141,7 @@ export default function GroceryListDetailPage({ params }: PageProps) {
             <Save className="mr-2 h-4 w-4" />
             {saving ? t('saving') : t('save')}
           </Button>
-          <Button variant="destructive" size="icon">
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <DeleteGroceryListButton groceryListId={id} groceryListName={list.name} />
         </div>
       </div>
 

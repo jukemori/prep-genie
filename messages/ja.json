@@ -340,7 +340,13 @@
     "days": "日",
     "container_type": "容器の種類",
     "storage_instructions": "保存方法",
-    "reheating_instructions": "温め直し方"
+    "reheating_instructions": "温め直し方",
+    "delete_meal": "食事を削除",
+    "delete_confirmation": "「{name}」を削除してもよろしいですか？この操作は取り消せません。",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleting": "削除中...",
+    "delete_success": "食事を削除しました"
   },
   "meal_plans_page": {
     "title": "食事プラン",
@@ -558,7 +564,13 @@
     "category_grains": "穀物",
     "category_pantry": "食品庫",
     "category_spices": "香辛料",
-    "category_other": "その他"
+    "category_other": "その他",
+    "delete_grocery_list": "買い物リストを削除",
+    "delete_confirmation": "「{name}」を削除してもよろしいですか？この操作は取り消せません。",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleting": "削除中...",
+    "delete_success": "買い物リストを削除しました"
   },
   "generate_grocery_list_page": {
     "back_to_lists": "リストに戻る",

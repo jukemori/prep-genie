@@ -343,7 +343,13 @@
     "days": "days",
     "container_type": "Container Type",
     "storage_instructions": "Storage Instructions",
-    "reheating_instructions": "Reheating Instructions"
+    "reheating_instructions": "Reheating Instructions",
+    "delete_meal": "Delete Meal",
+    "delete_confirmation": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "delete_success": "Meal deleted successfully"
   },
   "meal_plans_page": {
     "title": "Meal Plans",
@@ -561,7 +567,13 @@
     "category_grains": "Grains",
     "category_pantry": "Pantry",
     "category_spices": "Spices",
-    "category_other": "Other"
+    "category_other": "Other",
+    "delete_grocery_list": "Delete Grocery List",
+    "delete_confirmation": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "delete_success": "Grocery list deleted successfully"
   },
   "generate_grocery_list_page": {
     "back_to_lists": "Back to Lists",
