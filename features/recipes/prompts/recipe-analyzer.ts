@@ -74,25 +74,28 @@ ${recipeInput}
    - Carbohydrates (grams)
    - Fats (grams)
 
-7. Generate THREE improvement versions:
+7. Generate THREE improvement versions (ALL text must be in ${isJapanese ? '日本語/Japanese' : 'English'}):
 
    a) **Budget Version:**
    - Suggest cheaper ingredient alternatives
    - Maintain similar nutrition and flavor profile
    - Calculate estimated cost savings (percentage)
    - List specific ingredient swaps with savings amount
+   - Write descriptions and savings in ${isJapanese ? '日本語 (e.g., "約30%節約")' : 'English (e.g., "~30% cheaper")'}
 
    b) **High-Protein Version:**
    - Replace or add ingredients to boost protein content
    - Maintain reasonable calorie levels
    - Calculate new total protein amount
    - List specific ingredient swaps with protein boost amount
+   - Write descriptions and boosts in ${isJapanese ? '日本語 (e.g., "+15gタンパク質")' : 'English (e.g., "+15g protein")'}
 
    c) **Lower-Calorie Version:**
    - Suggest lower-calorie alternatives
    - Maintain satiety and flavor
    - Calculate new total calorie amount
    - List specific ingredient swaps with calorie reduction
+   - Write descriptions and reductions in ${isJapanese ? '日本語 (e.g., "-100kcal")' : 'English (e.g., "-100 kcal")'}
 
 **Output Format (JSON):**
 {
@@ -118,34 +121,34 @@ ${recipeInput}
   },
   "improvements": {
     "budget": {
-      "description": "Brief explanation of cost-saving approach",
+      "description": "${isJapanese ? '節約方法の説明（日本語で）' : 'Brief explanation of cost-saving approach'}",
       "ingredient_swaps": [
         {
-          "original": "ingredient name",
-          "replacement": "cheaper alternative",
-          "savings": "e.g., 30% cheaper"
+          "original": "${isJapanese ? '元の材料名' : 'ingredient name'}",
+          "replacement": "${isJapanese ? '代替材料名' : 'cheaper alternative'}",
+          "savings": "${isJapanese ? '約30%節約' : '~30% cheaper'}"
         }
       ],
-      "estimated_savings": "e.g., 25% total cost reduction"
+      "estimated_savings": "${isJapanese ? '約25%のコスト削減' : '~25% total cost reduction'}"
     },
     "high_protein": {
-      "description": "Brief explanation of protein-boosting approach",
+      "description": "${isJapanese ? 'タンパク質増加方法の説明（日本語で）' : 'Brief explanation of protein-boosting approach'}",
       "ingredient_swaps": [
         {
-          "original": "ingredient name",
-          "replacement": "high-protein alternative",
-          "protein_boost": "e.g., +15g protein"
+          "original": "${isJapanese ? '元の材料名' : 'ingredient name'}",
+          "replacement": "${isJapanese ? '高タンパク代替材料' : 'high-protein alternative'}",
+          "protein_boost": "${isJapanese ? '+15gタンパク質' : '+15g protein'}"
         }
       ],
       "new_protein": number (grams per serving)
     },
     "lower_calorie": {
-      "description": "Brief explanation of calorie-reduction approach",
+      "description": "${isJapanese ? 'カロリー削減方法の説明（日本語で）' : 'Brief explanation of calorie-reduction approach'}",
       "ingredient_swaps": [
         {
-          "original": "ingredient name",
-          "replacement": "lower-calorie alternative",
-          "calorie_reduction": "e.g., -100 kcal"
+          "original": "${isJapanese ? '元の材料名' : 'ingredient name'}",
+          "replacement": "${isJapanese ? '低カロリー代替材料' : 'lower-calorie alternative'}",
+          "calorie_reduction": "${isJapanese ? '-100kcal' : '-100 kcal'}"
         }
       ],
       "new_calories": number (per serving)
