@@ -19,8 +19,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'PrepGenie - AI Meal Prep & Nutrition Planner',
-  description: 'AI-powered meal planning and nutrition tracking for your fitness and health goals',
+  title: 'PrepGenie - Smart Meal Prep & Nutrition Planner',
+  description:
+    'Personalized meal planning and nutrition tracking for your fitness and health goals',
 }
 
 export default async function RootLayout({

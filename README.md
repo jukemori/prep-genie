@@ -1,21 +1,20 @@
 # PrepGenie
 
-**AI-Powered Meal Prep & Nutrition Planner**
+**Smart Meal Prep & Nutrition Planner**
 
-PrepGenie helps users generate personalized meal plans, track macronutrients, create automated grocery lists, and get AI nutrition assistance.
+PrepGenie helps users generate personalized meal plans from a curated recipe database, track macronutrients, and create automated grocery lists.
 
 ## Features
 
 - **User Profile & Onboarding** - Personalized fitness/health goal setup with TDEE & macro calculations
-- **AI Meal Generator** - Generate meals based on dietary preferences and nutritional goals
+- **Database-Driven Meal Plans** - Generate meal plans from 500+ curated seed recipes
 - **Meal Prep Mode** - Weekly meal planning with prep schedules
 - **Grocery List Generator** - Automated shopping lists with smart categorization
-- **Meal Library** - Save and organize favorite meals
-- **AI Nutrition Assistant** - ChatGPT-powered nutrition guidance
-- **Recipe Nutrition Analyzer** - Analyze recipes and get improvement suggestions
-- **Meal Swap System** - AI-powered meal replacements (budget/speed/dietary/macro swaps)
-- **Cultural Meal Modes** - Japanese, Korean, Mediterranean, Western, Halal cuisines
-- **Internationalization** - i18n infrastructure ready
+- **Meal Library** - Browse and save favorite meals
+- **Recipe Nutrition Analyzer** - Analyze recipes and get nutritional breakdown
+- **Meal Swap System** - Instant meal replacements (budget/speed/dietary/macro swaps)
+- **Cultural Cuisines** - Japanese, Korean, Mediterranean, Western, Halal options
+- **Internationalization** - English and Japanese language support
 - **Settings Page** - User preferences and profile management
 
 ## Tech Stack
@@ -24,7 +23,6 @@ PrepGenie helps users generate personalized meal plans, track macronutrients, cr
 - **Language**: TypeScript 5.9.2+
 - **State Management**: TanStack Query (server) + Zustand (client) + nuqs (URL)
 - **Backend/Database**: Supabase (PostgreSQL, Auth, Storage, RLS)
-- **AI**: OpenAI GPT-5-nano
 - **Styling**: Tailwind CSS v4 + shadcn/ui
 - **Forms**: react-hook-form + Zod validation
 - **Testing**: Vitest + Playwright
@@ -45,7 +43,6 @@ Create a `.env.local` file:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Installation
@@ -94,17 +91,15 @@ components/
 
 features/
 ├── meals/               # Meal management
-├── meal-plans/          # Meal planning
+├── meal-plans/          # Database-driven meal plan generation
 ├── recipes/             # Recipe analysis
 ├── grocery-lists/       # Grocery management
 ├── nutrition/           # TDEE, macros calculations
-├── ai-chat/             # AI assistant
 ├── settings/            # User settings
 ├── progress/            # Progress tracking
 └── auth/                # Authentication
 
 lib/
-├── ai/                  # OpenAI client
 ├── supabase/            # Supabase clients
 └── utils/               # Helpers, constants
 
