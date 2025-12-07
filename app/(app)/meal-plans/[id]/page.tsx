@@ -1,9 +1,10 @@
-import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
+import { ArrowLeft, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/atoms/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/ui/card'
+import { DeleteMealPlanButton } from '@/components/molecules/delete-meal-plan-button'
 import { MealPlanItemCard } from '@/features/meal-plans/components/meal-plan-item-card'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal, MealPlanItem } from '@/types'
@@ -88,10 +89,7 @@ export default async function MealPlanDetailPage({ params }: PageProps) {
               {t('generate_grocery_list')}
             </Link>
           </Button>
-          <Button variant="destructive" size="icon" aria-label={t('delete_meal_plan')}>
-            <Trash2 className="h-4 w-4" />
-            <span className="sr-only">{t('delete_meal_plan')}</span>
-          </Button>
+          <DeleteMealPlanButton mealPlanId={id} mealPlanName={mealPlan.name} />
         </div>
       </div>
 

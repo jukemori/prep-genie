@@ -415,7 +415,11 @@
     "confirm_swap": "交換を確認",
     "meal_swapped_success": "食事が正常に交換されました！",
     "meal_swap_failed": "食事の交換に失敗しました",
-    "meal_status_update_failed": "食事のステータス更新に失敗しました"
+    "meal_status_update_failed": "食事のステータス更新に失敗しました",
+    "delete_confirmation": "「{name}」を削除してもよろしいですか？この操作は取り消せません。",
+    "delete_success": "食事プランが正常に削除されました",
+    "deleting": "削除中...",
+    "delete": "削除"
   },
   "grocery_lists_page": {
     "title": "買い物リスト",

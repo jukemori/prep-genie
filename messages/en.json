@@ -418,7 +418,11 @@
     "meal_swapped_success": "Meal swapped successfully!",
     "meal_swap_failed": "Failed to swap meal",
     "meal_status_update_failed": "Failed to update meal status",
-    "delete_meal_plan": "Delete meal plan"
+    "delete_meal_plan": "Delete meal plan",
+    "delete_confirmation": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "delete_success": "Meal plan deleted successfully",
+    "deleting": "Deleting...",
+    "delete": "Delete"
   },
   "grocery_lists_page": {
     "title": "Grocery Lists",
