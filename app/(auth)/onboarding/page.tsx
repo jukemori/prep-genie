@@ -159,7 +159,7 @@ export default function OnboardingPage() {
                     onClick={() => locale !== 'en' && handleLanguageChange('en')}
                     disabled={isPending}
                   >
-                    🇺🇸 English
+                    English
                   </Button>
                   <Button
                     variant={locale === 'ja' ? 'default' : 'outline'}
@@ -167,7 +167,7 @@ export default function OnboardingPage() {
                     onClick={() => locale !== 'ja' && handleLanguageChange('ja')}
                     disabled={isPending}
                   >
-                    🇯🇵 日本語
+                    日本語
                   </Button>
                 </div>
               </div>
