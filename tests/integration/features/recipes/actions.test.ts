@@ -257,6 +257,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
         version: 'original',
+        locale: 'en',
       })
 
       expect(result.data).toBeDefined()
@@ -286,6 +287,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
         version: 'budget',
+        locale: 'en',
       })
 
       expect(result.data?.tags).toEqual(['budget'])
@@ -312,6 +314,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
         version: 'high_protein',
+        locale: 'en',
       })
 
       expect(result.data?.tags).toEqual(['high_protein'])
@@ -338,6 +341,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
         version: 'lower_calorie',
+        locale: 'en',
       })
 
       expect(result.data?.tags).toEqual(['lower_calorie'])
@@ -363,6 +367,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
 
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
+        locale: 'en',
         // No version specified
       })
 
@@ -377,6 +382,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
 
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
+        locale: 'en',
       })
 
       expect(result).toEqual({ error: 'Unauthorized' })
@@ -397,6 +403,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
 
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
+        locale: 'en',
       })
 
       expect(result).toEqual({ error: 'Insert failed' })
@@ -409,6 +416,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
 
       const result = await saveAnalyzedRecipe({
         recipe: recipeInput,
+        locale: 'en',
       })
 
       expect(result).toEqual({ error: 'Failed to save recipe' })
