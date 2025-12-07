@@ -748,6 +748,44 @@
     "stat_days": "Days Per Plan",
     "cta_title": "Your meals, planned.",
     "cta_subtitle": "Stop stressing about what to eat. Start your free meal plan today.",
-    "cta_button": "Create My Plan"
+    "cta_button": "Create My Plan",
+    "footer_rights": "All rights reserved.",
+    "mock_meals": {
+      "grilled_salmon_bowl": "Grilled Salmon Bowl",
+      "greek_yogurt_parfait": "Greek Yogurt Parfait",
+      "chicken_stir_fry": "Chicken Stir Fry"
+    },
+    "meal_types": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    },
+    "cuisines": {
+      "japanese": "Japanese",
+      "korean": "Korean",
+      "mediterranean": "Mediterranean",
+      "western": "Western",
+      "halal": "Halal"
+    },
+    "units": {
+      "cal": "cal",
+      "min": "min"
+    },
+    "macros": {
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fats": "Fats"
+    },
+    "grocery_preview": {
+      "spinach": "Spinach",
+      "chicken_breast": "Chicken breast",
+      "brown_rice": "Brown rice",
+      "more_items": "+12 more items..."
+    },
+    "swap_badges": {
+      "budget": "Budget",
+      "quick": "Quick",
+      "dietary": "Dietary"
+    }
   }
 }

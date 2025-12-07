@@ -21,17 +21,17 @@ import { Button } from '@/components/atoms/ui/button'
 import { Card } from '@/components/atoms/ui/card'
 import { LanguageSwitcher } from '@/components/molecules/language-switcher'
 
-const mockMeals = [
-  { name: 'Grilled Salmon Bowl', calories: 520, time: 25, type: 'dinner', icon: UtensilsCrossed },
-  { name: 'Greek Yogurt Parfait', calories: 340, time: 10, type: 'breakfast', icon: Coffee },
-  { name: 'Chicken Stir Fry', calories: 480, time: 20, type: 'lunch', icon: Salad },
-]
-
-const cuisines = ['Japanese', 'Korean', 'Mediterranean', 'Western', 'Halal']
-
 export default function LandingPage() {
   const t = useTranslations('landing')
   const tCommon = useTranslations('common')
+
+  const mockMeals = [
+    { nameKey: 'grilled_salmon_bowl', calories: 520, time: 25, typeKey: 'dinner', icon: UtensilsCrossed },
+    { nameKey: 'greek_yogurt_parfait', calories: 340, time: 10, typeKey: 'breakfast', icon: Coffee },
+    { nameKey: 'chicken_stir_fry', calories: 480, time: 20, typeKey: 'lunch', icon: Salad },
+  ]
+
+  const cuisineKeys = ['japanese', 'korean', 'mediterranean', 'western', 'halal'] as const
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -82,10 +82,10 @@ export default function LandingPage() {
             {/* Cuisines */}
             <div className="flex flex-wrap items-center gap-2 pt-4">
               <span className="text-sm text-muted-foreground">{t('cuisines_available')}</span>
-              {cuisines.map((c) => (
-                <span key={c} className="text-sm text-muted-foreground">
-                  {c}
-                  {c !== 'Halal' && ' ·'}
+              {cuisineKeys.map((key, index) => (
+                <span key={key} className="text-sm text-muted-foreground">
+                  {t(`cuisines.${key}`)}
+                  {index !== cuisineKeys.length - 1 && ' ·'}
                 </span>
               ))}
             </div>
@@ -104,34 +104,34 @@ export default function LandingPage() {
               <div className="space-y-3">
                 {mockMeals.map((meal) => (
                   <div
-                    key={meal.name}
+                    key={meal.nameKey}
                     className="flex items-center gap-4 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                   >
                     <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
                       <meal.icon className="size-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">{meal.name}</p>
+                      <p className="font-medium">{t(`mock_meals.${meal.nameKey}`)}</p>
                       <div className="flex items-center gap-3 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Flame className="size-3" />
-                          {meal.calories} cal
+                          {meal.calories} {t('units.cal')}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="size-3" />
-                          {meal.time} min
+                          {meal.time} {t('units.min')}
                         </span>
                       </div>
                     </div>
                     <Badge variant="secondary" className="capitalize">
-                      {meal.type}
+                      {t(`meal_types.${meal.typeKey}`)}
                     </Badge>
                   </div>
                 ))}
               </div>
               <div className="mt-4 flex items-center justify-between rounded-lg bg-muted p-3">
                 <span className="text-sm font-medium">{t('preview_daily_total')}</span>
-                <span className="font-semibold">1,340 cal</span>
+                <span className="font-semibold">1,340 {t('units.cal')}</span>
               </div>
             </Card>
           </div>
@@ -197,9 +197,9 @@ export default function LandingPage() {
                 {t('feature_nutrition_description')}
               </p>
               <div className="space-y-2">
-                <MacroBar label="Protein" value={120} max={150} />
-                <MacroBar label="Carbs" value={200} max={250} />
-                <MacroBar label="Fats" value={55} max={70} />
+                <MacroBar label={t('macros.protein')} value={120} max={150} />
+                <MacroBar label={t('macros.carbs')} value={200} max={250} />
+                <MacroBar label={t('macros.fats')} value={55} max={70} />
               </div>
             </Card>
 
@@ -213,10 +213,10 @@ export default function LandingPage() {
                 {t('feature_grocery_description')}
               </p>
               <div className="space-y-1.5 text-sm text-muted-foreground">
-                <div>Spinach</div>
-                <div>Chicken breast</div>
-                <div>Brown rice</div>
-                <div className="text-xs">+12 more items...</div>
+                <div>{t('grocery_preview.spinach')}</div>
+                <div>{t('grocery_preview.chicken_breast')}</div>
+                <div>{t('grocery_preview.brown_rice')}</div>
+                <div className="text-xs">{t('grocery_preview.more_items')}</div>
               </div>
             </Card>
 
@@ -228,9 +228,9 @@ export default function LandingPage() {
               <h3 className="mb-2 font-semibold">{t('feature_swap_title')}</h3>
               <p className="mb-4 text-sm text-muted-foreground">{t('feature_swap_description')}</p>
               <div className="flex flex-wrap gap-2">
-                <Badge variant="outline">Budget</Badge>
-                <Badge variant="outline">Quick</Badge>
-                <Badge variant="outline">Dietary</Badge>
+                <Badge variant="outline">{t('swap_badges.budget')}</Badge>
+                <Badge variant="outline">{t('swap_badges.quick')}</Badge>
+                <Badge variant="outline">{t('swap_badges.dietary')}</Badge>
               </div>
             </Card>
 
@@ -247,9 +247,9 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {cuisines.map((c) => (
-                    <div key={c} className="rounded-full border px-4 py-2 text-sm">
-                      {c}
+                  {cuisineKeys.map((key) => (
+                    <div key={key} className="rounded-full border px-4 py-2 text-sm">
+                      {t(`cuisines.${key}`)}
                     </div>
                   ))}
                 </div>
@@ -299,7 +299,7 @@ export default function LandingPage() {
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>
-            &copy; {new Date().getFullYear()} {tCommon('app_name')}. All rights reserved.
+            &copy; {new Date().getFullYear()} {tCommon('app_name')}. {t('footer_rights')}
           </p>
         </div>
       </footer>

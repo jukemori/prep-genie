@@ -745,6 +745,44 @@
     "stat_days": "日間プラン",
     "cta_title": "食事の悩み、終わりに。",
     "cta_subtitle": "何を食べるか、もう悩まない。今日から無料で始めよう。",
-    "cta_button": "プランを作成"
+    "cta_button": "プランを作成",
+    "footer_rights": "All rights reserved.",
+    "mock_meals": {
+      "grilled_salmon_bowl": "サーモンボウル",
+      "greek_yogurt_parfait": "ギリシャヨーグルトパフェ",
+      "chicken_stir_fry": "チキン野菜炒め"
+    },
+    "meal_types": {
+      "breakfast": "朝食",
+      "lunch": "昼食",
+      "dinner": "夕食"
+    },
+    "cuisines": {
+      "japanese": "和食",
+      "korean": "韓国料理",
+      "mediterranean": "地中海料理",
+      "western": "洋食",
+      "halal": "ハラール"
+    },
+    "units": {
+      "cal": "kcal",
+      "min": "分"
+    },
+    "macros": {
+      "protein": "タンパク質",
+      "carbs": "炭水化物",
+      "fats": "脂質"
+    },
+    "grocery_preview": {
+      "spinach": "ほうれん草",
+      "chicken_breast": "鶏むね肉",
+      "brown_rice": "玄米",
+      "more_items": "+12品目..."
+    },
+    "swap_badges": {
+      "budget": "節約",
+      "quick": "時短",
+      "dietary": "制限対応"
+    }
   }
 }
