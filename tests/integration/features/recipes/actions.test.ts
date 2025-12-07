@@ -115,7 +115,9 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
       mockFetch.mockResolvedValue({
         ok: true,
         text: () =>
-          Promise.resolve('<html><body><h1>Recipe</h1><p>Ingredients: Oats, Berries</p></body></html>'),
+          Promise.resolve(
+            '<html><body><h1>Recipe</h1><p>Ingredients: Oats, Berries</p></body></html>'
+          ),
       })
 
       mockCreate.mockResolvedValue({

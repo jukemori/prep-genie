@@ -2,6 +2,7 @@
   "common": {
     "app_name": "PrepGenie",
     "save": "保存",
+    "saving": "保存中...",
     "cancel": "キャンセル",
     "delete": "削除",
     "edit": "編集",

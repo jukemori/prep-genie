@@ -66,7 +66,8 @@ export default function ProgressPage() {
     setSubmitting(true)
     setError(null)
 
-    const formData = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const formData = new FormData(form)
     const result = await logProgress(formData)
 
     if (result.error) {
@@ -78,7 +79,7 @@ export default function ProgressPage() {
         setLogs(logsResult.data)
       }
       // Reset form
-      e.currentTarget.reset()
+      form.reset()
     }
 
     setSubmitting(false)
