@@ -2,6 +2,7 @@
 
 import { LogOut, Moon, Sun, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/atoms/ui/button'
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import { logout } from '@/features/auth/actions'
 
 export function AppHeader() {
   const { theme, setTheme } = useTheme()
+  const t = useTranslations('header')
 
   async function handleLogout() {
     await logout()
@@ -33,7 +35,7 @@ export function AppHeader() {
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+          <span className="sr-only">{t('toggle_theme')}</span>
         </Button>
 
         <DropdownMenu>
@@ -43,15 +45,15 @@ export function AppHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('my_account')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <a href="/settings">Settings</a>
+              <a href="/settings">{t('settings')}</a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
-              Log out
+              {t('log_out')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

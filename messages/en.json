@@ -21,6 +21,12 @@
     "filter": "Filter",
     "sort": "Sort"
   },
+  "header": {
+    "toggle_theme": "Toggle theme",
+    "my_account": "My Account",
+    "settings": "Settings",
+    "log_out": "Log out"
+  },
   "time": {
     "min": "min",
     "mins": "mins",

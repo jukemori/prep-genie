@@ -21,6 +21,12 @@
     "filter": "フィルター",
     "sort": "並び替え"
   },
+  "header": {
+    "toggle_theme": "テーマ切替",
+    "my_account": "マイアカウント",
+    "settings": "設定",
+    "log_out": "ログアウト"
+  },
   "time": {
     "min": "分",
     "mins": "分",
