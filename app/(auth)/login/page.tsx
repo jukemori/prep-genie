@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import {
@@ -16,6 +17,7 @@ import { Separator } from '@/components/atoms/ui/separator'
 import { login, signInWithGoogle } from '@/features/auth/actions'
 
 export default function LoginPage() {
+  const t = useTranslations('auth.login')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -48,32 +50,30 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your email and password to sign in to your account
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('email_placeholder')}
                 required
                 disabled={loading}
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <Link
                   href="/forgot-password"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  Forgot password?
+                  {t('forgot_password')}
                 </Link>
               </div>
               <Input id="password" name="password" type="password" required disabled={loading} />
@@ -86,14 +86,14 @@ export default function LoginPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading || googleLoading}>
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? t('signing_in') : t('sign_in')}
             </Button>
           </form>
 
           <div className="relative my-4">
             <Separator />
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-              or
+              {t('or')}
             </div>
           </div>
 
@@ -105,7 +105,7 @@ export default function LoginPage() {
             disabled={loading || googleLoading}
           >
             {googleLoading ? (
-              'Connecting...'
+              t('connecting')
             ) : (
               <>
                 <svg
@@ -132,15 +132,15 @@ export default function LoginPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continue with Google
+                {t('continue_with_google')}
               </>
             )}
           </Button>
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            {t('no_account')}{' '}
             <Link href="/register" className="text-primary hover:underline">
-              Sign up
+              {t('sign_up')}
             </Link>
           </div>
         </CardContent>

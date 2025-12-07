@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Mail } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from '@/components/atoms/ui/button'
 import {
@@ -17,6 +18,8 @@ import { Separator } from '@/components/atoms/ui/separator'
 import { register, signInWithGoogle } from '@/features/auth/actions'
 
 export default function RegisterPage() {
+  const t = useTranslations('auth.register')
+  const tConfirm = useTranslations('auth.confirmation')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -60,9 +63,9 @@ export default function RegisterPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <CheckCircle2 className="h-8 w-8 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
+            <CardTitle className="text-2xl font-bold">{tConfirm('title')}</CardTitle>
             <CardDescription>
-              We sent a confirmation link to
+              {tConfirm('description')}
               <br />
               <span className="font-medium text-foreground">{email}</span>
             </CardDescription>
@@ -72,28 +75,26 @@ export default function RegisterPage() {
               <div className="flex gap-3">
                 <Mail className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="space-y-1 text-sm">
-                  <p className="font-medium">Next steps:</p>
+                  <p className="font-medium">{tConfirm('next_steps')}</p>
                   <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                    <li>Open the email from PrepGenie</li>
-                    <li>Click the confirmation link</li>
-                    <li>Complete your profile setup</li>
+                    <li>{tConfirm('step_1')}</li>
+                    <li>{tConfirm('step_2')}</li>
+                    <li>{tConfirm('step_3')}</li>
                   </ol>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground text-center">
-                Didn't receive the email? Check your spam folder.
-              </p>
+              <p className="text-sm text-muted-foreground text-center">{tConfirm('check_spam')}</p>
               <Button variant="outline" className="w-full" disabled>
-                Resend confirmation email
+                {tConfirm('resend')}
               </Button>
             </div>
 
             <div className="text-center text-sm text-muted-foreground">
               <Link href="/login" className="text-primary hover:underline">
-                Back to sign in
+                {tConfirm('back_to_sign_in')}
               </Link>
             </div>
           </CardContent>
@@ -106,42 +107,40 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>
-            Enter your email and password to create your PrepGenie account
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('email_placeholder')}
                 required
                 disabled={loading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Minimum 8 characters"
+                placeholder={t('password_placeholder')}
                 required
                 disabled={loading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirm_password')}</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                placeholder="Re-enter your password"
+                placeholder={t('confirm_password_placeholder')}
                 required
                 disabled={loading}
               />
@@ -154,14 +153,14 @@ export default function RegisterPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading || googleLoading}>
-              {loading ? 'Creating account...' : 'Create account'}
+              {loading ? t('creating_account') : t('create_account')}
             </Button>
           </form>
 
           <div className="relative my-4">
             <Separator />
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-              or
+              {t('or')}
             </div>
           </div>
 
@@ -173,7 +172,7 @@ export default function RegisterPage() {
             disabled={loading || googleLoading}
           >
             {googleLoading ? (
-              'Connecting...'
+              t('connecting')
             ) : (
               <>
                 <svg
@@ -200,15 +199,15 @@ export default function RegisterPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continue with Google
+                {t('continue_with_google')}
               </>
             )}
           </Button>
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('have_account')}{' '}
             <Link href="/login" className="text-primary hover:underline">
-              Sign in
+              {t('sign_in')}
             </Link>
           </div>
         </CardContent>
