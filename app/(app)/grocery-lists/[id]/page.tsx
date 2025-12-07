@@ -134,7 +134,7 @@ export default function GroceryListDetailPage({ params }: PageProps) {
               {categoryItems.map((item) => {
                 const globalIndex = items.indexOf(item)
                 return (
-                  <div key={item.name} className="flex items-center gap-3 rounded-lg border p-3">
+                  <div key={globalIndex} className="flex items-center gap-3 rounded-lg border p-3">
                     <Checkbox
                       checked={item.is_purchased}
                       onCheckedChange={() => handleToggleItem(globalIndex)}
