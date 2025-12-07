@@ -35,6 +35,10 @@ vi.mock('@/lib/supabase/server', () => ({
   })),
 }))
 
+// Mock global fetch for URL fetching
+const mockFetch = vi.fn()
+vi.stubGlobal('fetch', mockFetch)
+
 const mockAnalyzedRecipe = {
   name: 'Healthy Breakfast Bowl',
   description: 'A nutritious breakfast with oats and berries',
@@ -107,6 +111,13 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
     })
 
     it('analyzes recipe from URL input', async () => {
+      // Mock fetch response for URL
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: () =>
+          Promise.resolve('<html><body><h1>Recipe</h1><p>Ingredients: Oats, Berries</p></body></html>'),
+      })
+
       mockCreate.mockResolvedValue({
         choices: [
           {
@@ -123,6 +134,7 @@ describe('Recipe Analyzer Actions Integration Tests', () => {
         locale: 'en',
       })
 
+      expect(mockFetch).toHaveBeenCalledWith('https://example.com/recipe', expect.any(Object))
       expect(result.data).toEqual(mockAnalyzedRecipe)
     })
 
