@@ -1,9 +1,11 @@
 import { Plus } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/atoms/ui/button'
 import { MealCard } from '@/components/molecules/meal-card'
 import { MealFilters } from '@/features/meals/components/meal-filters'
+import type { Locale } from '@/i18n/request'
 import { createClient } from '@/lib/supabase/server'
 import type { Meal } from '@/types'
 
@@ -21,6 +23,10 @@ export default async function MealsPage({ searchParams }: PageProps) {
   const supabase = await createClient()
   const t = await getTranslations('meals_page')
 
+  // Get current locale
+  const cookieStore = await cookies()
+  const locale = (cookieStore.get('NEXT_LOCALE')?.value || 'en') as Locale
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -29,11 +35,12 @@ export default async function MealsPage({ searchParams }: PageProps) {
     return null
   }
 
-  // Build query
+  // Build query with locale filter
   let query = supabase
     .from('meals')
     .select('*')
     .or(`user_id.eq.${user.id},is_public.eq.true`)
+    .eq('locale', locale)
     .order('created_at', { ascending: false })
 
   // Apply filters

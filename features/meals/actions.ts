@@ -1,12 +1,18 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 import { mealSchema } from '@/features/meals/schemas/meal.schema'
+import type { Locale } from '@/i18n/request'
 import { createClient } from '@/lib/supabase/server'
 import type { MealInsert, MealUpdate } from '@/types'
 
-export async function getMeals() {
+export async function getMeals(locale?: Locale) {
   const supabase = await createClient()
+
+  // Get locale from parameter or cookie
+  const cookieStore = await cookies()
+  const currentLocale = locale || (cookieStore.get('NEXT_LOCALE')?.value as Locale) || 'en'
 
   const {
     data: { user },
@@ -20,6 +26,7 @@ export async function getMeals() {
     .from('meals')
     .select('*')
     .or(`user_id.eq.${user.id},is_public.eq.true`)
+    .eq('locale', currentLocale)
     .order('created_at', { ascending: false })
 
   if (error) {
