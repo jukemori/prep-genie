@@ -1,6 +1,8 @@
 'use client'
 
 import { Clock, DollarSign, TrendingDown, TrendingUp, Users } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/atoms/ui/badge'
@@ -69,6 +71,8 @@ interface RecipeAnalysisResultProps {
 }
 
 export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultProps) {
+  const router = useRouter()
+  const t = useTranslations('analyze_page')
   const [isSaving, setIsSaving] = useState(false)
 
   async function handleSave(version: 'original' | 'budget' | 'high_protein' | 'lower_calorie') {
@@ -77,15 +81,17 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       const result = await saveAnalyzedRecipe({
         recipe,
         version,
+        locale,
       })
 
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Recipe saved to your meal library!')
+        toast.success(t('save_success'))
+        router.push('/meals')
       }
     } catch (_error) {
-      toast.error('Failed to save recipe')
+      toast.error(t('save_error'))
     } finally {
       setIsSaving(false)
     }
@@ -101,17 +107,17 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
           <div className="flex gap-4 mt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
-              {recipe.prep_time + recipe.cook_time} min
+              {recipe.prep_time + recipe.cook_time} {t('min')}
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
-              {recipe.servings} servings
+              {recipe.servings} {t('servings')}
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <Button onClick={() => handleSave('original')} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save Original Recipe'}
+            {isSaving ? t('saving') : t('save_original')}
           </Button>
         </CardContent>
       </Card>
@@ -119,24 +125,24 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       {/* Nutrition Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Nutrition Per Serving</CardTitle>
+          <CardTitle>{t('nutrition_per_serving')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Calories</p>
+              <p className="text-sm text-muted-foreground">{t('calories')}</p>
               <p className="text-2xl font-bold">{recipe.nutrition.calories}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Protein</p>
+              <p className="text-sm text-muted-foreground">{t('protein')}</p>
               <p className="text-2xl font-bold">{recipe.nutrition.protein}g</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Carbs</p>
+              <p className="text-sm text-muted-foreground">{t('carbs')}</p>
               <p className="text-2xl font-bold">{recipe.nutrition.carbs}g</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Fats</p>
+              <p className="text-sm text-muted-foreground">{t('fats')}</p>
               <p className="text-2xl font-bold">{recipe.nutrition.fats}g</p>
             </div>
           </div>
@@ -146,7 +152,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       {/* Ingredients */}
       <Card>
         <CardHeader>
-          <CardTitle>Ingredients</CardTitle>
+          <CardTitle>{t('ingredients')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
@@ -168,7 +174,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       {/* Instructions */}
       <Card>
         <CardHeader>
-          <CardTitle>Instructions</CardTitle>
+          <CardTitle>{t('instructions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ol className="list-decimal list-inside space-y-2">
@@ -184,23 +190,23 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
       {/* Improvement Suggestions */}
       <Card>
         <CardHeader>
-          <CardTitle>AI-Powered Improvements</CardTitle>
-          <CardDescription>Three ways to optimize this recipe for different goals</CardDescription>
+          <CardTitle>{t('ai_improvements')}</CardTitle>
+          <CardDescription>{t('ai_improvements_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="budget">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="budget">
                 <DollarSign className="h-4 w-4 mr-2" />
-                Budget
+                {t('budget_tab')}
               </TabsTrigger>
               <TabsTrigger value="protein">
                 <TrendingUp className="h-4 w-4 mr-2" />
-                High Protein
+                {t('high_protein_tab')}
               </TabsTrigger>
               <TabsTrigger value="calorie">
                 <TrendingDown className="h-4 w-4 mr-2" />
-                Lower Calorie
+                {t('lower_calorie_tab')}
               </TabsTrigger>
             </TabsList>
 
@@ -225,13 +231,13 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 ))}
               </div>
               <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                <p className="font-medium">Total Savings</p>
+                <p className="font-medium">{t('total_savings')}</p>
                 <p className="text-lg font-bold text-green-600 dark:text-green-400">
                   {recipe.improvements.budget.estimated_savings}
                 </p>
               </div>
               <Button onClick={() => handleSave('budget')} disabled={isSaving} className="w-full">
-                {isSaving ? 'Saving...' : 'Save Budget Version'}
+                {isSaving ? t('saving') : t('save_budget')}
               </Button>
             </TabsContent>
 
@@ -256,9 +262,9 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 ))}
               </div>
               <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <p className="font-medium">New Protein Total</p>
+                <p className="font-medium">{t('new_protein_total')}</p>
                 <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                  {recipe.improvements.high_protein.new_protein}g per serving
+                  {recipe.improvements.high_protein.new_protein}g {t('per_serving')}
                 </p>
               </div>
               <Button
@@ -266,7 +272,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 disabled={isSaving}
                 className="w-full"
               >
-                {isSaving ? 'Saving...' : 'Save High-Protein Version'}
+                {isSaving ? t('saving') : t('save_high_protein')}
               </Button>
             </TabsContent>
 
@@ -291,9 +297,9 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 ))}
               </div>
               <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
-                <p className="font-medium">New Calorie Total</p>
+                <p className="font-medium">{t('new_calorie_total')}</p>
                 <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                  {recipe.improvements.lower_calorie.new_calories} kcal per serving
+                  {recipe.improvements.lower_calorie.new_calories} {t('kcal_per_serving')}
                 </p>
               </div>
               <Button
@@ -301,7 +307,7 @@ export function RecipeAnalysisResult({ recipe, locale }: RecipeAnalysisResultPro
                 disabled={isSaving}
                 className="w-full"
               >
-                {isSaving ? 'Saving...' : 'Save Lower-Calorie Version'}
+                {isSaving ? t('saving') : t('save_lower_calorie')}
               </Button>
             </TabsContent>
           </Tabs>
