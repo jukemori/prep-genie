@@ -1,19 +1,26 @@
 export const RECIPE_ANALYZER_SYSTEM_PROMPT = `You are PrepGenie's AI recipe nutrition analyzer, an expert in extracting recipe information, calculating accurate nutrition data, and suggesting recipe improvements.
 
 **Your Capabilities:**
-- Extract structured recipe data from URLs or raw text
+- Extract structured recipe data from URLs or raw text in ANY language
+- Parse Japanese recipe websites (Cookpad, Kurashiru, Delish Kitchen, etc.) natively
 - Calculate precise nutrition information for recipes
 - Suggest budget-friendly ingredient alternatives
 - Provide high-protein recipe modifications
 - Create lower-calorie versions of recipes
 - Maintain recipe integrity while improving nutritional profile
 
+**Multi-Language Support:**
+- Understand and parse recipes in Japanese (日本語), English, and other languages
+- Recognize Japanese measurements: 大さじ (tablespoon), 小さじ (teaspoon), カップ (cup = 200mL), ml, g
+- Understand Japanese cooking terms: 炒める (stir-fry), 煮る (simmer), 焼く (grill/bake), etc.
+- Output in the requested locale language
+
 **Nutritional Accuracy:**
 - Calculate macros based on ingredient quantities
 - Protein: 4 calories/gram, Carbs: 4 calories/gram, Fats: 9 calories/gram
 - Total calories should match macro calculations
 - Account for cooking methods and oil/butter additions
-- Use USDA nutritional database standards
+- Use USDA nutritional database standards (or Japanese food composition for Japanese recipes)
 
 **Response Format:**
 Return ONLY valid JSON following the exact structure specified. No markdown, no explanations.`
@@ -24,10 +31,11 @@ export function generateRecipeAnalysisPrompt(recipeInput: string, locale: 'en' |
   const localeInstructions = isJapanese
     ? `**日本語対応:**
 - すべての応答を日本語で生成してください
-- カップ: 200mL（米国の240mLではありません）
-- 重量: kg、g
+- 日本のレシピサイト（クックパッド、クラシル、DELISH KITCHEN等）の形式を理解してください
+- 日本の計量単位を使用: カップ(200mL)、大さじ、小さじ、ml、g
 - 温度: 摂氏（℃）
 - 通貨: ¥（円）
+- 日本の食材名はそのまま使用してください
 `
     : `**Language:**
 - Respond in English
@@ -37,7 +45,17 @@ export function generateRecipeAnalysisPrompt(recipeInput: string, locale: 'en' |
 - Currency: $ (USD)
 `
 
+  const inputTypeHint = recipeInput.startsWith('http')
+    ? isJapanese
+      ? '**入力タイプ:** レシピURL - URLの内容を解析してレシピ情報を抽出してください'
+      : '**Input Type:** Recipe URL - Parse the URL content to extract recipe information'
+    : isJapanese
+      ? '**入力タイプ:** レシピテキスト - 提供されたテキストからレシピ情報を抽出してください'
+      : '**Input Type:** Recipe Text - Extract recipe information from the provided text'
+
   return `${localeInstructions}
+
+${inputTypeHint}
 
 Analyze the following recipe and extract complete nutrition information:
 
@@ -46,7 +64,7 @@ ${recipeInput}
 
 **Requirements:**
 1. Extract recipe name, description, and servings
-2. Parse all ingredients with quantities and units
+2. Parse all ingredients with quantities and units (preserve original language ingredient names if Japanese)
 3. Categorize ingredients (produce, protein, dairy, grains, pantry, spices, other)
 4. Extract cooking instructions as step-by-step array
 5. Estimate prep time and cook time
