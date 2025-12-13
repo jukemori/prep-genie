@@ -19,33 +19,40 @@ export function CuisineSelector({ value, onValueChange }: CuisineSelectorProps) 
   return (
     <div className="space-y-3">
       <div className="grid gap-3">
-        {cuisineKeys.map((cuisineKey) => (
-          <Button
-            key={cuisineKey}
-            variant={value === cuisineKey ? 'default' : 'outline'}
-            className="h-auto flex-col items-start justify-start p-4 text-left"
-            data-cuisine={cuisineKey}
-            data-selected={value === cuisineKey ? 'true' : 'false'}
-            onClick={() => {
-              if (value === cuisineKey) {
-                onValueChange(undefined) // Deselect if already selected
-              } else {
-                onValueChange(cuisineKey)
-              }
-            }}
-          >
-            <div className="flex w-full items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                <span className="font-semibold">{t(`cuisine_${cuisineKey}`)}</span>
+        {cuisineKeys.map((cuisineKey) => {
+          const isSelected = value === cuisineKey
+          return (
+            <Button
+              key={cuisineKey}
+              variant={isSelected ? 'default' : 'outline'}
+              className="h-auto flex-col items-start justify-start p-4 text-left"
+              data-cuisine={cuisineKey}
+              data-selected={isSelected ? 'true' : 'false'}
+              onClick={() => {
+                if (isSelected) {
+                  onValueChange(undefined) // Deselect if already selected
+                } else {
+                  onValueChange(cuisineKey)
+                }
+              }}
+            >
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  <span className="font-semibold">{t(`cuisine_${cuisineKey}`)}</span>
+                </div>
+                {isSelected && <Check className="h-4 w-4" />}
               </div>
-              {value === cuisineKey && <Check className="h-4 w-4" />}
-            </div>
-            <p className="mt-1 text-xs font-normal text-muted-foreground">
-              {t(`cuisine_${cuisineKey}_desc`)}
-            </p>
-          </Button>
-        ))}
+              <p
+                className={`mt-1 text-xs font-normal ${
+                  isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                }`}
+              >
+                {t(`cuisine_${cuisineKey}_desc`)}
+              </p>
+            </Button>
+          )
+        })}
       </div>
 
       {value && (
