@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 
 interface NutritionRingProps {
@@ -17,6 +18,7 @@ export function NutritionRing({
   size = 120,
   strokeWidth = 12,
 }: NutritionRingProps) {
+  const t = useTranslations('nutrition')
   const total = protein + carbs + fats
 
   const percentages = useMemo(() => {
@@ -100,7 +102,7 @@ export function NutritionRing({
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
         <p className="text-2xl font-bold">{total}g</p>
-        <p className="text-xs text-muted-foreground">total</p>
+        <p className="text-xs text-muted-foreground">{t('total')}</p>
       </div>
 
       {/* Legend */}
@@ -108,21 +110,21 @@ export function NutritionRing({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-[hsl(221,83%,53%)]" />
-            <span>Protein</span>
+            <span>{t('protein')}</span>
           </div>
           <span className="font-medium">{protein}g</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-[hsl(142,76%,36%)]" />
-            <span>Carbs</span>
+            <span>{t('carbs')}</span>
           </div>
           <span className="font-medium">{carbs}g</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-[hsl(25,95%,53%)]" />
-            <span>Fats</span>
+            <span>{t('fats')}</span>
           </div>
           <span className="font-medium">{fats}g</span>
         </div>
