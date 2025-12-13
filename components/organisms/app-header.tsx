@@ -1,8 +1,8 @@
 'use client'
 
 import { LogOut, Moon, Sun, User } from 'lucide-react'
-import { useTheme } from 'next-themes'
 import { useTranslations } from 'next-intl'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/atoms/ui/button'
 import {
   DropdownMenu,

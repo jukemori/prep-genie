@@ -26,8 +26,20 @@ export default function LandingPage() {
   const tCommon = useTranslations('common')
 
   const mockMeals = [
-    { nameKey: 'grilled_salmon_bowl', calories: 520, time: 25, typeKey: 'dinner', icon: UtensilsCrossed },
-    { nameKey: 'greek_yogurt_parfait', calories: 340, time: 10, typeKey: 'breakfast', icon: Coffee },
+    {
+      nameKey: 'grilled_salmon_bowl',
+      calories: 520,
+      time: 25,
+      typeKey: 'dinner',
+      icon: UtensilsCrossed,
+    },
+    {
+      nameKey: 'greek_yogurt_parfait',
+      calories: 340,
+      time: 10,
+      typeKey: 'breakfast',
+      icon: Coffee,
+    },
     { nameKey: 'chicken_stir_fry', calories: 480, time: 20, typeKey: 'lunch', icon: Salad },
   ]
 
