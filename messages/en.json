@@ -370,7 +370,11 @@
     "generate_meal_plan": "Generate Meal Plan",
     "browse_meals": "Browse Meals",
     "log_progress": "Log Today's Progress",
-    "ask_ai": "Ask AI Nutrition Assistant"
+    "ask_ai": "Ask AI Nutrition Assistant",
+    "goal_weight_loss": "Weight Loss",
+    "goal_maintain": "Maintain Weight",
+    "goal_muscle_gain": "Muscle Gain",
+    "goal_balanced": "Balanced Eating"
   },
   "meals_page": {
     "title": "Meal Library",

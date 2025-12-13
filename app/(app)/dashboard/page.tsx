@@ -129,7 +129,15 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">{t('goal')}</span>
               <span className="text-sm text-muted-foreground capitalize">
-                {profile?.goal?.replace('_', ' ')}
+                {profile?.goal
+                  ? t(
+                      `goal_${profile.goal}` as
+                        | 'goal_weight_loss'
+                        | 'goal_maintain'
+                        | 'goal_muscle_gain'
+                        | 'goal_balanced'
+                    )
+                  : '-'}
               </span>
             </div>
             <div className="flex items-center justify-between">

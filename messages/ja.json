@@ -367,7 +367,11 @@
     "generate_meal_plan": "食事プランを生成",
     "browse_meals": "食事を閲覧",
     "log_progress": "今日の進捗を記録",
-    "ask_ai": "AI栄養アシスタントに質問"
+    "ask_ai": "AI栄養アシスタントに質問",
+    "goal_weight_loss": "減量",
+    "goal_maintain": "体重維持",
+    "goal_muscle_gain": "筋肉増量",
+    "goal_balanced": "バランスの取れた食事"
   },
   "meals_page": {
     "title": "食事ライブラリ",
