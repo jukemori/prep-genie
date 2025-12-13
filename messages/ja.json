@@ -581,7 +581,8 @@
     "total_items": "合計アイテム数",
     "purchased_items": "購入済み",
     "progress": "進捗",
-    "items": "アイテム"
+    "items": "アイテム",
+    "grocery_list_name": "買い物リスト - {date}"
   },
   "progress_page": {
     "title": "進捗追跡",

@@ -584,7 +584,8 @@
     "total_items": "Total Items",
     "purchased_items": "Purchased",
     "progress": "Progress",
-    "items": "items"
+    "items": "items",
+    "grocery_list_name": "Grocery List - {date}"
   },
   "progress_page": {
     "title": "Progress Tracking",

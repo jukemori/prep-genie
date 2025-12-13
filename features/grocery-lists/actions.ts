@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import type { GroceryListInsert } from '@/types'
 
@@ -55,6 +56,7 @@ export async function getGroceryList(id: string) {
 
 export async function generateGroceryListFromMealPlan(mealPlanId: string) {
   const supabase = await createClient()
+  const t = await getTranslations('grocery_lists_page')
 
   const {
     data: { user },
@@ -113,7 +115,7 @@ export async function generateGroceryListFromMealPlan(mealPlanId: string) {
   const groceryListInsert: GroceryListInsert = {
     user_id: user.id,
     meal_plan_id: mealPlanId,
-    name: `Grocery List - ${new Date().toLocaleDateString()}`,
+    name: t('grocery_list_name', { date: new Date().toLocaleDateString() }),
     items: consolidatedItems as never,
     estimated_cost: null,
   }
