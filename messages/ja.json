@@ -494,7 +494,9 @@
     "protein": "タンパク質",
     "carbs": "炭水化物",
     "fats": "脂質",
-    "generated_plan": "生成プラン"
+    "generated_plan": "生成プラン",
+    "weekly": "週間",
+    "daily": "毎日"
   },
   "meal_plans_new": {
     "back_to_meal_plans": "食事プランに戻る",

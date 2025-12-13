@@ -61,7 +61,7 @@ export default async function MealPlansPage() {
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="line-clamp-1">{plan.name}</CardTitle>
                   <Badge variant="outline" className="capitalize">
-                    {plan.type}
+                    {t(plan.type as 'weekly' | 'daily')}
                   </Badge>
                 </div>
                 <CardDescription>

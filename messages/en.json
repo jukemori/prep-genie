@@ -497,7 +497,9 @@
     "protein": "Protein",
     "carbs": "Carbs",
     "fats": "Fats",
-    "generated_plan": "Generated Plan"
+    "generated_plan": "Generated Plan",
+    "weekly": "Weekly",
+    "daily": "Daily"
   },
   "meal_plans_new": {
     "back_to_meal_plans": "Back to Meal Plans",

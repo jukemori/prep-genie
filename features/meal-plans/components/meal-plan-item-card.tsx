@@ -24,6 +24,7 @@ interface MealPlanItemCardProps {
 export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanItemCardProps) {
   const t = useTranslations('meal_plan_detail_page')
   const tMeals = useTranslations('meals')
+  const tNutrition = useTranslations('nutrition')
   const [isCompleted, setIsCompleted] = useState(item.is_completed || false)
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -75,10 +76,18 @@ export function MealPlanItemCard({ item, mealPlanId, onSwapComplete }: MealPlanI
           </div>
         </div>
         <div className="flex gap-4 text-sm text-muted-foreground">
-          <span>{item.meals.calories_per_serving || 0} cal</span>
-          <span>{item.meals.protein_per_serving || 0}g protein</span>
-          <span>{item.meals.carbs_per_serving || 0}g carbs</span>
-          <span>{item.meals.fats_per_serving || 0}g fats</span>
+          <span>
+            {item.meals.calories_per_serving || 0} {tNutrition('cal')}
+          </span>
+          <span>
+            {item.meals.protein_per_serving || 0}g {tNutrition('protein')}
+          </span>
+          <span>
+            {item.meals.carbs_per_serving || 0}g {tNutrition('carbs')}
+          </span>
+          <span>
+            {item.meals.fats_per_serving || 0}g {tNutrition('fats')}
+          </span>
         </div>
         <div className="mt-3">
           <MealSwapMenu
