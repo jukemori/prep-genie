@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -44,6 +45,7 @@ interface NutritionTargetsSettingsProps {
 }
 
 export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsProps) {
+  const t = useTranslations('settings')
   const [isLoading, setIsLoading] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
 
@@ -65,10 +67,10 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Nutrition targets updated successfully!')
+        toast.success(t('nutrition_updated_success'))
       }
     } catch (_error) {
-      toast.error('Failed to update nutrition targets')
+      toast.error(t('nutrition_update_failed'))
     } finally {
       setIsLoading(false)
     }
@@ -87,10 +89,10 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
         form.setValue('target_protein', result.data.target_protein)
         form.setValue('target_carbs', result.data.target_carbs)
         form.setValue('target_fats', result.data.target_fats)
-        toast.success('Nutrition targets reset to AI-recommended values!')
+        toast.success(t('nutrition_reset_success'))
       }
     } catch (_error) {
-      toast.error('Failed to reset nutrition targets')
+      toast.error(t('nutrition_reset_failed'))
     } finally {
       setIsResetting(false)
     }
@@ -99,11 +101,11 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
   return (
     <div className="space-y-6">
       <div className="bg-muted p-4 rounded-lg">
-        <h3 className="font-medium mb-2">Current TDEE</h3>
-        <p className="text-2xl font-bold">{profile.tdee} kcal/day</p>
-        <p className="text-sm text-muted-foreground mt-1">
-          Total Daily Energy Expenditure based on your profile
+        <h3 className="font-medium mb-2">{t('current_tdee')}</h3>
+        <p className="text-2xl font-bold">
+          {profile.tdee} {t('kcal_per_day')}
         </p>
+        <p className="text-sm text-muted-foreground mt-1">{t('tdee_description')}</p>
       </div>
 
       <Form {...form}>
@@ -113,7 +115,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
             name="daily_calorie_target"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Daily Calorie Target</FormLabel>
+                <FormLabel>{t('daily_calorie_target')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -125,7 +127,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
                     disabled={field.disabled}
                   />
                 </FormControl>
-                <FormDescription>Customize your daily calorie goal</FormDescription>
+                <FormDescription>{t('customize_calorie_goal')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -137,7 +139,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
               name="target_protein"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Protein (g)</FormLabel>
+                  <FormLabel>{t('protein_g')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -159,7 +161,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
               name="target_carbs"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Carbs (g)</FormLabel>
+                  <FormLabel>{t('carbs_g')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -181,7 +183,7 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
               name="target_fats"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fats (g)</FormLabel>
+                  <FormLabel>{t('fats_g')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -201,27 +203,26 @@ export function NutritionTargetsSettings({ profile }: NutritionTargetsSettingsPr
 
           <div className="flex gap-4">
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? t('saving') : t('save_changes')}
             </Button>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button type="button" variant="outline" disabled={isResetting}>
-                  Reset to AI Values
+                  {t('reset_to_ai')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Reset Nutrition Targets?</AlertDialogTitle>
+                  <AlertDialogTitle>{t('reset_nutrition_title')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will recalculate your nutrition targets based on your current profile (age,
-                    weight, height, activity level, and goals). Your custom values will be replaced.
+                    {t('reset_nutrition_description')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={handleReset}>
-                    {isResetting ? 'Resetting...' : 'Reset'}
+                    {isResetting ? t('resetting') : t('reset')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/atoms/ui/button'
 import { Label } from '@/components/atoms/ui/label'
@@ -17,56 +18,55 @@ interface AppPreferencesSettingsProps {
 }
 
 export function AppPreferencesSettings({ profile }: AppPreferencesSettingsProps) {
+  const t = useTranslations('settings')
   const { theme, setTheme } = useTheme()
 
   return (
     <div className="space-y-6">
       <div>
         <Label htmlFor="theme" className="text-base">
-          Theme
+          {t('theme')}
         </Label>
-        <p className="text-sm text-muted-foreground mb-3">Choose your preferred color scheme</p>
+        <p className="text-sm text-muted-foreground mb-3">{t('theme_description')}</p>
         <Select value={theme} onValueChange={setTheme}>
           <SelectTrigger id="theme" className="w-full">
-            <SelectValue placeholder="Select theme" />
+            <SelectValue placeholder={t('select_theme')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="dark">Dark</SelectItem>
-            <SelectItem value="system">System</SelectItem>
+            <SelectItem value="light">{t('theme_light')}</SelectItem>
+            <SelectItem value="dark">{t('theme_dark')}</SelectItem>
+            <SelectItem value="system">{t('theme_system')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div>
-        <Label className="text-base">Default Meal Plan Type</Label>
-        <p className="text-sm text-muted-foreground mb-3">Your preferred meal planning frequency</p>
+        <Label className="text-base">{t('default_meal_plan_type')}</Label>
+        <p className="text-sm text-muted-foreground mb-3">{t('meal_plan_frequency')}</p>
         <Select defaultValue="weekly">
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select default plan type" />
+            <SelectValue placeholder={t('select_plan_type')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="daily">Daily</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
+            <SelectItem value="daily">{t('daily')}</SelectItem>
+            <SelectItem value="weekly">{t('weekly')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div>
-        <Label className="text-base">Preferred Cuisines</Label>
-        <p className="text-sm text-muted-foreground mb-3">Cuisine types you enjoy (coming soon)</p>
+        <Label className="text-base">{t('preferred_cuisines')}</Label>
+        <p className="text-sm text-muted-foreground mb-3">{t('cuisines_coming_soon')}</p>
         <Button variant="outline" disabled>
-          Manage Cuisines
+          {t('manage_cuisines')}
         </Button>
       </div>
 
       <div>
-        <Label className="text-base">Notifications</Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          Email notification preferences (coming soon)
-        </p>
+        <Label className="text-base">{t('notifications')}</Label>
+        <p className="text-sm text-muted-foreground mb-3">{t('notifications_coming_soon')}</p>
         <Button variant="outline" disabled>
-          Manage Notifications
+          {t('manage_notifications')}
         </Button>
       </div>
     </div>
